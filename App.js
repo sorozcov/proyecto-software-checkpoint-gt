@@ -8,9 +8,24 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
+import * as firebase from "firebase";
 
 const Stack = createStackNavigator();
-
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyAKPue3cCi_HLt9uZE7RoZIN2alLC0HJi8",
+    authDomain: "software-checkpoint-gt.firebaseapp.com",
+    databaseURL: "https://software-checkpoint-gt.firebaseio.com",
+    projectId: "software-checkpoint-gt",
+    storageBucket: "software-checkpoint-gt.appspot.com",
+    messagingSenderId: "960829337971",
+    appId: "1:960829337971:web:4bea91361f1deaf7ca9506",
+    measurementId: "G-8RFP288CFR"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const [initialNavigationState, setInitialNavigationState] = React.useState();
