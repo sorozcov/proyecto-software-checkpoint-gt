@@ -24,7 +24,7 @@ const Stack = createStackNavigator();
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
+ 
   
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
