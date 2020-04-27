@@ -9,6 +9,53 @@ import * as actionsCategories from '../src/actions/categories';
 
 
 function LoginScreen({ theme, navigation, saveLoggedUser }) {
+	const { colors, roundness } = theme;
+  const [modalVisibleIndicatorLogin, setmodalVisibleIndicatorLogin] = useState(false);
+  const [mailInput, changeMailInput] = useState('');
+  const [password, changePassword] = useState('');
+  async function login(email, pass) {
+    Keyboard.dismiss();
+    console.log("started");
+    setmodalVisibleIndicatorLogin(true);
+     try {
+         
+         await firebase.auth()
+             .signInWithEmailAndPassword(email, pass);
+   
+            
+            setmodalVisibleIndicatorLogin(false);
+         // Navigate to the Home page, the user is auto logged in
+         user=await firebase.auth().currentUser; 
+         if(user.emailVerified){
+            saveLoggedUser(navigation,user)
+            console.log("Login succesfull");
+         }else{
+          console.log("Verificar correo!");
+          setTimeout(function(){
+            Alert.alert(
+             "Verificar correo",
+             "Verifique su correo electrónico para ingresar a la plataforma.",
+             [
+              {text: 'Enviar correo de nuevo', onPress: () => {firebase.auth().currentUser.sendEmailVerification()}},
+               {text: 'Ok', onPress: () => {}},
+             ],
+            )},100)
+         }
+         
+     } catch (error) {
+         console.log(error.toString());
+         setmodalVisibleIndicatorLogin(false);
+         setTimeout(function(){
+         Alert.alert(
+          "Error",
+          "Los datos ingresados no son válidos para ningún usuario.",
+          [
+            {text: 'OK', onPress: () => {}},
+          ],
+         )},100)
+     }
+   
+  }
   
   return (
     <KeyboardAvoidingView
