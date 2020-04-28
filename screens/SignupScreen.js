@@ -1,22 +1,144 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View,KeyboardAvoidingView} from 'react-native';
-import {  withTheme, } from 'react-native-paper';
-import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
+import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator } from 'react-native-paper';
+
 import * as firebase from "firebase";
+import 'firebase/firestore';
 
-import * as actionsLoggedUser from '../src/actions/loggedUser';
-import * as actionsCategories from '../src/actions/categories';
+import ImagePicker, * as imageUploadFunctions from '../components/ImagePickerUser';
+import MyTextInput from '../components/textInput';
 
 
-function SignupScreen({ theme, navigation, saveLoggedUser }) {
-  
+async function createUserCollectionFirebase ({ email, name, lastName, image, uid })
+{
+  let db = firebase.firestore();
+  let newUserDoc = db.collection('users').doc(uid);
+  return newUserDoc.set({
+    email: email,
+    name: name,
+    lastName: lastName,
+    uid: uid,
+    image: image,
+  });
+}
+
+function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
+  const { colors, roundness } = theme;
+  const [modalVisibleIndicatorLogin, setModalVisibleIndicatorLogin] = useState(false);
+  const signUp = values => {
+    console.log('Submitting form', values)
+    signupFirebase(values)
+  }
+
+  async function signupFirebase({ email, password, name, lastName, image }) {
+    Keyboard.dismiss();
+    setModalVisibleIndicatorLogin(true);
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+      let uid = await firebase.auth().currentUser.uid;
+      image = image !== undefined ? image : null;
+      if (image !== null){
+        let blob = await imageUploadFunctions.uriToBlob(image);
+        await imageUploadFunctions.uploadToFirebase(blob, uid);
+
+        image = uid;
+      }
+
+      await createUserCollectionFirebase({ email, name, lastName, image, uid })
+      await firebase.auth().currentUser.sendEmailVerification()
+      setModalVisibleIndicatorLogin(false);
+      setTimeout(function() {
+        Alert.alert(
+          "Bienvenido " + name,
+          "Su cuenta se ha creado con éxtio. El último paso es verificar su correo electrónico.",
+          [
+            { text: 'OK', onPress: () => {} },
+          ],
+        )}, 100
+      )
+      navigation.navigate('Login')
+    } catch(error) {
+      console.log(error.toString());
+      let errorMessage = ""
+      switch(error.toString()) {
+        case "Error: The email address is already in use by other account.":
+          errorMessage = "El correo ingresado ya está en uso por otro usuario."
+          break;
+        default:
+          errorMessage = "No se pudo crear el usuario."
+      }
+      setModalVisibleIndicatorLogin(false);
+      setTimeout(function() {
+        Alert.alert(
+          "Error",
+          errorMessage,
+          [
+            { text: 'OK', onPress: () => {}},
+          ],
+        )}, 100
+      )
+    }
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.container}
     >
     <View style={styles.container}>
-      
+      <ScrollView style={styles.container} contentContainerStyle={contentContainer}>
+        <View style={styles.formContainer}>
+          <Text style={{...styles.titleStyle, color: colors.accent, }}>Registro</Text>
+          <Field name={'image'} component={ImagePicker} image={null}/>
+          <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
+          <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
+          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email.address'/>
+          <Field name={'password'} component={MyTextInput} label='Contraseña' placeholder='Ingresa tu contraseña' secureTextEntry={true}/>
+          <Field name={'passwordConfirm'} component={MyTextInput} label='Confirmación Contraseña' placeholder='Confirma tu contraseña' secureTextEntry={true}/>
+          <Button
+            disabled={!(dirty && valid)}
+            theme={roundness}
+            color={'#000000'}
+            icon="login"
+            height={50}
+            mode="contained"
+            labelStyle={{
+              fontFamily: "dosis-bold",
+              fontSize: 15,
+            }}
+            style={{
+              fontFamily: 'dosis',
+              marginLeft: '5%',
+              marginRight: '5%',
+              marginTop: '4%',
+              justifyContent: 'center',
+            }}
+            onPress={handleSubmit(signUp)}>
+            REGISTRARSE
+          </Button>
+        </View>
+        <Modal
+          transparent={true}
+          animationType={'none'}
+          visible={modalVisibleIndicatorLogin}>
+          <View style={styles.modalBackground}>
+            <View style={styles.activityIndicatorMessage}>
+              <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
+            </View>
+          </View>
+        </Modal>
+        <Text style={styles.textStyle}>¿Ya tienes una cuenta?
+            <Text style={{
+              ...styles.textStyle, 
+              color: colors.accent
+              }} 
+              onPress={() => navigation.navigate('Login')}> 
+              Inicia Sesión
+            </Text>
+        </Text>
+      </ScrollView>
     </View>
     </KeyboardAvoidingView>
   );
@@ -29,39 +151,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontFamily: 'dosis-regular',
   },
-  topContainer: {
-    flex: 0.8,
-    paddingTop:50
-  },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 5,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+  contentContainer: {
+    paddingTop: 30,
   },
   inputContainerStyle: {
     margin: 8,
   },
-  imageContainer: {
-    alignItems: 'center'
-  },
-  logoImage: {
-    width: 250,
-    height: 250,
-    resizeMode: 'contain',
-  },
   inputContainerStyle: {
     paddingLeft: 20,
-    paddingRight: 20,
     paddingBottom: 10,
+    paddingRight: 20,
+  },
+  titleStyle: {
+    textAlign: 'center',
+    fontFamily: 'dosis-extra-bold',
+    fontSize: 30,
+    paddingBottom: '6%',
+    paddingTop: '8%',
   },
   textStyle:{
     textAlign: 'center', 
     fontFamily: 'dosis-semi-bold',
-    fontSize:16,
-    paddingTop:'4%',
-    paddingBottom:'4%'
+    fontSize: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   modalBackground: {
     flex: 1,
@@ -81,18 +194,16 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(
-  undefined,
-  dispatch => ({
-    async saveLoggedUser(navigation,user) {
-      //Se cargan las categorias
-      dispatch(actionsCategories.clearCategories());
-      const categories = await firebase.firestore().collection('categories').get();
-      categories.docs.map(doc=> dispatch(actionsCategories.addCategory(doc.data())));
-      //Se cargan los usuarios
-      const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
-      dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-      navigation.navigate('Home');
-    },
-  }),
-)(withTheme(LoginScreen));
+export default reduxForm({
+  form: 'signUp',
+  validate: (values) => {
+    const errors = {};
+    errors.name = !values.name ? 'Este campo es obligatorio' : undefined
+    errors.lastName = !values.lastName ? 'Este campo es obligatorio' : undefined
+    errors.email = !values.email ? 'Este campo es obligatorio' : !values.email.includes('@') ? 'Tienes que ingresar un correo válido' : undefined;
+    errors.password = !values.password ? 'Este campo es obligatorio' : values.password.length < 8 ? 'La contraseña es muy corta. Debe tener al menos 8 caracteres' : undefined;
+    errors.passwordConfirm = !values.passwordConfirm ? 'Debe confirmar su contraseña' : values.passwordConfirm !== values.password ? 'Las contraseñas ingresadas no coinciden' : undefined;
+
+    return errors;
+  }
+})(withTheme(SignupScreen));
