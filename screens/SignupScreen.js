@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Image, StyleSheet, View, KeyboardAvoidingView } from 'react-native';
-import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator} from 'react-native-paper';
+import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
+import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator } from 'react-native-paper';
 
 import * as firebase from "firebase";
 import 'firebase/firestore';
@@ -27,6 +27,60 @@ async function createUserCollectionFirebase ({ email, name, lastName, image, uid
 function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
   const { colors, roundness } = theme;
   const [modalVisibleIndicatorLogin, setModalVisibleIndicatorLogin] = useState(false);
+  const signUp = values => {
+    console.log('Submitting form', values)
+    signupFirebase(values)
+  }
+
+  async function signupFirebase({ email, password, name, lastName, image }) {
+    Keyboard.dismiss();
+    setModalVisibleIndicatorLogin(true);
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+      let uid = await firebase.auth().currentUser.uid;
+      image = image !== undefined ? image : null;
+      if (image !== null){
+        let blob = await imageUploadFunctions.uriToBlob(image);
+        await imageUploadFunctions.uploadToFirebase(blob, uid);
+
+        image = uid;
+      }
+
+      await createUserCollectionFirebase({ email, name, lastName, image, uid })
+      await firebase.auth().currentUser.sendEmailVerification()
+      setModalVisibleIndicatorLogin(false);
+      setTimeout(function() {
+        Alert.alert(
+          "Bienvenido " + name,
+          "Su cuenta se ha creado con éxtio. El último paso es verificar su correo electrónico.",
+          [
+            { text: 'OK', onPress: () => {} },
+          ],
+        )}, 100
+      )
+      navigation.navigate('Login')
+    } catch(error) {
+      console.log(error.toString());
+      let errorMessage = ""
+      switch(error.toString()) {
+        case "Error: The email address is already in use by other account.":
+          errorMessage = "El correo ingresado ya está en uso por otro usuario."
+          break;
+        default:
+          errorMessage = "No se pudo crear el usuario."
+      }
+      setModalVisibleIndicatorLogin(false);
+      setTimeout(function() {
+        Alert.alert(
+          "Error",
+          errorMessage,
+          [
+            { text: 'OK', onPress: () => {}},
+          ],
+        )}, 100
+      )
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -87,7 +141,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
       </ScrollView>
     </View>
     </KeyboardAvoidingView>
-  )  
+  );
 }
 
 const styles = StyleSheet.create({
