@@ -53,7 +53,41 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
             {text: 'OK', onPress: () => {}},
           ],
          )},100)
-     }
+	 }
+	 
+	 async function resetPassword(email) {
+		Keyboard.dismiss();
+		setmodalVisibleIndicatorLogin(true);
+		 try {
+			 
+			 await firebase.auth().sendPasswordResetEmail(email);
+	   
+			console.log("Password reset succesfull");
+			setmodalVisibleIndicatorLogin(false);
+			setTimeout(function(){
+			  Alert.alert(
+			   "Recuperación Contraseña",
+			   "Correo para reestablecimiento de contraseña enviado.",
+			   [
+				 {text: 'OK', onPress: () => {}},
+			   ],
+			  )},100)   
+			 
+	
+			
+			 
+		 } catch (error) {
+			 console.log(error.toString());
+			 setmodalVisibleIndicatorLogin(false);
+			 setTimeout(function(){
+			 Alert.alert(
+			  "Error",
+			  "Error, correo ingresado no válido.",
+			  [
+				{text: 'OK', onPress: () => {}},
+			  ],
+			 )},100)
+		 }
    
   }
   
