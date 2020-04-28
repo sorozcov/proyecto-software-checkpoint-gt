@@ -1,25 +1,41 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View,KeyboardAvoidingView} from 'react-native';
-import {  withTheme, } from 'react-native-paper';
-import { connect } from 'react-redux';
+import { Image, StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { withTheme, Text, Button } from 'react-native-paper';
 import * as firebase from "firebase";
+import 'firebase/firestore';
 
-import * as actionsLoggedUser from '../src/actions/loggedUser';
-import * as actionsCategories from '../src/actions/categories';
+async function createUserCollectionFirebase ({ email, name, lastName, image, phoneNumber, uid })
+{
+  let db = firebase.firestore();
+  let newUserDoc = db.collection('users').doc(uid);
+  return newUserDoc.set({
+    email: email,
+    name: name,
+    lastName: lastName,
+    phoneNumber: phoneNumber,
+    uid: uid,
+    image: image,
+  });
+}
 
+function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
+  const { colors, roundness } = theme;
+  const [modalVisibleIndicatorLogin, setModalVisibleIndicatorLogin] = useState(false);
 
-function SignupScreen({ theme, navigation, saveLoggedUser }) {
-  
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.container}
     >
     <View style={styles.container}>
-      
+      <ScrollView style={styles.container} contentContainerStyle={contentContainer}>
+        <View style={styles.formContainer}>
+          <Text style={{...styles.titleStyle, color: colors.accent, }}>Registro</Text>
+        </View>
+      </ScrollView>
     </View>
     </KeyboardAvoidingView>
-  );
+  )  
 }
 
 const styles = StyleSheet.create({
@@ -28,6 +44,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#fff',
     fontFamily: 'dosis-regular',
+  },
+  contentContainer: {
+    paddingTop: 30,
+  },
+  titleStyle: {
+    textAlign: 'center',
+    fontFamily: 'dosis-extra-bold',
+    fontSize: 30,
+    paddingBottom: '6%',
+    paddingTop: '8%',
   },
   topContainer: {
     flex: 0.8,
@@ -83,16 +109,5 @@ const styles = StyleSheet.create({
 
 export default connect(
   undefined,
-  dispatch => ({
-    async saveLoggedUser(navigation,user) {
-      //Se cargan las categorias
-      dispatch(actionsCategories.clearCategories());
-      const categories = await firebase.firestore().collection('categories').get();
-      categories.docs.map(doc=> dispatch(actionsCategories.addCategory(doc.data())));
-      //Se cargan los usuarios
-      const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
-      dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-      navigation.navigate('Home');
-    },
-  }),
-)(withTheme(LoginScreen));
+  undefined,
+)(withTheme(SignupScreen));
