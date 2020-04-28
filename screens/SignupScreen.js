@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { withTheme, Text, Button } from 'react-native-paper';
+import { reduxForm, Field } from 'redux-form';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Image, StyleSheet, View, KeyboardAvoidingView } from 'react-native';
+import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator} from 'react-native-paper';
+
 import * as firebase from "firebase";
 import 'firebase/firestore';
 
-async function createUserCollectionFirebase ({ email, name, lastName, image, phoneNumber, uid })
+import ImagePicker, * as imageUploadFunctions from '../components/ImagePickerUser';
+import MyTextInput from '../components/textInput';
+
+
+async function createUserCollectionFirebase ({ email, name, lastName, image, uid })
 {
   let db = firebase.firestore();
   let newUserDoc = db.collection('users').doc(uid);
@@ -12,7 +19,6 @@ async function createUserCollectionFirebase ({ email, name, lastName, image, pho
     email: email,
     name: name,
     lastName: lastName,
-    phoneNumber: phoneNumber,
     uid: uid,
     image: image,
   });
@@ -31,7 +37,53 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
       <ScrollView style={styles.container} contentContainerStyle={contentContainer}>
         <View style={styles.formContainer}>
           <Text style={{...styles.titleStyle, color: colors.accent, }}>Registro</Text>
+          <Field name={'image'} component={ImagePicker} image={null}/>
+          <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
+          <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
+          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email.address'/>
+          <Field name={'password'} component={MyTextInput} label='Contraseña' placeholder='Ingresa tu contraseña' secureTextEntry={true}/>
+          <Field name={'passwordConfirm'} component={MyTextInput} label='Confirmación Contraseña' placeholder='Confirma tu contraseña' secureTextEntry={true}/>
+          <Button
+            disabled={!(dirty && valid)}
+            theme={roundness}
+            color={'#000000'}
+            icon="login"
+            height={50}
+            mode="contained"
+            labelStyle={{
+              fontFamily: "dosis-bold",
+              fontSize: 15,
+            }}
+            style={{
+              fontFamily: 'dosis',
+              marginLeft: '5%',
+              marginRight: '5%',
+              marginTop: '4%',
+              justifyContent: 'center',
+            }}
+            onPress={handleSubmit(signUp)}>
+            REGISTRARSE
+          </Button>
         </View>
+        <Modal
+          transparent={true}
+          animationType={'none'}
+          visible={modalVisibleIndicatorLogin}>
+          <View style={styles.modalBackground}>
+            <View style={styles.activityIndicatorMessage}>
+              <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
+            </View>
+          </View>
+        </Modal>
+        <Text style={styles.textStyle}>¿Ya tienes una cuenta?
+            <Text style={{
+              ...styles.textStyle, 
+              color: colors.accent
+              }} 
+              onPress={() => navigation.navigate('Login')}> 
+              Inicia Sesión
+            </Text>
+        </Text>
       </ScrollView>
     </View>
     </KeyboardAvoidingView>
@@ -48,6 +100,14 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 30,
   },
+  inputContainerStyle: {
+    margin: 8,
+  },
+  inputContainerStyle: {
+    paddingLeft: 20,
+    paddingBottom: 10,
+    paddingRight: 20,
+  },
   titleStyle: {
     textAlign: 'center',
     fontFamily: 'dosis-extra-bold',
@@ -55,39 +115,12 @@ const styles = StyleSheet.create({
     paddingBottom: '6%',
     paddingTop: '8%',
   },
-  topContainer: {
-    flex: 0.8,
-    paddingTop:50
-  },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 5,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  inputContainerStyle: {
-    margin: 8,
-  },
-  imageContainer: {
-    alignItems: 'center'
-  },
-  logoImage: {
-    width: 250,
-    height: 250,
-    resizeMode: 'contain',
-  },
-  inputContainerStyle: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 10,
-  },
   textStyle:{
     textAlign: 'center', 
     fontFamily: 'dosis-semi-bold',
-    fontSize:16,
-    paddingTop:'4%',
-    paddingBottom:'4%'
+    fontSize: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   modalBackground: {
     flex: 1,
@@ -107,7 +140,16 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(
-  undefined,
-  undefined,
-)(withTheme(SignupScreen));
+export default reduxForm({
+  form: 'signUp',
+  validate: (values) => {
+    const errors = {};
+    errors.name = !values.name ? 'Este campo es obligatorio' : undefined
+    errors.lastName = !values.lastName ? 'Este campo es obligatorio' : undefined
+    errors.email = !values.email ? 'Este campo es obligatorio' : !values.email.includes('@') ? 'Tienes que ingresar un correo válido' : undefined;
+    errors.password = !values.password ? 'Este campo es obligatorio' : values.password.length < 8 ? 'La contraseña es muy corta. Debe tener al menos 8 caracteres' : undefined;
+    errors.passwordConfirm = !values.passwordConfirm ? 'Debe confirmar su contraseña' : values.passwordConfirm !== values.password ? 'Las contraseñas ingresadas no coinciden' : undefined;
+
+    return errors;
+  }
+})(withTheme(SignupScreen));
