@@ -137,7 +137,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
         animationType={'none'}
         visible={modalVisibleIndicatorLogin}>
         <View style={styles.modalBackground}>
-          <View style={styles.activityIndicatorMessage}>
+          <View style={styles.activityIndicatorWrapper}>
             <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
           </View>
         </View>
