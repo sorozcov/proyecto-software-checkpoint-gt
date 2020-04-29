@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
 import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator } from 'react-native-paper';
 
+import randomString from 'random-string'
 import * as firebase from "firebase";
 import 'firebase/firestore';
 
@@ -32,10 +33,13 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
     signupFirebase(values)
   }
 
-  async function signupFirebase({ email, password, name, lastName, image }) {
+  async function signupFirebase({ email, name, lastName, image }) {
     Keyboard.dismiss();
     setModalVisibleIndicatorLogin(true);
     try {
+      //Create Random Password
+      let password = randomString();
+     
       await firebase.auth().createUserWithEmailAndPassword(email, password);
       let uid = await firebase.auth().currentUser.uid;
       image = image !== undefined ? image : null;
@@ -47,12 +51,13 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
       }
 
       await createUserCollectionFirebase({ email, name, lastName, image, uid })
-      await firebase.auth().currentUser.sendEmailVerification()
+      //Enviar correo para resetear password al gusto del mesero
+      await firebase.auth().sendPasswordResetEmail(email);
       setModalVisibleIndicatorLogin(false);
       setTimeout(function() {
         Alert.alert(
-          "Bienvenido " + name,
-          "Su cuenta se ha creado con éxtio. El último paso es verificar su correo electrónico.",
+          "Nueva cuenta creada",
+          "La nueva cuenta se ha creado con éxito. El último paso es verificar el correo electrónico y resetear su contraseña.",
           [
             { text: 'OK', onPress: () => {} },
           ],
@@ -96,8 +101,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
           <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
           <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo'/>
-          <Field name={'password'} component={MyTextInput} label='Contraseña' placeholder='Ingresa tu contraseña' secureTextEntry={true}/>
-          <Field name={'passwordConfirm'} component={MyTextInput} label='Confirmación Contraseña' placeholder='Confirma tu contraseña' secureTextEntry={true}/>
+         
           <Button
             disabled={!(dirty && valid)}
             theme={roundness}
@@ -202,8 +206,7 @@ export default reduxForm({
     errors.name = !values.name ? 'Este campo es obligatorio' : undefined
     errors.lastName = !values.lastName ? 'Este campo es obligatorio' : undefined
     errors.email = !values.email ? 'Este campo es obligatorio' : !values.email.includes('@') ? 'Tienes que ingresar un correo válido' : undefined;
-    errors.password = !values.password ? 'Este campo es obligatorio' : values.password.length < 8 ? 'La contraseña es muy corta. Debe tener al menos 8 caracteres' : undefined;
-    errors.passwordConfirm = !values.passwordConfirm ? 'Debe confirmar su contraseña' : values.passwordConfirm !== values.password ? 'Las contraseñas ingresadas no coinciden' : undefined;
+   
 
     return errors;
   }
