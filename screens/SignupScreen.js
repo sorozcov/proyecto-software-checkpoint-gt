@@ -67,6 +67,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
           errorMessage = "El correo ingresado ya está en uso por otro usuario."
           break;
         default:
+          console.log(error.toString());
           errorMessage = "No se pudo crear el usuario."
       }
       setModalVisibleIndicatorLogin(false);
@@ -88,13 +89,13 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
       style={styles.container}
     >
     <View style={styles.container}>
-      <ScrollView style={styles.container} contentContainerStyle={contentContainer}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.formContainer}>
           <Text style={{...styles.titleStyle, color: colors.accent, }}>Registro</Text>
           <Field name={'image'} component={ImagePicker} image={null}/>
           <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
-          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email.address'/>
+          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo'/>
           <Field name={'password'} component={MyTextInput} label='Contraseña' placeholder='Ingresa tu contraseña' secureTextEntry={true}/>
           <Field name={'passwordConfirm'} component={MyTextInput} label='Confirmación Contraseña' placeholder='Confirma tu contraseña' secureTextEntry={true}/>
           <Button

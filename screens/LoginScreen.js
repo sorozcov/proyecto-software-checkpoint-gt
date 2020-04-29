@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as firebase from "firebase";
 
 import * as actionsLoggedUser from '../src/actions/loggedUser';
-import * as actionsCategories from '../src/actions/categories';
+
 
 
 function LoginScreen({ theme, navigation, saveLoggedUser }) {
@@ -24,7 +24,8 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
 			  
 			  setmodalVisibleIndicatorLogin(false);
 		   // Navigate to the Home page, the user is auto logged in
-		   user=await firebase.auth().currentUser; 
+		   let user = await firebase.auth().currentUser; 
+		   
 		   if(user.emailVerified){
 			  saveLoggedUser(navigation,user)
 			  console.log("Login succesfull");
@@ -199,8 +200,8 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
 	  alignItems: 'center'
 	},
 	logoImage: {
-	  width: 250,
-	  height: 250,
+	  width: 220,
+	  height: 220,
 	  resizeMode: 'contain',
 	},
 	inputContainerStyle: {
@@ -237,10 +238,7 @@ export default connect(
   undefined,
   dispatch => ({
     async saveLoggedUser(navigation,user) {
-      //Se cargan las categorias
-      dispatch(actionsCategories.clearCategories());
-      const categories = await firebase.firestore().collection('categories').get();
-      categories.docs.map(doc=> dispatch(actionsCategories.addCategory(doc.data())));
+
       //Se cargan los usuarios
       const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));
