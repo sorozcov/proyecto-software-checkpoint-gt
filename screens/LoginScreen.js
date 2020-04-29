@@ -165,10 +165,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
 		   
 	  
 		<View style={styles.bottomContainer}>
-		
-		  <Text style={styles.textStyle}>¿No tienes una cuenta?  
-			<Text style={{...styles.textStyle, color: colors.accent, }} onPress={() => navigation.navigate('Signup') }> Regístrate</Text>
-		  </Text>
+			<Text style={{...styles.textStyle, color: colors.accent, }} onPress={() => navigation.navigate('Signup') }> Crear Usuario</Text>
 		</View>
 	  </View>
 	  </KeyboardAvoidingView>
@@ -188,9 +185,10 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
 	},
 	bottomContainer: {
 	  position: 'absolute',
-	  bottom: 5,
+	  bottom: 0,
 	  left: 0,
 	  right: 0,
+	  paddingBottom: 10,
 	  alignItems: 'center',
 	},
 	inputContainerStyle: {

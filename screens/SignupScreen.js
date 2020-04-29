@@ -96,7 +96,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.formContainer}>
-          <Text style={{...styles.titleStyle, color: colors.accent, }}>Registro</Text>
+          <Text style={{...styles.titleStyle, color: colors.accent, }}>Nuevo Usuario</Text>
           <Field name={'image'} component={ImagePicker} image={null}/>
           <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
@@ -124,17 +124,6 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
             REGISTRARSE
           </Button>
         </View>
-        <Modal
-          transparent={true}
-          animationType={'none'}
-          visible={modalVisibleIndicatorLogin}>
-          <View style={styles.modalBackground}>
-            <View style={styles.activityIndicatorMessage}>
-              <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
-            </View>
-          </View>
-        </Modal>
-        <Text style={styles.textStyle}>¿Ya tienes una cuenta?
             <Text style={{
               ...styles.textStyle, 
               color: colors.accent
@@ -142,8 +131,17 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
               onPress={() => navigation.navigate('Login')}> 
               Inicia Sesión
             </Text>
-        </Text>
       </ScrollView>
+      <Modal
+        transparent={true}
+        animationType={'none'}
+        visible={modalVisibleIndicatorLogin}>
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorMessage}>
+            <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
+          </View>
+        </View>
+      </Modal>
     </View>
     </KeyboardAvoidingView>
   );
