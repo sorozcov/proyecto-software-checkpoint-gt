@@ -121,7 +121,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
               justifyContent: 'center',
             }}
             onPress={handleSubmit(signUp)}>
-            REGISTRARSE
+            CREAR CUENTA
           </Button>
         </View>
         <Modal
