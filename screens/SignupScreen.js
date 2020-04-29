@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
-import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator } from 'react-native-paper';
+import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Modal, Alert } from 'react-native';
+import { TextInput, withTheme, Text, Button, ActivityIndicator } from 'react-native-paper';
 
 import randomString from 'random-string'
 import * as firebase from "firebase";
