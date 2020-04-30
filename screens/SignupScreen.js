@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Alert } from 'react-native';
-import { TextInput, withTheme, Text, Button, Modal, ActivityIndicator } from 'react-native-paper';
+import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Modal, Alert } from 'react-native';
+import { TextInput, withTheme, Text, Button, ActivityIndicator } from 'react-native-paper';
 
+import randomString from 'random-string'
 import * as firebase from "firebase";
 import 'firebase/firestore';
 
@@ -32,10 +33,13 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
     signupFirebase(values)
   }
 
-  async function signupFirebase({ email, password, name, lastName, image }) {
+  async function signupFirebase({ email, name, lastName, image }) {
     Keyboard.dismiss();
     setModalVisibleIndicatorLogin(true);
     try {
+      //Create Random Password
+      let password = randomString();
+     
       await firebase.auth().createUserWithEmailAndPassword(email, password);
       let uid = await firebase.auth().currentUser.uid;
       image = image !== undefined ? image : null;
@@ -47,12 +51,13 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
       }
 
       await createUserCollectionFirebase({ email, name, lastName, image, uid })
-      await firebase.auth().currentUser.sendEmailVerification()
+      //Enviar correo para resetear password al gusto del mesero
+      await firebase.auth().sendPasswordResetEmail(email);
       setModalVisibleIndicatorLogin(false);
       setTimeout(function() {
         Alert.alert(
-          "Bienvenido " + name,
-          "Su cuenta se ha creado con éxtio. El último paso es verificar su correo electrónico.",
+          "Nueva cuenta creada",
+          "La nueva cuenta se ha creado con éxito. El último paso es verificar el correo electrónico y resetear su contraseña.",
           [
             { text: 'OK', onPress: () => {} },
           ],
@@ -67,6 +72,7 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
           errorMessage = "El correo ingresado ya está en uso por otro usuario."
           break;
         default:
+          console.log(error.toString());
           errorMessage = "No se pudo crear el usuario."
       }
       setModalVisibleIndicatorLogin(false);
@@ -88,15 +94,14 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
       style={styles.container}
     >
     <View style={styles.container}>
-      <ScrollView style={styles.container} contentContainerStyle={contentContainer}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.formContainer}>
-          <Text style={{...styles.titleStyle, color: colors.accent, }}>Registro</Text>
+          <Text style={{...styles.titleStyle, color: colors.accent, }}>Nuevo Usuario</Text>
           <Field name={'image'} component={ImagePicker} image={null}/>
           <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
-          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email.address'/>
-          <Field name={'password'} component={MyTextInput} label='Contraseña' placeholder='Ingresa tu contraseña' secureTextEntry={true}/>
-          <Field name={'passwordConfirm'} component={MyTextInput} label='Confirmación Contraseña' placeholder='Confirma tu contraseña' secureTextEntry={true}/>
+          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo'/>
+         
           <Button
             disabled={!(dirty && valid)}
             theme={roundness}
@@ -116,20 +121,9 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
               justifyContent: 'center',
             }}
             onPress={handleSubmit(signUp)}>
-            REGISTRARSE
+            CREAR CUENTA
           </Button>
         </View>
-        <Modal
-          transparent={true}
-          animationType={'none'}
-          visible={modalVisibleIndicatorLogin}>
-          <View style={styles.modalBackground}>
-            <View style={styles.activityIndicatorMessage}>
-              <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
-            </View>
-          </View>
-        </Modal>
-        <Text style={styles.textStyle}>¿Ya tienes una cuenta?
             <Text style={{
               ...styles.textStyle, 
               color: colors.accent
@@ -137,8 +131,17 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
               onPress={() => navigation.navigate('Login')}> 
               Inicia Sesión
             </Text>
-        </Text>
       </ScrollView>
+      <Modal
+        transparent={true}
+        animationType={'none'}
+        visible={modalVisibleIndicatorLogin}>
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
+          </View>
+        </View>
+      </Modal>
     </View>
     </KeyboardAvoidingView>
   );
@@ -185,8 +188,8 @@ const styles = StyleSheet.create({
   },
   activityIndicatorWrapper: {
     backgroundColor: '#FFFFFF',
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
     borderRadius: 10,
     display: 'flex',
     alignItems: 'center',
@@ -201,8 +204,7 @@ export default reduxForm({
     errors.name = !values.name ? 'Este campo es obligatorio' : undefined
     errors.lastName = !values.lastName ? 'Este campo es obligatorio' : undefined
     errors.email = !values.email ? 'Este campo es obligatorio' : !values.email.includes('@') ? 'Tienes que ingresar un correo válido' : undefined;
-    errors.password = !values.password ? 'Este campo es obligatorio' : values.password.length < 8 ? 'La contraseña es muy corta. Debe tener al menos 8 caracteres' : undefined;
-    errors.passwordConfirm = !values.passwordConfirm ? 'Debe confirmar su contraseña' : values.passwordConfirm !== values.password ? 'Las contraseñas ingresadas no coinciden' : undefined;
+   
 
     return errors;
   }

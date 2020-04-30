@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as firebase from "firebase";
 
 import * as actionsLoggedUser from '../src/actions/loggedUser';
-import * as actionsCategories from '../src/actions/categories';
+
 
 
 function LoginScreen({ theme, navigation, saveLoggedUser }) {
@@ -241,10 +241,7 @@ export default connect(
   undefined,
   dispatch => ({
     async saveLoggedUser(navigation,user) {
-      //Se cargan las categorias
-      dispatch(actionsCategories.clearCategories());
-      const categories = await firebase.firestore().collection('categories').get();
-      categories.docs.map(doc=> dispatch(actionsCategories.addCategory(doc.data())));
+
       //Se cargan los usuarios
       const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));

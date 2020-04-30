@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import {withTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
 
 
@@ -59,35 +59,35 @@ function Main({theme, navigation}) {
        
         <Tab.Screen name="Menu"  component={HomeScreen}
                 options={{
-                  tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> EXPLORAR </Text>,
+                  tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> MENÚ </Text>,
                   
                   
                   tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name="account" color={color} size={25}
+                    <MaterialCommunityIcons name="food" color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }} />
                   ),
                 }} />
-        <Tab.Screen name="Usuarios" component={SettingsScreen} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> MIS VENTAS </Text>,
+        <Tab.Screen name="Sucursales" component={SettingsScreen} options={{
+                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> SUCURSALES </Text>,
                   tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name="account" color={color} size={25}
+                    <MaterialCommunityIcons name="store" color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}/>
                   ),
                 }} />
-         <Tab.Screen name="Sucursales" component={AnotherScreen} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> PERFIL </Text>,
+         <Tab.Screen name="Usuarios" component={AnotherScreen} options={{
+                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> USUARIOS </Text>,
                  
                   tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name="account"  color={color} size={25}
+                    <MaterialCommunityIcons name="account-multiple"  color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}  />
                   ),
                   
                 }} />
         <Tab.Screen name="Reportes" component={AnotherScreen2} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> PERFIL </Text>,
+                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> REPORTES </Text>,
                  
                   tabBarIcon: ({ color }) => (
-                    <MaterialCommunityIcons name="account"  color={color} size={25}
+                    <MaterialCommunityIcons name="chart-bar"  color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}  />
                   ),
                   
