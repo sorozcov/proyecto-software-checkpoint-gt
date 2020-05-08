@@ -14,13 +14,13 @@ var firebaseConfig = {
 };
 
 //Inicializar configuración de Firebase
-firebase.initializeApp(firebaseConfig);
-const configureFirebase = () => firebase.initializeApp(firebaseConfig);
+
+const firebaseApp = firebase.initializeApp(firebaseConfig);
 const firebaseFirestore =  firebase.firestore();
 const firebaseStorage =firebase.storage().ref();
 
 export {
-  configureFirebase,
+  firebaseApp,
   firebaseFirestore,
   firebaseStorage,
   firebase
