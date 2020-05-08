@@ -10,8 +10,8 @@ import AuthScreen from './screens/AuthScreen';
 
 
 import configureStore from './store';
-import configureFirebase from './firebase/firebase'
 import HomeScreen from './screens/HomeScreen';
+
 
 
 
@@ -41,7 +41,7 @@ export default function App(props) {
       try {
         SplashScreen.preventAutoHide();
         // Initialize Firebase
-        configureFirebase();
+        
         // Load fonts
         await Font.loadAsync({
           ...Ionicons.font,

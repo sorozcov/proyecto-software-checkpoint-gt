@@ -1,5 +1,5 @@
 // Configuracion de Firebase
-import * as firebase from "firebase";
+import * as firebase from 'firebase';
 
 //Firebase Config del Proyecto
 var firebaseConfig = {
@@ -14,4 +14,14 @@ var firebaseConfig = {
 };
 
 //Inicializar configuración de Firebase
-export default  () => firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+const configureFirebase = () => firebase.initializeApp(firebaseConfig);
+const firebaseFirestore =  firebase.firestore();
+const firebaseStorage =firebase.storage().ref();
+
+export {
+  configureFirebase,
+  firebaseFirestore,
+  firebaseStorage,
+  firebase
+}
