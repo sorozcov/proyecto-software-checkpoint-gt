@@ -3,11 +3,11 @@ import { Image, StyleSheet, View,Modal,Alert,Keyboard ,KeyboardAvoidingView} fro
 import { TextInput, withTheme,ActivityIndicator ,Text, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import * as firebase from "firebase";
-import * as FirebaseUsers from "../firebase/users";
+
 import * as actionsLoggedUser from '../src/actions/loggedUser';
 
 
-FirebaseUsers.getUsers().then((users)=>{console.log(users)});
+
 function LoginScreen({ theme, navigation, saveLoggedUser }) {
   const { colors, roundness } = theme;
   const [modalVisibleIndicatorLogin, setmodalVisibleIndicatorLogin] = useState(false);

@@ -48,3 +48,8 @@ export function* watchLoginStarted() {
     login,
   );
 }
+
+//Como van a llamar el saga desde los servicios de firebase
+//import * as FirebaseUsers from "../firebase/users";
+//users = yield FirebaseUsers.getUsers()
+//FirebaseUsers.getUsers().then((users)=>{console.log(users)});
