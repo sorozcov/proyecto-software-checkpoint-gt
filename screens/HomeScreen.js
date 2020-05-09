@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { Text, View,StyleSheet } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import {withTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
-
-
-
+import UserList from '../components/UserList';
 
 function HomeScreen() {
   return (
@@ -26,10 +24,10 @@ function SettingsScreen() {
   );
 }
 
-function AnotherScreen() {
+function Users() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <UserList />
     </View>
   );
 }
@@ -74,7 +72,7 @@ function Main({theme, navigation}) {
                     style={{ marginTop: 0,paddingBottom:8 }}/>
                   ),
                 }} />
-         <Tab.Screen name="Usuarios" component={AnotherScreen} options={{
+         <Tab.Screen name="Usuarios" component={Users} options={{
                    tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> USUARIOS </Text>,
                  
                   tabBarIcon: ({ color }) => (
