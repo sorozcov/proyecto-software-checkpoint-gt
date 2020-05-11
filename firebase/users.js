@@ -59,7 +59,7 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
       let dateModified = new Date();
       dateModified = dateModified.getTime();
 
-      if(inNew){
+      if(isNew){
         //Creamos el documento del usuario
         await userDoc.set({
             email: email,
@@ -76,7 +76,7 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
         //Vemos si necesita subir una imagen
         image = image !== undefined ? image : null;
         if (image !== null){
-          let uploadImg = await uploadImageToFirebase(uri,uid,"UserImages");
+          let uploadImg = await uploadImageToFirebase(image,uid,"UserImages");
           if(!uploadImg.uploaded){
             //Error subiendo imagen
             console.log(uploadImg.error);
@@ -91,8 +91,8 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
         //Vemos si necesita subir una imagen
         image = image !== undefined ? image : null;
         if (image !== null){
-          if(image!=userDoc.data().image){
-            let uploadImg = await uploadImageToFirebase(uri,uid,"UserImages");
+          if(image.includes(userDoc.data().image)){
+            let uploadImg = await uploadImageToFirebase(image,uid,"UserImages");
             if(!uploadImg.uploaded){
               //Error subiendo imagen
               console.log(uploadImg.error);
@@ -144,7 +144,7 @@ export const deleteUser = async ({uid})=>{
     } catch (error) {
       console.log("ERROR" + error.toString());
       let errorMessage = "No se pudo eliminar el usuario."
-      return {errorMessage:errorMessage,error,uid=null}
+      return {errorMessage:errorMessage,error:error,uid:null}
     }
 
 }

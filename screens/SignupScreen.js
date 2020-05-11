@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Image, StyleSheet, View, KeyboardAvoidingView, Keyboard, Modal, Alert } from 'react-native';
@@ -8,83 +9,29 @@ import randomString from 'random-string'
 import * as firebase from "firebase";
 import 'firebase/firestore';
 
-import ImagePicker, * as imageUploadFunctions from '../components/ImagePickerUser';
+import ImagePicker from '../components/ImagePickerUser';
 import MyTextInput from '../components/textInput';
+import * as selectors from '../src/reducers';
+import * as actionsUsers from '../src/actions/users';
 
 
-async function createUserCollectionFirebase ({ email, name, lastName, image, uid })
-{
-  let db = firebase.firestore();
-  let newUserDoc = db.collection('users').doc(uid);
-  return newUserDoc.set({
-    email: email,
-    name: name,
-    lastName: lastName,
-    uid: uid,
-    image: image,
-  });
-}
-
-function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
+function SignupScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, isAdding, isEditing, createUser, editUser }) {
   const { colors, roundness } = theme;
-  const [modalVisibleIndicatorLogin, setModalVisibleIndicatorLogin] = useState(false);
-  const signUp = values => {
-    console.log('Submitting form', values)
-    signupFirebase(values)
+  const isNew = initialValues==null;
+  var isLoading = false;
+  if(!isNew) {
+    navigation.setOptions({ title: 'EDITAR USUARIO' });
+    isLoading = isEditing;
+  } else {
+    isLoading = isAdding;
   }
 
-  async function signupFirebase({ email, name, lastName, image }) {
-    Keyboard.dismiss();
-    setModalVisibleIndicatorLogin(true);
-    try {
-      //Create Random Password
-      let password = randomString();
-     
-      await firebase.auth().createUserWithEmailAndPassword(email, password);
-      let uid = await firebase.auth().currentUser.uid;
-      image = image !== undefined ? image : null;
-      if (image !== null){
-        let blob = await imageUploadFunctions.uriToBlob(image);
-        await imageUploadFunctions.uploadToFirebase(blob, uid);
-
-        image = uid;
-      }
-
-      await createUserCollectionFirebase({ email, name, lastName, image, uid })
-      //Enviar correo para resetear password al gusto del mesero
-      await firebase.auth().sendPasswordResetEmail(email);
-      setModalVisibleIndicatorLogin(false);
-      setTimeout(function() {
-        Alert.alert(
-          "Nueva cuenta creada",
-          "La nueva cuenta se ha creado con éxito. El último paso es verificar el correo electrónico y resetear su contraseña.",
-          [
-            { text: 'OK', onPress: () => {} },
-          ],
-        )}, 100
-      )
-      navigation.navigate('Login')
-    } catch(error) {
-      console.log(error.toString());
-      let errorMessage = ""
-      switch(error.toString()) {
-        case "Error: The email address is already in use by other account.":
-          errorMessage = "El correo ingresado ya está en uso por otro usuario."
-          break;
-        default:
-          console.log(error.toString());
-          errorMessage = "No se pudo crear el usuario."
-      }
-      setModalVisibleIndicatorLogin(false);
-      setTimeout(function() {
-        Alert.alert(
-          "Error",
-          errorMessage,
-          [
-            { text: 'OK', onPress: () => {}},
-          ],
-        )}, 100
-      )
+  const signUp = values => {
+    console.log('Submitting form', values)
+    if(isNew){
+      createUser(navigation,values)
+    } else {
+      editUser(navigation,values)
     }
   }
 
@@ -96,11 +43,10 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.formContainer}>
-          <Text style={{...styles.titleStyle, color: colors.accent, }}>Nuevo Usuario</Text>
-          <Field name={'image'} component={ImagePicker} image={null}/>
+          <Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image}/>
           <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
-          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo'/>
+          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email-address'/>
          
           <Button
             disabled={!(dirty && valid)}
@@ -124,21 +70,14 @@ function SignupScreen({ theme, navigation, dirty, valid, handleSubmit }) {
             CREAR CUENTA
           </Button>
         </View>
-            <Text style={{
-              ...styles.textStyle, 
-              color: colors.accent
-              }} 
-              onPress={() => navigation.navigate('Login')}> 
-              Inicia Sesión
-            </Text>
       </ScrollView>
       <Modal
         transparent={true}
         animationType={'none'}
-        visible={modalVisibleIndicatorLogin}>
+        visible={isLoading}>
         <View style={styles.modalBackground}>
           <View style={styles.activityIndicatorWrapper}>
-            <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary} />
+            <ActivityIndicator size="large" animating={isLoading} color={colors.primary} />
           </View>
         </View>
       </Modal>
@@ -197,8 +136,25 @@ const styles = StyleSheet.create({
   }
 });
 
-export default reduxForm({
+export default connect(
+  state => ({
+    initialValues: selectors.getSelectedUser(state),
+    isAdding: selectors.isAddingUsers(state),
+    isEditing: selectors.isEditingUsers(state),
+  }),
+  dispatch => ({
+    createUser(navigation, user) {
+      dispatch(actionsUsers.startAddingUser(user));
+      //navigation.navigate('UserList');
+    },
+    editUser(navigation, user) {
+      dispatch(actionsUsers.startEditingUser(user));
+      //navigation.navigate('UserList');
+    },
+  }),
+)(reduxForm({
   form: 'signUp',
+  enableReinitialize : true,
   validate: (values) => {
     const errors = {};
     errors.name = !values.name ? 'Este campo es obligatorio' : undefined
@@ -208,4 +164,4 @@ export default reduxForm({
 
     return errors;
   }
-})(withTheme(SignupScreen));
+})(withTheme(SignupScreen)));

@@ -22,17 +22,13 @@ export const startAddingUser = user => ({
   type: types.USER_ADD_STARTED,
   payload: user,
 });
-export const completeAddingUser = (oldId, user) => ({
+export const completeAddingUser = user => ({
   type: types.USER_ADD_COMPLETED,
-  payload: {
-    oldId,
-    user,
-  },
+  payload: user,
 });
-export const failAddingUser = (oldId, error) => ({
+export const failAddingUser = error => ({
   type: types.USER_ADD_FAILED,
   payload: {
-    oldId,
     error,
   },
 });
@@ -41,7 +37,7 @@ export const startEditingUser = user => ({
   type: types.USER_EDIT_STARTED,
   payload: user,
 });
-export const completeEditingUser = (user) => ({
+export const completeEditingUser = user => ({
   type: types.USER_EDIT_COMPLETED,
   payload: user,
 });
@@ -72,4 +68,11 @@ export const failRemovingUser = (id, error) => ({
     error,
   },
 });
-  
+
+export const selectUser = user => ({
+  type: types.USER_SELECTED,
+  payload: user,
+});
+export const deselectUser = () => ({
+  type: types.USER_DESELECTED,
+});

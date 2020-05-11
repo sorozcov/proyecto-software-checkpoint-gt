@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { ListItem, Left, Thumbnail, Body, Text, Right, Button } from 'native-base';
 
 import default_pic from '../src/resources/default.png';
+import * as actionsUsers from '../src/actions/users';
 
 
-export default class UserListItem extends Component{
+class UserListItem extends Component{
     constructor(props){
         super();
         this.image = (props.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${props.image}_400x400.jpg?alt=media` : null);
@@ -22,11 +24,22 @@ export default class UserListItem extends Component{
                     <Text note numberOfLines={1}>{this.props.description}</Text>
                 </Body>
                 <Right>
-                    <Button transparent>
-                        <Text>Ver</Text>
+                    <Button transparent onPress={() => this.props.selectUser(this.props.navigation, this.props.user)}>
+                        <Text>Editar</Text>
                     </Button>
                 </Right>
             </ListItem>
         );
     }
 }
+
+export default connect(
+    undefined,
+    dispatch => ({
+      selectUser(navigation, user) {
+        dispatch(actionsUsers.selectUser(user));
+        navigation.navigate('SignupScreen');
+      },
+    }),
+  )(UserListItem);
+  
