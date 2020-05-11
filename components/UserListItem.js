@@ -3,13 +3,12 @@ import { ListItem, Left, Thumbnail, Body, Text, Right, Button } from 'native-bas
 
 import default_pic from '../src/resources/default.png';
 
-
 export default class UserListItem extends Component{
     render(){
         return(
             <ListItem thumbnail>
                 <Left>
-                    <Thumbnail square source={default_pic} />
+                    <Thumbnail square source={this.props.image === null ? default_pic : {uri: this.props.image}} />
                 </Left>
                 <Body>
                     <Text>{this.props.name}</Text>

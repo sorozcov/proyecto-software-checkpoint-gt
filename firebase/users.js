@@ -7,25 +7,34 @@ import { firebaseFirestore,firebaseAuth,firebase } from '.';
 
 const db = firebaseFirestore;
 
+const db = firebaseFirestore;
+
 export const getUsers= async () =>{
+
 
     try{
       const users = await db.collection('users').get();
-  
-      let usersArray = [];
-      await users.docs.forEach(user => {
-          usersArray.push(user.data());
-      });
-      let usersNormalizer = {};
-      let userById ={};
-      userNormalizer['byOrder']=usersArray.map((user)=>{user.userId})
-      usersArray.map((user)=>{userById[user.userId]=user})
-      userNormalizer['byId']=userById;
-      usersArrayNormalizer['array']=usersArray;
-      return {users:usersNormalizer,error:null};
-    }catch{
-      return {users:null,error}
+    let usersArray = [];
+    await users.docs.forEach(user => {
+        usersArray.push(user.data());
+    });
+
+    let usersNormalizer = {};
+    let userById = {};
+
+    usersNormalizer['order'] = usersArray.map(user => user.uid)
+    usersArray.map((user) => {userById[user.uid] = user})
+    usersNormalizer['byId'] = userById;
+    usersNormalizer['array'] = usersArray;
+
+    return {users:usersNormalizer,error:null};
+  } catch(error){
+    return {
+      users: null,
+      error
     }
+  }
+
 }
 
 
