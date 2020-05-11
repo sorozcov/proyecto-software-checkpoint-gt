@@ -4,7 +4,7 @@
 
 
 import { firebaseFirestore,firebaseAuth,firebase } from '.';
-import { updateRestaurant } from './restaurants';
+
 
 const db = firebaseFirestore;
 const collection = "restaurants";

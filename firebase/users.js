@@ -4,16 +4,18 @@
 
 
 import { firebaseFirestore,firebaseAuth,firebase } from '.';
+import randomString from 'random-string'
+import { uploadImageToFirebase } from './images';
 
 const db = firebaseFirestore;
+const collection = "users";
 
-
-
+//Obtener usuarios de firebase
 export const getUsers= async () =>{
 
 
     try{
-      const users = await db.collection('users').get();
+      const users = await db.collection(collection).get();
     let usersArray = [];
     await users.docs.forEach(user => {
         usersArray.push(user.data());
@@ -38,37 +40,86 @@ export const getUsers= async () =>{
 }
 
 
-//Agregar un usuario
-export const addUser= async ({ email, name, lastName, image,userType,restaurantId,userName }) =>{
-  
+//Agregar un usuario o editar un usuario. Si el usuario se editar enviar uid null o no enviar.
+export const updateUser= async ({ uid=null,email, name, lastName, image,userTypeId,userTypeName,restaurantId,restaurantName }) =>{
     try {
-        //Create Random Password
+
+      let userDoc = null;
+      let isNew = uid==null;
+      if(isNew){
+        //Create Random Password for User to change with the email confirmation
         let password = randomString();
-       
+        //Create firebase user with firebaseAuth
         await firebaseAuth.createUserWithEmailAndPassword(email, password);
-        let uid = await firebaseAuth.currentUser.uid;
-        image = image !== undefined ? image : null;
-        if (image !== null){
-          let blob = await uriToBlob(image);
-          await uploadToFirebase(blob, uid);
-          image = uid;
-        }
-        
-        let newUserDoc = db.collection('users').doc(uid);
-        await newUserDoc.set({
+        uid = await firebaseAuth.currentUser.uid;
+      }
+      userDoc = await firebaseFirestore.collection(collection).doc(uid);
+      uid = userDoc.id;
+
+      let dateModified = new Date();
+      dateModified = dateModified.getTime();
+
+      if(inNew){
+        //Creamos el documento del usuario
+        await userDoc.set({
             email: email,
             name: name,
             lastName: lastName,
             uid: uid,
             image: image,
-            userType:userType,
-            userId:userId,
-            userName:userName
+            userTypeName:userTypeName,
+            userTypeId:userTypeId,
+            restaurantId:restaurantId,
+            restaurantName:restaurantName,
+            dateModified:dateModified
         });
+        //Vemos si necesita subir una imagen
+        image = image !== undefined ? image : null;
+        if (image !== null){
+          let uploadImg = await uploadImageToFirebase(uri,uid,"UserImages");
+          if(!uploadImg.uploaded){
+            //Error subiendo imagen
+            console.log(uploadImg.error);
+          }
+          image = uid;
+        }
         //Enviar correo para resetear password al gusto del mesero
         await firebaseAuth.sendPasswordResetEmail(email);
+      }else{
         
-      } catch(error) {
+        //Vemos si necesita hacer update de la imagen
+        //Vemos si necesita subir una imagen
+        image = image !== undefined ? image : null;
+        if (image !== null){
+          if(image!=userDoc.data().image){
+            let uploadImg = await uploadImageToFirebase(uri,uid,"UserImages");
+            if(!uploadImg.uploaded){
+              //Error subiendo imagen
+              console.log(uploadImg.error);
+            }
+            
+          }
+          image = uid;
+          
+        }
+        
+        //Hacemos update al documento del usuario
+        await userDoc.update({
+          email: email,
+          name: name,
+          lastName: lastName,
+          uid: uid,
+          image: image,
+          userTypeName:userTypeName,
+          userTypeId:userTypeId,
+          restaurantId:restaurantId,
+          restaurantName:restaurantName,
+          dateModified:dateModified
+        });
+
+      }
+      return{user:userDoc.data(),error:null,errorMessage:null}
+    } catch(error) {
         console.log(error.toString());
         let errorMessage = ""
         switch(error.toString()) {
@@ -79,60 +130,21 @@ export const addUser= async ({ email, name, lastName, image,userType,restaurantI
             console.log(error.toString());
             errorMessage = "No se pudo crear el usuario."
         }
+        return{user:null,error,errorMessage}
+    }
+  }
 
-      }
+//Funcion para eliminar un usuario.
+export const deleteUser = async ({uid})=>{
+  try {
+
+      let userDoc = await firebaseFirestore.collection(collection).doc(uid);
+      userDoc = await userDoc.delete();
+      return { uid:uid,error:null,errorMessage:null}
+    } catch (error) {
+      console.log("ERROR" + error.toString());
+      let errorMessage = "No se pudo eliminar el usuario."
+      return {errorMessage:errorMessage,error,uid=null}
     }
 
-
-export const createUser= async (user) =>{
-  
-    const newUser = firebaseFirestore.collection('users').doc();
-    const uid = newUser.id; 
-    newUser.set(user);
-    return id;
 }
-
-export const editUser= async (user) =>{
-  
-    const newUser = firebaseFirestore.collection('users').doc(user.userid);
-    newUser.update(user);
-    return true;
-}
-
-
-
-const uriToBlob = (uri) => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        // return the blob
-        resolve(xhr.response);
-      };
-      
-      xhr.onerror = function() {
-        // something went wrong
-        reject(new Error('uriToBlob failed'));
-      };
-      // this helps us get a blob
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      
-      xhr.send(null);
-    });
-  }
-  
-  
-const uploadToFirebase = (blob,uid) => {
-    return new Promise((resolve, reject)=>{
-      let storageRef = firebase.storage().ref();
-      let img = "UserImages/" + uid+'.jpg';
-      storageRef.child(img).put(blob, {
-        contentType: 'image/jpeg'
-      }).then((snapshot)=>{
-        blob.close();
-        resolve(snapshot);
-      }).catch((error)=>{
-        reject(error);
-      });
-    });
-  }
