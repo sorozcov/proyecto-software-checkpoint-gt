@@ -7,7 +7,7 @@ import { firebaseFirestore,firebaseAuth,firebase } from '.';
 
 const db = firebaseFirestore;
 
-const db = firebaseFirestore;
+
 
 export const getUsers= async () =>{
 
