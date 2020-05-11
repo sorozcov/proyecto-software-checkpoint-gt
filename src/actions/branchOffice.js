@@ -40,17 +40,22 @@ export const failAddingBranchOffice = (oldId, error) => ({
 
 // REMOVE BRANCH OFFICE
 export const startRemovingBranchOffice = id => ({
-    type: types.BRANCH_OFFICE_DELETE_STARTED,
-    payload: id,
-});
-export const completeRemovingBranchOffice = () => ({
-    type: types.BRANCH_OFFICE_DELETE_COMPLETED,
-});
-export const failRemovingBranchOffice = (id, error) => ({
-    type: types.BRANCH_OFFICE_DELETE_FAILED,
+    type: types.BRANCH_OFFICE_REMOVE_STARTED,
     payload: {
         id,
-        error
+    },
+});
+export const completeRemovingBranchOffice = id => ({
+    type: types.BRANCH_OFFICE_REMOVE_COMPLETED,
+    payload: {
+        id,
+    },
+});
+export const failRemovingBranchOffice = (id, error) => ({
+    type: types.BRANCH_OFFICE_REMOVE_FAILED,
+    payload: {
+        id,
+        error,
     },
 });
 
@@ -59,9 +64,11 @@ export const startUpdatingBranchOffice = branchOffice => ({
     type: types.BRANCH_OFFICE_UPDATE_STARTED,
     payload: branchOffice,
 });
-export const completeUpdatingBranchOffice = branchOffice => ({
+export const completeUpdatingBranchOffice = id => ({
     type: types.BRANCH_OFFICE_UPDATE_COMPLETED,
-    payload: branchOffice,
+    payload: {
+        id,
+    },
 });
 export const failUpdatingBranchOffice = (id, error) => ({
     type: types.BRANCH_OFFICE_UPDATE_FAILED,
