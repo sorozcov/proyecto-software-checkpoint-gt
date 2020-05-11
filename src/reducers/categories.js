@@ -5,13 +5,12 @@ import * as types from '../types/categories';
 
 
 /*
-    FORMA REDUCTOR:
-        - byId
-        - order
-        - isFetching
-        - isCreating
-        - isRemoving
-        - error
+    - byId
+    - order
+    - isFetching
+    - isCreating
+    - isRemoving
+    - error
 */
 
 
@@ -31,7 +30,7 @@ const byId = (state = {}, action) => {
             return newState;
         }
 
-        case types.CATEGORIES_ADD_STARTED: {
+        case types.CATEGORY_ADD_STARTED: {
             const newState = {...state};
             newState[action.payload.id] = {
                 ...action.payload,
@@ -41,7 +40,7 @@ const byId = (state = {}, action) => {
             return newState;
         }
 
-        case types.CATEGORIES_REMOVE_STARTED: {
+        case types.CATEGORY_REMOVE_STARTED: {
             return omit(state, action.payload.id)
         }
         
@@ -57,16 +56,16 @@ const order = (state = [], action) => {
             return [...state, ...action.payload.result];
         }
         
-        case types.CATEGORIES_ADD_STARTED: {
+        case types.CATEGORY_ADD_STARTED: {
             return [...state, action.payload.id];
         }
 
-        case types.CATEGORIES_ADD_COMPLETED: {
-            const { oldId, categorie } = action.payload;
-            return state.map(id => id === oldId ? categorie.id : id);
+        case types.CATEGORY_ADD_COMPLETED: {
+            const { oldId, category } = action.payload;
+            return state.map(id => id === oldId ? category.id : id);
         }
 
-        case types.CATEGORIES_REMOVE_COMPLETED: {
+        case types.CATEGORY_REMOVE_COMPLETED: {
             return state.filter(id => id !== action.payload.id);
         }
 
@@ -98,15 +97,15 @@ const isFetching = (state = false, action) => {
 
 const isCreating = (state = false, action) => {
     switch(action.type) {
-        case types.CATEGORIES_ADD_STARTED: {
+        case types.CATEGORY_ADD_STARTED: {
             return true;
         }
 
-        case types.CATEGORIES_ADD_COMPLETED: {
+        case types.CATEGORY_ADD_COMPLETED: {
             return false;
         }
 
-        case types.CATEGORIES_ADD_FAILED: {
+        case types.CATEGORY_ADD_FAILED: {
             return false;
         }
 
@@ -118,15 +117,15 @@ const isCreating = (state = false, action) => {
 
 const isRemoving = (state = false, action) => {
     switch(action.type) {
-        case types.CATEGORIES_REMOVE_STARTED: {
+        case types.CATEGORY_REMOVE_STARTED: {
             return true;
         }
 
-        case types.CATEGORIES_REMOVE_COMPLETED: {
+        case types.CATEGORY_REMOVE_COMPLETED: {
             return false;
         }
 
-        case types.CATEGORIES_REMOVE_FAILED: {
+        case types.CATEGORY_REMOVE_FAILED: {
             return false;
         }
 
@@ -142,12 +141,36 @@ const error = (state = null, action) => {
             return action.payload.error;
         }
 
-        case types.CATEGORIES_ADD_FAILED: {
+        case types.CATEGORIES_FETCH_STARTED: {
+            return null;
+        }
+
+        case types.CATEGORIES_FETCH_COMPLETED: {
+            return null;
+        }
+
+        case types.CATEGORY_ADD_FAILED: {
             return action.payload.error;
         }
 
-        case types.CATEGORIES_REMOVE_FAILED: {
+        case types.CATEGORY_ADD_STARTED: {
+            return null;
+        }
+
+        case types.CATEGORY_ADD_COMPLETED: {
+            return null;
+        }
+
+        case types.CATEGORY_REMOVE_FAILED: {
             return action.payload.error;
+        }
+
+        case types.CATEGORY_REMOVE_STARTED: {
+            return null;
+        }
+
+        case types.CATEGORY_REMOVE_COMPLETED: {
+            return null;
         }
 
         default: {
@@ -165,9 +188,9 @@ export default combineReducers ({
     error,
 });
 
-export const getCategorie = (state, id) => state.byId[id];
-export const getCategories = state => state.order.map(id => getCategorie(state, id));
+export const getCategory = (state, id) => state.byId[id];
+export const getCategories = state => state.order.map(id => getCategory(state, id));
 export const isFetchingCategories = state => state.isFetching;
-export const isCreatingCategorie = state => state.isCreating;
-export const isRemovingCategorie = state => state.isRemoving;
+export const isCreatingCategory = state => state.isCreating;
+export const isRemovingCategory = state => state.isRemoving;
 export const getError = state => state.error; 

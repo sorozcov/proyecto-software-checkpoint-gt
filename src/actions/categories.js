@@ -19,42 +19,42 @@ export const failFetchingCategories = error => ({
     }
 });
 
-export const startAddingCategories = categorie => ({
-    type: types.CATEGORIES_ADD_STARTED,
+export const startAddingCategory = category => ({
+    type: types.CATEGORY_ADD_STARTED,
     payload: {
-        categorie,
+        category,
     },
 });
 
-export const completeAddingCategories = (oldId, categorie)=> ({
-    type: types.CATEGORIES_ADD_COMPLETED,
+export const completeAddingCategory = (oldId, category)=> ({
+    type: types.CATEGORY_ADD_COMPLETED,
     payload: {
         oldId,
-        categorie,
+        CATEGORY_ADD_STARTED,
     },
 });
 
-export const failAddingCategorie = (oldId, error) => ({
-    type: types.CATEGORIES_ADD_FAILED,
+export const failAddingCategory = (oldId, error) => ({
+    type: types.CATEGORY_ADD_FAILED,
     payload: {
         oldId,
         error,
     },
 });
 
-export const startRemovingCategorie = id => ({
-    type: types.CATEGORIES_REMOVE_STARTED,
+export const startRemovingCategory = id => ({
+    type: types.CATEGORY_REMOVE_STARTED,
     payload: {
         id,
     },
 });
 
-export const completeRemovingCategorie = () => ({
-    type: types.CATEGORIES_REMOVE_COMPLETED,
+export const completeRemovingCategory = () => ({
+    type: types.CATEGORY_REMOVE_COMPLETED,
 });
 
-export const failRemovingCategorie = (id, error) => ({
-    type: types.CATEGORIES_REMOVE_FAILED,
+export const failRemovingCategory = (id, error) => ({
+    type: types.CATEGORY_REMOVE_FAILED,
     payload: {
         id, 
         error,
