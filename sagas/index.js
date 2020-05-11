@@ -1,16 +1,11 @@
 import { fork, all } from 'redux-saga/effects';
-//Importamos los watchers
-//import { watchLoginStarted } from './auth';
 
+import { watchUsersFetchStarted } from './users';
 
-//Main saga
-//Fork para cada saga secundaria
-function* mainSaga() {
+function* mainSaga(){
   yield all([
-    //fork(watchLoginStarted),
-    //fork(watchLoginStarted),
+    fork(watchUsersFetchStarted)
   ]);
 }
-
 
 export default mainSaga;

@@ -5,6 +5,8 @@
 
 import { firebaseFirestore } from '.';
 
+const db = firebaseFirestore;
+
 export const getUsers= async () =>{
   try{
     const users = await db.collection('users').get();
@@ -13,15 +15,21 @@ export const getUsers= async () =>{
     await users.docs.forEach(user => {
         usersArray.push(user.data());
     });
+
     let usersNormalizer = {};
-    let userById ={};
-    userNormalizer['byOrder']=usersArray.map((user)=>{user.uid})
-    usersArray.map((user)=>{userById[user.uid]=user})
-    userNormalizer['byId']=userById;
-    usersArrayNormalizer['array']=usersArray;
+    let userById = {};
+
+    usersNormalizer['order'] = usersArray.map(user => user.uid)
+    usersArray.map((user) => {userById[user.uid] = user})
+    usersNormalizer['byId'] = userById;
+    usersNormalizer['array'] = usersArray;
+
     return {users:usersNormalizer,error:null};
-  }catch{
-    return {users:null,error}
+  } catch(error){
+    return {
+      users: null,
+      error
+    }
   }
 }
 
