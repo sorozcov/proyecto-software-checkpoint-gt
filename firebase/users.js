@@ -3,27 +3,77 @@
 /* -------------------------------------------------------------------------- */
 
 
-import { firebaseFirestore } from '.';
+import { firebaseFirestore,firebaseAuth,firebase } from '.';
+
+const db = firebaseFirestore;
 
 export const getUsers= async () =>{
-  try{
-    const users = await db.collection('users').get();
 
-    let usersArray = [];
-    await users.docs.forEach(user => {
-        usersArray.push(user.data());
-    });
-    let usersNormalizer = {};
-    let userById ={};
-    userNormalizer['byOrder']=usersArray.map((user)=>{user.uid})
-    usersArray.map((user)=>{userById[user.uid]=user})
-    userNormalizer['byId']=userById;
-    usersArrayNormalizer['array']=usersArray;
-    return {users:usersNormalizer,error:null};
-  }catch{
-    return {users:null,error}
-  }
+    try{
+      const users = await db.collection('users').get();
+  
+      let usersArray = [];
+      await users.docs.forEach(user => {
+          usersArray.push(user.data());
+      });
+      let usersNormalizer = {};
+      let userById ={};
+      userNormalizer['byOrder']=usersArray.map((user)=>{user.userId})
+      usersArray.map((user)=>{userById[user.userId]=user})
+      userNormalizer['byId']=userById;
+      usersArrayNormalizer['array']=usersArray;
+      return {users:usersNormalizer,error:null};
+    }catch{
+      return {users:null,error}
+    }
 }
+
+
+//Agregar un usuario
+export const addUser= async ({ email, name, lastName, image,userType,restaurantId,userName }) =>{
+  
+    try {
+        //Create Random Password
+        let password = randomString();
+       
+        await firebaseAuth.createUserWithEmailAndPassword(email, password);
+        let uid = await firebaseAuth.currentUser.uid;
+        image = image !== undefined ? image : null;
+        if (image !== null){
+          let blob = await uriToBlob(image);
+          await uploadToFirebase(blob, uid);
+          image = uid;
+        }
+        
+        let newUserDoc = db.collection('users').doc(uid);
+        await newUserDoc.set({
+            email: email,
+            name: name,
+            lastName: lastName,
+            uid: uid,
+            image: image,
+            userType:userType,
+            userId:userId,
+            userName:userName
+        });
+        //Enviar correo para resetear password al gusto del mesero
+        await firebaseAuth.sendPasswordResetEmail(email);
+        
+      } catch(error) {
+        console.log(error.toString());
+        let errorMessage = ""
+        switch(error.toString()) {
+          case "Error: The email address is already in use by other account.":
+            errorMessage = "El correo ingresado ya está en uso por otro usuario."
+            break;
+          default:
+            console.log(error.toString());
+            errorMessage = "No se pudo crear el usuario."
+        }
+
+      }
+    }
+
 
 export const createUser= async (user) =>{
   
@@ -39,3 +89,41 @@ export const editUser= async (user) =>{
     newUser.update(user);
     return true;
 }
+
+
+
+const uriToBlob = (uri) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        // return the blob
+        resolve(xhr.response);
+      };
+      
+      xhr.onerror = function() {
+        // something went wrong
+        reject(new Error('uriToBlob failed'));
+      };
+      // this helps us get a blob
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      
+      xhr.send(null);
+    });
+  }
+  
+  
+const uploadToFirebase = (blob,uid) => {
+    return new Promise((resolve, reject)=>{
+      let storageRef = firebase.storage().ref();
+      let img = "UserImages/" + uid+'.jpg';
+      storageRef.child(img).put(blob, {
+        contentType: 'image/jpeg'
+      }).then((snapshot)=>{
+        blob.close();
+        resolve(snapshot);
+      }).catch((error)=>{
+        reject(error);
+      });
+    });
+  }
