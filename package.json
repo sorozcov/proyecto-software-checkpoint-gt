@@ -30,7 +30,9 @@
     "expo-permissions": "~8.1.0",
     "expo-web-browser": "~8.1.0",
     "firebase": "7.9.0",
+
     "native-base": "2.13.8",
+
     "random-string": "^0.2.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",

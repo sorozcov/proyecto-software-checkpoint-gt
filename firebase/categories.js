@@ -6,6 +6,7 @@
 import { firebaseFirestore,firebaseAuth,firebase } from '.';
 
 
+
 const db = firebaseFirestore;
 const collection = "categories";
 
@@ -18,20 +19,23 @@ export const getCategories= async () =>{
         await categories.docs.forEach(category => {
             categoriesArray.push(category.data());
         });
+
         let categoriesNormalizer = {};
         let categoryById ={};
+        
         categoryNormalizer['byOrder']=categoriesArray.map((category)=>{category.categoryId})
         categoriesArray.map((category)=>{categoryById[category.categoryId]=category})
         categoryNormalizer['byId']=categoryById;
         categoriesArrayNormalizer['array']=categoriesArray;
+        
         return {categories:categoriesNormalizer,error:null};
     }catch(error){
         return {categories:null,error}
     }
 }
 
-//Funcion para crear o hacer update de un Category
-//Si es nuevo enviar categoryId=null o no enviar
+// Funcion para crear o hacer update de un Category
+// Si es nuevo enviar categoryId=null o no enviar
 export const updateCategory = async ({categoryId,categoryName})=>{
     try {
 
@@ -48,25 +52,34 @@ export const updateCategory = async ({categoryId,categoryName})=>{
  
         let dateModified = new Date();
         dateModified = dateModified.getTime();
+        
         let categoryInfo = {
             categoryId: categoryId, 
             categoryName: categoryName,
             dateModified:dateModified
-          };
+        };
+        
         if(isNew){
           await categoryDoc.set(categoryInfo);
         } else {
-
           await categoryDoc.update(categoryInfo);
         }
-        return { category:categoryDoc.data(),error:null,errorMessage:null}
+
+        return { 
+            category: categoryDoc.data(),
+            error:null,
+            errorMessage:null
+        }
   
-      } catch (error) {
+    } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo guardar la categoría."
-        return {errorMessage:errorMessage,error,category:null}
-      }
-
+        return {
+            errorMessage: errorMessage,
+            error, 
+            category: null
+        };
+    }
 }
 
 //Funcion para eliminar una categoria.
@@ -79,7 +92,10 @@ export const deleteCategory = async ({categoryId})=>{
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar la categoría."
-        return {errorMessage:errorMessage,error,categoryId:null}
+        return {errorMessage:errorMessage,error,categoryId: null}
       }
 
 }
+
+
+ 
