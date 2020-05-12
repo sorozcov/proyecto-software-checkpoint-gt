@@ -66,7 +66,7 @@ export const updateRestaurant = async ({restaurantId,restaurantName,address,zone
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo guardar la categoría."
-        return {errorMessage:errorMessage,error,restaurant=null}
+        return {errorMessage:errorMessage,error,restaurant:null}
       }
 
 }
@@ -81,7 +81,7 @@ export const deleteRestaurant = async ({restaurantId})=>{
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar la categoría."
-        return {errorMessage:errorMessage,error,restaurantId=null}
+        return {errorMessage:errorMessage,error,restaurantId:null}
       }
 
 }

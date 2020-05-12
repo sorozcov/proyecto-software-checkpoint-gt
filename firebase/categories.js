@@ -64,7 +64,7 @@ export const updateCategory = async ({categoryId,categoryName})=>{
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo guardar la categoría."
-        return {errorMessage:errorMessage,error,category=null}
+        return {errorMessage:errorMessage,error,category:null}
       }
 
 }
@@ -79,7 +79,7 @@ export const deleteCategory = async ({categoryId})=>{
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar la categoría."
-        return {errorMessage:errorMessage,error,categoryId=null}
+        return {errorMessage:errorMessage,error,categoryId:null}
       }
 
 }
