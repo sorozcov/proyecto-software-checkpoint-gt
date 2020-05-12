@@ -229,7 +229,7 @@ export default connect(
       const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));
       if(user.userTypeId==1 || user.userTypeId==null){
-        navigation.navigate('Home');
+        navigation.navigate('HomeAdmin');
       }else{
         navigation.navigate('HomeWaiters');
       }

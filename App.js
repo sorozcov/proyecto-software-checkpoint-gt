@@ -10,7 +10,7 @@ import AuthScreen from './screens/AuthScreen';
 
 
 import configureStore from './store';
-import HomeScreen from './screens/HomeScreen';
+import HomeScreen from './screens/HomeScreenAdmin';
 //Importamos firebaseApp para que este de forma global
 import { firebaseApp } from './firebase';
 

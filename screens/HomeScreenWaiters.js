@@ -6,13 +6,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {connect} from 'react-redux';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
 import {useTheme,Avatar,Title,Caption,Paragraph,Drawer } from 'react-native-paper';
-
+import * as selectors from '../src/reducers';
 const DrawerR = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
+import default_pic from '../src/resources/default.png';
 
 
 function DrawerContent(props) {
-  const {navigation} = props;
+  const {navigation,user} = props;
+  const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
+
   return (
     <DrawerContentScrollView {...props}>
     <View
@@ -25,13 +28,13 @@ function DrawerContent(props) {
         <Avatar.Image
           source={{
             uri:
-              'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+              image,
           }}
           size={140}
           style={{marginTop:10}}
         />
-        <Title style={styles.title}>Nombre</Title>
-        <Caption style={styles.caption}>Checkpoint Majadas</Caption>
+        <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
+        <Caption style={styles.caption}>{user.restaurantName}</Caption>
        
       </View>
       <Drawer.Section style={styles.drawerSection}>
@@ -55,7 +58,7 @@ function DrawerContent(props) {
             source={ require('../assets/images/checkpoint.jpg') }
             style={styles.logoImage}
           />
-          <Text style={styles.restaurantName}>Checkpoint GT</Text>
+          <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
       </View>
      
     </View>
@@ -82,9 +85,9 @@ function SettingsScreen() {
   );
 }
 
-function RootNavigator({theme,navigation}) {
+function RootNavigator({theme,navigation,user}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation}/>}>
+    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user}/>}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
@@ -245,7 +248,7 @@ const styles = StyleSheet.create({
 Main = withTheme(Main);
 export default connect(
   state => ({
-    
+    user: selectors.getLoggedUser(state),
   }),
   dispatch => ({
     
