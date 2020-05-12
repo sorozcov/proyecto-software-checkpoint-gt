@@ -6664,6 +6664,11 @@ react-native-screens@~2.2.0:
   dependencies:
     debounce "^1.2.0"
 
+react-native-sectioned-multi-select@^0.7.7:
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/react-native-sectioned-multi-select/-/react-native-sectioned-multi-select-0.7.7.tgz#81b3dbfb50c72eb27e095b0e4f1c6ae34f9bf669"
+  integrity sha512-+34+PgQ7K4nfdn6dAFIfInj1dXpaLOcSSaNqQeNpByQUPoFcF29YeeNpw/h+vI7aYUFnmjuD6O7DBO9eihjC8A==
+
 react-native-status-bar-height@^2.2.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/react-native-status-bar-height/-/react-native-status-bar-height-2.5.0.tgz#bc0fb85230603850aab9667ee8111a62954de90c"

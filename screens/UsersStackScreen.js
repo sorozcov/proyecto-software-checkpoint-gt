@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
 import UserList from '../components/UserList';
-import SignupScreen from './SignupScreen';
+import EditUserScreen from './EditUserScreen';
 
 const UsersStack = createStackNavigator();
 
@@ -19,7 +19,7 @@ function UsersStackScreen({ theme }) {
         headerMode: 'screen'
       })} initialRouteName="UserList">
       <UsersStack.Screen name="UserList" options={{ title: 'USUARIOS', headerTitleAlign:'center'}} component={UserList} />
-      <UsersStack.Screen name="SignupScreen"   options={{ title: 'NUEVO USUARIO', headerTitleAlign:'center'}} component={SignupScreen} />
+      <UsersStack.Screen name="EditUserScreen"   options={{ title: 'NUEVO USUARIO', headerTitleAlign:'center'}} component={EditUserScreen} />
     </UsersStack.Navigator>
   );
 }

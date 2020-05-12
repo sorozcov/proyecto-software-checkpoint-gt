@@ -37,11 +37,12 @@ function* addUser(action) {
         var user = action.payload;
         const response = yield updateUser(user);
         if (response.error == null) {
-            yield put(actions.completeAddingUser(user));
+            yield put(actions.completeAddingUser(response.user));
         } else {
             yield put(actions.failAddingUser(response.error));
         }
     } catch (error) {
+        console.log(error)
         yield put(actions.failAddingUser('Falló al crear el usuario'));
     }
 }
@@ -58,7 +59,7 @@ function* editUser(action) {
         var user = action.payload;
         const response = yield updateUser(user);
         if (response.error == null) {
-            yield put(actions.completeEditingUser(user));
+            yield put(actions.completeEditingUser(response.user));
         } else {
             yield put(actions.failEditingUser(response.error));
         }

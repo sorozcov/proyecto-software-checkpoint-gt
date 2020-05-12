@@ -38,7 +38,7 @@ export default connect(
     dispatch => ({
       selectUser(navigation, user) {
         dispatch(actionsUsers.selectUser(user));
-        navigation.navigate('SignupScreen');
+        navigation.navigate('EditUserScreen');
       },
     }),
   )(UserListItem);

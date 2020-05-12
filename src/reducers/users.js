@@ -19,11 +19,10 @@ const byId = (state = {}, action) => {
     }
     case types.USER_ADD_COMPLETED: {
       const user = action.payload;
-      const newState = omit(state, oldId);
-      newState[user.uid] = {
+      state[user.uid] = {
         ...user,
       };
-      return newState;
+      return state;
     }
     case types.USER_EDIT_COMPLETED: {
       return {
