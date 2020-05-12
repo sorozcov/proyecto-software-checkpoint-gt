@@ -84,7 +84,7 @@ function DrawerContent(props) {
           )}
           label="Cerrar sesión"
           labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-          onPress={() => {navigation.navigate('Login') }}
+          onPress={() => {navigation.replace('Login') }}
         />
         
       </Drawer.Section>

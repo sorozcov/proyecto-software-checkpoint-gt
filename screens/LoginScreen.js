@@ -5,6 +5,12 @@ import { connect } from 'react-redux';
 import * as firebase from "firebase";
 
 import * as actionsLoggedUser from '../src/actions/loggedUser';
+import {NavigationActions,StackActions } from 'react-navigation';                
+const resetAction = StackActions.reset({
+    index: 0,
+    actions: [
+      NavigationActions.navigate({ routeName: 'HomeAdmin'})
+    ] })
 
 
 
@@ -230,9 +236,9 @@ export default connect(
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));
 
       if(userLoggedIn.data().userTypeId==1){
-        navigation.navigate('HomeAdmin');
+        navigation.replace('HomeAdmin');
       }else{
-        navigation.navigate('HomeWaiters');
+        navigation.replace('HomeWaiters');
       }
      
     },
