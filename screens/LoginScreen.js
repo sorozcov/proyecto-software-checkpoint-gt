@@ -245,7 +245,12 @@ export default connect(
       //Se cargan los usuarios
       const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-      navigation.navigate('Home');
+      if(user.userTypeId==1 || user.userTypeId==null){
+        navigation.navigate('Home');
+      }else{
+        navigation.navigate('HomeWaiters');
+      }
+     
     },
   }),
 )(withTheme(LoginScreen));
