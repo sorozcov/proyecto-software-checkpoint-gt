@@ -1,27 +1,31 @@
 import React, { Component } from 'react';
 import { ListItem, Left, Body, Text, Right, Button } from 'native-base';
 
+import * as selectors from '../src/reducers';
 
 
-export default class CategoryRow extends Component{
-    constructor(props){
-        super();
-    }
-    render(){
-     
-        return(
-            <ListItem thumbnail>
-                <Left>
-                </Left>
-                <Body>
-                    <Text>{this.props.name}</Text>
-                </Body>
-                <Right>
-                    <Button transparent>
-                        <Text>Ver</Text>
+const CategoryRow = ({ name, isConfirmed = false }) => {
+
+    <tr>
+        <td>{ name }</td>
+        <td>
+            {
+                isConfirmed && (
+                    <Button //onClick={edit}
+                    >
+                        {'Ver'}
                     </Button>
-                </Right>
-            </ListItem>
-        );
-    }
+                )
+            }
+        </td>
+    </tr>
 }
+
+export default connect(
+    (state, { id }) => ({
+        ...selectors.getCategory(state, id),
+    }),
+    // (dispatch, { id }) => ({
+
+    // })
+)(CategoryRow)
