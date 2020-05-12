@@ -33,7 +33,7 @@ const byId = (state = {}, action) => {
         },
       };
     }
-    case types.USER_REMOVE_STARTED: {
+    case types.USER_REMOVE_COMPLETED: {
       return omit(state, action.payload.id);
     }
     default: {
@@ -50,7 +50,7 @@ const order = (state = [], action) => {
     case types.USER_ADD_COMPLETED: {
       return [...state, action.payload.uid];
     }
-    case types.USER_REMOVE_STARTED: {
+    case types.USER_REMOVE_COMPLETED: {
       return state.filter(id => id !== action.payload.id);
     }
     default: {
