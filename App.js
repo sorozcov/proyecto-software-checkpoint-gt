@@ -55,6 +55,8 @@ export default function App(props) {
           'dosis-semi-bold': require('./assets/fonts/Dosis-SemiBold.ttf'),
           'dosis-bold': require('./assets/fonts/Dosis-Bold.ttf'),
           'dosis-extra-bold': require('./assets/fonts/Dosis-ExtraBold.ttf'),
+          'Roboto': require('native-base/Fonts/Roboto.ttf'),
+          'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service

@@ -45,6 +45,7 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
     try {
 
       let userDoc = null;
+      let userData = null;
       let isNew = uid==null;
       if(isNew){
         //Create Random Password for User to change with the email confirmation
@@ -59,30 +60,31 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
       let dateModified = new Date();
       dateModified = dateModified.getTime();
 
-      if(inNew){
-        //Creamos el documento del usuario
-        await userDoc.set({
-            email: email,
-            name: name,
-            lastName: lastName,
-            uid: uid,
-            image: image,
-            userTypeName:userTypeName,
-            userTypeId:userTypeId,
-            restaurantId:restaurantId,
-            restaurantName:restaurantName,
-            dateModified:dateModified
-        });
+      if(isNew){
         //Vemos si necesita subir una imagen
         image = image !== undefined ? image : null;
         if (image !== null){
-          let uploadImg = await uploadImageToFirebase(uri,uid,"UserImages");
+          let uploadImg = await uploadImageToFirebase(image,uid,"UserImages");
           if(!uploadImg.uploaded){
             //Error subiendo imagen
             console.log(uploadImg.error);
           }
           image = uid;
         }
+        //Creamos el documento del usuario
+        userData = {
+          email: email,
+          name: name,
+          lastName: lastName,
+          uid: uid,
+          image: image,
+          userTypeName:userTypeName,
+          userTypeId:userTypeId,
+          restaurantId:restaurantId,
+          restaurantName:restaurantName,
+          dateModified:dateModified
+        };
+        await userDoc.set(userData);
         //Enviar correo para resetear password al gusto del mesero
         await firebaseAuth.sendPasswordResetEmail(email);
       }else{
@@ -91,8 +93,8 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
         //Vemos si necesita subir una imagen
         image = image !== undefined ? image : null;
         if (image !== null){
-          if(image!=userDoc.data().image){
-            let uploadImg = await uploadImageToFirebase(uri,uid,"UserImages");
+          if(!image.includes(uid)){
+            let uploadImg = await uploadImageToFirebase(image,uid,"UserImages");
             if(!uploadImg.uploaded){
               //Error subiendo imagen
               console.log(uploadImg.error);
@@ -104,7 +106,7 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
         }
         
         //Hacemos update al documento del usuario
-        await userDoc.update({
+        userData = {
           email: email,
           name: name,
           lastName: lastName,
@@ -115,10 +117,11 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
           restaurantId:restaurantId,
           restaurantName:restaurantName,
           dateModified:dateModified
-        });
+        }
+        await userDoc.update(userData);
 
       }
-      return{user:userDoc.data(),error:null,errorMessage:null}
+      return{user:userData,error:null,errorMessage:null}
     } catch(error) {
         console.log(error.toString());
         let errorMessage = ""
@@ -144,7 +147,7 @@ export const deleteUser = async ({uid})=>{
     } catch (error) {
       console.log("ERROR" + error.toString());
       let errorMessage = "No se pudo eliminar el usuario."
-      return {errorMessage:errorMessage,error,uid=null}
+      return {errorMessage:errorMessage,error:error,uid:null}
     }
 
 }

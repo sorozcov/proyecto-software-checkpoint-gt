@@ -6,7 +6,7 @@ import {withTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
-import UserList from '../components/UserList';
+import UsersStackScreen from './UsersStackScreen';
 
 function HomeScreen() {
   return (
@@ -26,9 +26,7 @@ function SettingsScreen() {
 
 function Users() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <UserList />
-    </View>
+    <UsersStackScreen />
   );
 }
 

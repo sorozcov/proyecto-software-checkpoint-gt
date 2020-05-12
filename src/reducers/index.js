@@ -21,6 +21,7 @@ export const isLoggedUser = state => loggedUserSelectors.isLoggedUser(state.logg
 //Users
 export const getUser = (state, id) => usersSelectors.getUser(state.users, id);
 export const getUsers = state => usersSelectors.getUsers(state.users);
+export const getSelectedUser = state => usersSelectors.getSelectedUser(state.users);
 export const isFetchingUsers = state => usersSelectors.isFetchingUsers(state.users);
 export const isAddingUsers = state => usersSelectors.isAddingUsers(state.users);
 export const isEditingUsers = state => usersSelectors.isEditingUsers(state.users);

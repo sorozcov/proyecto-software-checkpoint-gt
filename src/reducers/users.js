@@ -1,4 +1,5 @@
 import omit from 'lodash/omit';
+import union from 'lodash/union';
 import { combineReducers } from 'redux';
 
 import * as types from '../types/users';
@@ -12,33 +13,22 @@ const byId = (state = {}, action) => {
       order.forEach(id => {
         newState[id] = {
           ...entities[id],
-          isConfirmed: true,
         };
       });
       return newState;
     }
-    case types.USER_ADD_STARTED: {
-      const newState = { ...state };
-      newState[action.payload.id] = {
-        ...action.payload,
-        isConfirmed: false,
-      };
-      return newState;
-    }
     case types.USER_ADD_COMPLETED: {
-      const { oldId, user } = action.payload;
-      const newState = omit(state, oldId);
-      newState[user.id] = {
+      const user = action.payload;
+      state[user.uid] = {
         ...user,
-        isConfirmed: true,
       };
-      return newState;
+      return state;
     }
     case types.USER_EDIT_COMPLETED: {
       return {
         ...state,
-        [action.payload.userid]: {
-          ...state[action.payload.userid],
+        [action.payload.uid]: {
+          ...state[action.payload.uid],
           ...action.payload,
         },
       };
@@ -55,17 +45,28 @@ const byId = (state = {}, action) => {
 const order = (state = [], action) => {
   switch(action.type) {
     case types.USERS_FETCH_COMPLETED: {
-      return [...state, ...action.payload.order];
-    }
-    case types.USER_ADD_STARTED: {
-      return [...state, action.payload.id];
+      return union(state, action.payload.order);
     }
     case types.USER_ADD_COMPLETED: {
-      const { oldId, user } = action.payload;
-      return state.map(id => id === oldId ? user.id : id);
+      return [...state, action.payload.uid];
     }
     case types.USER_REMOVE_STARTED: {
       return state.filter(id => id !== action.payload.id);
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+const userSelected = (state = null, action) => {
+  switch (action.type) {
+    case types.USER_SELECTED: {
+      return action.payload;
+    }
+    case types.USER_DESELECTED: {
+      var newState = null;
+      return newState;
     }
     default: {
       return state;
@@ -193,6 +194,7 @@ const error = (state = null, action) => {
 const users = combineReducers({
   byId,
   order,
+  userSelected,
   isFetching,
   isAdding,
   isEditing,
@@ -204,6 +206,7 @@ export default users;
 
 export const getUser = (state, id) => state.byId[id];
 export const getUsers = state => state.order.map(id => getUser(state, id));
+export const getSelectedUser = (state) => state.userSelected;
 export const isFetchingUsers = state => state.isFetching;
 export const isAddingUsers = state => state.isAdding;
 export const isEditingUsers = state => state.isEditing;

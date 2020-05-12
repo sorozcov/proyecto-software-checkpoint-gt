@@ -1,10 +1,12 @@
 import { fork, all } from 'redux-saga/effects';
 
-import { watchUsersFetchStarted } from './users';
+import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted } from './users';
 
 function* mainSaga(){
   yield all([
-    fork(watchUsersFetchStarted)
+    fork(watchUsersFetchStarted),
+    fork(watchAddUsersStarted),
+    fork(watchEditUsersStarted)
   ]);
 }
 
