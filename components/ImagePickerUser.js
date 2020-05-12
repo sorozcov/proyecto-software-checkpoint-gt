@@ -56,9 +56,8 @@ export default class ImagePickerUser extends React.Component {
   input = this.props.input;
   constructor(props){
     super(props)
-    
-    
-    
+    if(props.image != null)
+      this.state.image = `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${props.image}_400x400.jpg?alt=media`;
   }
   render() {
     this.props.input.onChange(this.state.image)
@@ -108,7 +107,7 @@ export default class ImagePickerUser extends React.Component {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.4,
       }).then(result=>{
         if (!result.cancelled) {
             this.setState({ image: result.uri });
@@ -127,7 +126,7 @@ export default class ImagePickerUser extends React.Component {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.4,
       }).then(result=>{
             if (!result.cancelled) {
                 this.setState({ image: result.uri });

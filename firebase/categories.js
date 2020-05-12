@@ -6,6 +6,7 @@
 import { firebaseFirestore,firebaseAuth,firebase } from '.';
 
 
+
 const db = firebaseFirestore;
 const collection = "categories";
 
@@ -95,3 +96,6 @@ export const deleteCategory = async ({categoryId})=>{
       }
 
 }
+
+
+ 
