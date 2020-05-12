@@ -5,6 +5,12 @@ import { connect } from 'react-redux';
 import * as firebase from "firebase";
 
 import * as actionsLoggedUser from '../src/actions/loggedUser';
+import {NavigationActions,StackActions } from 'react-navigation';                
+const resetAction = StackActions.reset({
+    index: 0,
+    actions: [
+      NavigationActions.navigate({ routeName: 'HomeAdmin'})
+    ] })
 
 
 
@@ -97,63 +103,59 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
       style={styles.container}
     >
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-        <View style={{flex:0.4}}/>
-        <View style={styles.imageContainer}>
-          <Image
-            source={ require('../assets/images/checkpoint.jpg') }
-            style={styles.logoImage}
-          />
-        </View>
-        <View style={{flex:0.2}}/>
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.inputContainerStyle}
-            mode={'outlined'}
-            keyboardType='email-address'
-            label="Correo"
-            placeholder="Ingresa tu correo"
-            value={mailInput}
-            onChangeText={changeMailInput}
-          />
-          <TextInput
-            style={styles.inputContainerStyle}
-            mode={'outlined'}
-            label="Contraseña"
-            placeholder="Ingresa tu contraseña"
-            value={password}
-            onChangeText={changePassword}
-            secureTextEntry={true}
-          />
-          <Button
-            theme={roundness}
-            color={'#000000'}
-            icon="login"
-            height = "18%"
-            mode="contained"
-            labelStyle={{
-              fontFamily:"dosis-bold",
-              fontSize: 15,
-            }}
-            style={{
-              fontFamily: 'dosis',
-              marginLeft: '5%',
-              marginRight: '5%',
-              marginTop:'4%',
-              justifyContent: 'center',            
-              
-            }}
-            onPress={() => login(mailInput,password)}>
-            INICIAR SESIÓN
-          
-          </Button>
-        <Text style={styles.textStyle}>¿Olvidaste tu contraseña?
-          <Text style={{...styles.textStyle, color: colors.accent }} onPress={() => resetPassword(mailInput)}> Recuperar contraseña.</Text>
-        </Text>
-        </View>    
-       
+      <View style={{flex:0.4}}/>
+      <View style={styles.imageContainer}>
+        <Image
+          source={ require('../assets/images/checkpoint.jpg') }
+          style={styles.logoImage}
+        />
       </View>
-      
+      <View style={{flex:0.2}}/>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.inputContainerStyle}
+          mode={'outlined'}
+          keyboardType='email-address'
+          label="Correo"
+          placeholder="Ingresa tu correo"
+          value={mailInput}
+          onChangeText={changeMailInput}
+        />
+        <TextInput
+          style={styles.inputContainerStyle}
+          mode={'outlined'}
+          label="Contraseña"
+          placeholder="Ingresa tu contraseña"
+          value={password}
+          onChangeText={changePassword}
+          secureTextEntry={true}
+        />
+        <Button
+          theme={roundness}
+          color={'#000000'}
+          icon="login"
+          height = "18%"
+          mode="contained"
+          labelStyle={{
+            fontFamily:"dosis-bold",
+            fontSize: 15,
+          }}
+          style={{
+            fontFamily: 'dosis',
+            marginLeft: '5%',
+            marginRight: '5%',
+            marginTop:'4%',
+            justifyContent: 'center',            
+            
+          }}
+          onPress={() => login(mailInput,password)}>
+          INICIAR SESIÓN
+        
+        </Button>
+      <Text style={styles.textStyle}>¿Olvidaste tu contraseña?
+        <Text style={{...styles.textStyle, color: colors.accent }} onPress={() => resetPassword(mailInput)}> Recuperar contraseña.</Text>
+      </Text>
+      </View>      
       <Modal
         transparent={true}
         animationType={'none'}
@@ -164,15 +166,6 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
           </View>
         </View>
     </Modal>     
-            
-         
-    
-      <View style={styles.bottomContainer}>
-      
-        <Text style={styles.textStyle}>¿No tienes una cuenta?  
-          <Text style={{...styles.textStyle, color: colors.accent, }} onPress={() => navigation.navigate('Signup') }> Regístrate</Text>
-        </Text>
-      </View>
     </View>
     </KeyboardAvoidingView>
   );
@@ -184,10 +177,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#fff',
     fontFamily: 'dosis-regular',
-  },
-  topContainer: {
-    flex: 0.8,
-    paddingTop:50
   },
   bottomContainer: {
     position: 'absolute',
@@ -245,7 +234,13 @@ export default connect(
       //Se cargan los usuarios
       const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-      navigation.navigate('Home');
+
+      if(userLoggedIn.data().userTypeId==1){
+        navigation.replace('HomeAdmin');
+      }else{
+        navigation.replace('HomeWaiters');
+      }
+     
     },
   }),
 )(withTheme(LoginScreen));

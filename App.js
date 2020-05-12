@@ -10,7 +10,7 @@ import AuthScreen from './screens/AuthScreen';
 
 
 import configureStore from './store';
-import HomeScreen from './screens/HomeScreen';
+import HomeScreen from './screens/HomeScreenAdmin';
 //Importamos firebaseApp para que este de forma global
 import { firebaseApp } from './firebase';
 
@@ -20,6 +20,7 @@ import { firebaseApp } from './firebase';
 
 //Se crea el store
 const store = configureStore();
+store.subscribe(() => console.log(store.getState()))
 
 //Se configura el tema 
 const theme = {
@@ -54,6 +55,8 @@ export default function App(props) {
           'dosis-semi-bold': require('./assets/fonts/Dosis-SemiBold.ttf'),
           'dosis-bold': require('./assets/fonts/Dosis-Bold.ttf'),
           'dosis-extra-bold': require('./assets/fonts/Dosis-ExtraBold.ttf'),
+          'Roboto': require('native-base/Fonts/Roboto.ttf'),
+          'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
         });
       } catch (e) {
         // We might want to provide this error information to an error reporting service
