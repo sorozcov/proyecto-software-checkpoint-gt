@@ -10,12 +10,12 @@ class UserListItem extends Component{
     constructor(props){
         super();
         this.image = (props.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${props.image}_400x400.jpg?alt=media` : null);
-        
+        this.style = props.style;
     }
     render(){
      
         return(
-            <ListItem thumbnail>
+            <ListItem thumbnail style={{...this.style}}>
                 <Left>
                     <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} />
                 </Left>
@@ -23,11 +23,7 @@ class UserListItem extends Component{
                     <Text>{this.props.name}</Text>
                     <Text note numberOfLines={1}>{this.props.description}</Text>
                 </Body>
-                <Right>
-                    <Button transparent onPress={() => this.props.selectUser(this.props.navigation, this.props.user)}>
-                        <Text>Editar</Text>
-                    </Button>
-                </Right>
+               
             </ListItem>
         );
     }

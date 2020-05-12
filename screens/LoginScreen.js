@@ -228,7 +228,8 @@ export default connect(
       //Se cargan los usuarios
       const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
       dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-      if(user.userTypeId==1 || user.userTypeId==null){
+
+      if(userLoggedIn.data().userTypeId==1){
         navigation.navigate('HomeAdmin');
       }else{
         navigation.navigate('HomeWaiters');
