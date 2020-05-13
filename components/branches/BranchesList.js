@@ -25,15 +25,18 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
            
+          
             {
-                branches.length <= 0 && !isLoading && (
-                    <Text>No hay sucursales</Text>
-                )
-            }
-            {
-                branches.length > 0 && (
+               (
                     <Container width={width}>
-                        
+                        {
+                                branches.length <= 0 && !isLoading && (
+                                    <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
+                                            <MaterialCommunityIcons name="information" color='black' size={50} />
+                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay sucursales registradas</Text>
+                                    </View>
+                                )
+                            }
                       
                             <SwipeListView
                                 style={{marginTop:8}}
