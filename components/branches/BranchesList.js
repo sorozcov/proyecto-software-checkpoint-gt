@@ -6,7 +6,7 @@ import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import UserListItem from './BranchItem';
+import BranchItem from './BranchItem';
 import * as actions from '../../src/actions/branches';
 import * as selectors from '../../src/reducers';
 import { HeaderBackground } from '@react-navigation/stack';
@@ -14,31 +14,37 @@ import { HeaderBackground } from '@react-navigation/stack';
 const width = Dimensions.get('window').width; // full width
 
 
-function UserList ({ theme, onLoad, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch}) {
+function UserList ({ theme, onLoad, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch }) {
     const { colors, roundness } = theme;
+
+    console.log('isAdding: ', isAdding)
+    console.log('branches: ', branches)
+    console.log('branches.length: ', branches.length)
+
     useEffect(onLoad, []);
     return(
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
             {
                 isLoading && (
                     <Spinner color='red' />
                 )
             }
             {
-                branches.length < 0 && !isLoading && (
-                    <View>No hay sucursales</View>
+                branches.length <= 0 && !isLoading && (
+                    <Text>No hay sucursales</Text>
                 )
             }
             {
                 branches.length > 0 && !isLoading && (
                     <Container width={width}>
+                        <Text>Sucursales</Text>
                         <Content>
                             <SwipeListView
                                 data={branches}
                                 renderItem={ (branch, rowMap) => (
-                                    <UserListItem style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
+                                    <BranchItem style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
                                 )}
-                                keyExtractor={branch => branch.id}
+                                keyExtractor={(branch, index) => (index.toString())}
                                 renderHiddenItem={
                                     (branch, rowMap) => (
                                         <View style={styles.rowBack}>
@@ -76,61 +82,35 @@ function UserList ({ theme, onLoad, branches, isLoading, navigation, newBranch, 
                                 
                                 previewOpenDelay={1000}
                             />
-
                         </Content>            
-                        <FloatingAction
-                            buttonSize={65}
-                            color='black'
-                            overrideWithAction={true}
-                            onPressItem={() => newBranch(navigation)}
-                            actions={[{
-                                icon: (
-                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 3, }}/>
-                                  ),
-                                name:'addBranch'
-                              }]}
-                        />
                     </Container>
                 )
             }
+            <FloatingAction
+                buttonSize={65}
+                color='black'
+                overrideWithAction={true}
+                onPressItem={() => newBranch(navigation)}
+                actions={[{
+                    icon: (
+                        <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 3, }}/>
+                      ),
+                    name:'addBranch'
+                  }]}
+            />
             <Modal
                 transparent={true}
                 animationType={'none'}
                 visible={isAdding || isEditing}>
                 <View style={styles.modalBackground}>
-                <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
-                </View>
+                    <View style={styles.activityIndicatorWrapper}>
+                        <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
+                    </View>
                 </View>
             </Modal>
         </View>
     )
 }
-
-export default connect(
-    state => ({
-        branches: selectors.getBranches(state),
-        isLoading: selectors.isFetchingBranches(state),
-        isAdding: selectors.isAddingBranches(state),
-        isEditing: selectors.isEditingBranches(state),
-    }),
-    dispatch => ({
-        onLoad() {
-            dispatch(actions.startFetchingBranch());
-        },
-        newBranch(navigation) {
-            dispatch(actions.deselectBranch());
-            navigation.navigate('EditBranchScreen');
-        },
-
-        selectBranch(navigation, branch) {
-              dispatch(actions.selectBranch(branch));
-              navigation.navigate('EditBranchScreen');
-        },
-          
-    }),
-)(withTheme(UserList))
-
 
 const styles = StyleSheet.create({
   modalBackground: {
@@ -182,3 +162,28 @@ const styles = StyleSheet.create({
     },
     
 })
+
+
+export default connect(
+    state => ({
+        branches: selectors.getBranches(state),
+        isLoading: selectors.isFetchingBranches(state),
+        isAdding: selectors.isAddingBranches(state),
+        isEditing: selectors.isEditingBranches(state),
+    }),
+    dispatch => ({
+        onLoad() {
+            dispatch(actions.startFetchingBranch());
+        },
+        newBranch(navigation) {
+            dispatch(actions.deselectBranch());
+            navigation.navigate('EditBranchScreen');
+        },
+
+        selectBranch(navigation, branch) {
+              dispatch(actions.selectBranch(branch));
+              navigation.navigate('EditBranchScreen');
+        },
+          
+    }),
+)(withTheme(UserList));

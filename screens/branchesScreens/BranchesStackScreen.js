@@ -5,12 +5,12 @@ import { withTheme } from 'react-native-paper';
 import BranchesList from '../../components/branches/BranchesList';
 import EditBranchScreen from './EditBranchScreen';
 
-const UsersStack = createStackNavigator();
+const BranchesStack = createStackNavigator();
 
 function BranchesStackScreen({ theme }) {
   const { colors } = theme;
   return (
-    <UsersStack.Navigator screenOptions={({ route }) => 
+    <BranchesStack.Navigator screenOptions={({ route }) => 
       ({
         headerBackTitleVisible:false,
         headerTitleStyle: {
@@ -18,9 +18,9 @@ function BranchesStackScreen({ theme }) {
         },
         headerMode: 'screen'
       })} initialRouteName="BranchesList">
-      <UsersStack.Screen name="BranchesList" options={{ title: 'SUCURSALES', headerTitleAlign:'center'}} component={BranchesList} />
-      <UsersStack.Screen name="EditBranchScreen" options={{ title: 'NUEVA SUCURSAL', headerTitleAlign:'center'}} component={EditBranchScreen} />
-    </UsersStack.Navigator>
+      <BranchesStack.Screen name="BranchesList" options={{ title: 'SUCURSALES', headerTitleAlign:'center'}} component={BranchesList} />
+      <BranchesStack.Screen name="EditBranchScreen" options={{ title: 'NUEVA SUCURSAL', headerTitleAlign:'center'}} component={EditBranchScreen} />
+    </BranchesStack.Navigator>
   );
 }
 

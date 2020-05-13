@@ -8,46 +8,47 @@ const collection = "branches";
 export const getBranches = async() => {
     try {
         const branches = await db.collection(collection).get();
-
         let branchesArray = [];
         await branches.docs.forEach(branch => {
             branchesArray.push(branch.data());
         });
         let branchesNormalizer = {};
         let branchById = {};
-        branchNormalizer['order'] = branchesArray.map((branch) => { branch.branchId })
-        branchesArray.map((branch) => { branchById[branch.branchId] = branch })
-        branchNormalizer['byId'] = branchById;
-        branchesArrayNormalizer['array'] = branchesArray;
+
+        branchesNormalizer['order'] = branchesArray.map(branch => branch.id)
+        branchesArray.map((branch) => { branchById[branch.id] = branch })
+        branchesNormalizer['byId'] = branchById;
+        branchesNormalizer['array'] = branchesArray;
+
         return { branches: branchesNormalizer, error: null };
+
     } catch (error) {
         return { branches: null, error }
     }
 }
 
 //Funcion para crear o hacer update de un Branch
-//Si es nuevo enviar branchId=null o no enviar
-export const updateBranch = async({ branchId, branchName, location }) => {
+//Si es nuevo enviar id=null o no enviar
+export const updateBranch = async({ id, name, location }) => {
     try {
 
         let branchDoc = null;
-        let isNew = branchId == null;
+        let isNew = id == null;
         if (isNew) {
             branchDoc = await firebaseFirestore.collection(collection).doc();
-            branchId = branchDoc.id;
+            id = branchDoc.id;
         } else {
-            branchDoc = await firebase.firestore().collection(collection).doc(branchId);
-            branchId = branchDoc.id;
+            branchDoc = await firebaseFirestore.collection(collection).doc(id);
+            id = branchDoc.id;
         }
 
 
-        let dateModified = new Date();
-        dateModified = dateModified.getTime();
+        // let dateModified = new Date();
+        // dateModified = dateModified.getTime();
         let branchInfo = {
-            branchId,
-            branchName,
+            id,
+            name,
             location,
-            dateModified
         };
         if (isNew) {
             await branchDoc.set(branchInfo);
@@ -59,23 +60,23 @@ export const updateBranch = async({ branchId, branchName, location }) => {
 
     } catch (error) {
         console.log("ERROR" + error.toString());
-        let errorMessage = "No se pudo guardar la categoría."
-        return { errorMessage: errorMessage, error, branch: null }
+        let errorMessage = "No se pudo guardar la sucursal."
+        return { errorMessage, error, branch: null }
     }
-
 }
 
 //Funcion para eliminar un Branch.
-export const deleteBranch = async({ branchId }) => {
+export const deleteBranch = async({ id }) => {
     try {
-
-        let branchDoc = await firebaseFirestore.collection(collection).doc(branchId);
+        let branchDoc = await firebaseFirestore.collection(collection).doc(id);
         branchDoc = await branchDoc.delete();
-        return { branchId, error: null, errorMessage: null }
+
+        return { id, error: null, errorMessage: null };
+
     } catch (error) {
         console.log("ERROR" + error.toString());
-        let errorMessage = "No se pudo eliminar la categoría."
-        return { errorMessage, error, branchId: null }
-    }
+        let errorMessage = "No se pudo eliminar la sucursal."
 
+        return { errorMessage, error, id: null };
+    }
 }

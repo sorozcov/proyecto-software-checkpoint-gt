@@ -49,7 +49,7 @@ function* fetchBranches(action) {
         yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
 
     } catch (error) {
-        yield put(actions.failFetchingBranch("Error:", error));
+        yield put(actions.failFetchingBranch("Error:", result.error));
     }
 }
 
@@ -57,7 +57,12 @@ function* fetchBranches(action) {
 function* addBranch(action) {
     try {
         const branch = action.payload;
-        const result = yield updateBranch({ branchId: null, BranchName: branch.name, location: branch.location });
+        const result = yield updateBranch({
+            id: null,
+            name: branch.name,
+            location: branch.location,
+        });
+        console.log("ADD BRANCH RESULT:", result);
         yield put(actions.completeAddingBranch(action.payload.id, result.branch));
 
     } catch (error) {
@@ -68,8 +73,10 @@ function* addBranch(action) {
 //TODO: BRANCHES REMOVE SAGA
 function* removeBranch(action) {
     try {
-        const result = yield deleteBranch({ branchId: action.payload });
-        yield put(actions.completeRemovingBranch(result.branchId));
+        const result = yield deleteBranch({ id: action.payload });
+        console.log("REMOVE BRANCH RESULT:", result);
+
+        yield put(actions.completeRemovingBranch(result.id));
 
     } catch (error) {
         yield put(actions.failRemovingBranch("Error:", error));
@@ -80,8 +87,10 @@ function* removeBranch(action) {
 function* editBranch(action) {
     try {
         const branch = action.payload;
-        const result = yield updateBranch({ branchId: branch.id, BranchName: branch.name, location: branch.location });
-        yield put(actions.completeUpdatingBranch(result.branch.branchId));
+        const result = yield updateBranch({ id: branch.id, name: branch.name, location: branch.location });
+        console.log("UPDATE BRANCH RESULT:", result);
+
+        yield put(actions.completeUpdatingBranch(result.branch.id));
     } catch (error) {
         yield put(actions.failAddingBranch("Error:", error));
     }

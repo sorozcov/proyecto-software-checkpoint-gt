@@ -129,7 +129,7 @@ function Main({theme, navigation}) {
                     style={{ marginTop: 0,paddingBottom:8 }} />
                   ),
                 }} />
-        <Tab.Screen name="Sucursales" component={SettingsScreen} options={{
+        <Tab.Screen name="Sucursales" component={Branches} options={{
                    tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> SUCURSALES </Text>,
                   tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="store" color={color} size={25}
@@ -145,7 +145,7 @@ function Main({theme, navigation}) {
                   ),
                   
                 }} />
-        <Tab.Screen name="Reportes" component={AnotherScreen2} options={{
+        <Tab.Screen name="Reportes" component={SettingsScreen} options={{
                    tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> REPORTES </Text>,
                  
                   tabBarIcon: ({ color }) => (

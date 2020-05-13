@@ -13,7 +13,6 @@ const byId = (state = {}, action) => {
                 order.forEach(id => {
                     newState[id] = {
                         ...entities[id],
-                        isConfirmed: true,
                     };
                 });
                 return newState;
@@ -34,8 +33,8 @@ const byId = (state = {}, action) => {
             {
                 return {
                     ...state,
-                    [action.payload.uid]: {
-                        ...state[action.payload.uid],
+                    [action.payload.id]: {
+                        ...state[action.payload.id],
                         ...action.payload,
                     },
                 };
