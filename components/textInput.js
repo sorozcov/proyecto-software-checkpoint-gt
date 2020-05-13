@@ -16,6 +16,7 @@ export default function MyTextInput(props) {
         style={styles.inputContainerStyle}
         placeholderTextColor={'red'}
         mode={'outlined'}
+        editable={inputProps.disabled == null}
         label={inputProps.label}
         placeholder={inputProps.placeholder}
         keyboardType={inputProps.keyboardType}
