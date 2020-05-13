@@ -22,11 +22,11 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
            
             {
                 users.length < 0 && !isLoading && (
-                    <View>No hay usuarios registrados</View>
+                    <Text>No hay usuarios registrados</Text>
                 )
             }
             {
-                 (
+                users.length > 0 && (
                     <Container  width={width}>
                         
                             <SwipeListView
