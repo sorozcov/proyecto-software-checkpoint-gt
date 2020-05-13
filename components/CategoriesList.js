@@ -17,19 +17,12 @@ import CategoryListItem from './CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, newCategory, isCreating, /*isEditing,*/ selectCategory}) {
+function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newCategory, isCreating, /*isEditing,*/ selectCategory}) {
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            {
-                isLoading && (
-                    <View>
-                        <Spinner color='red' />
-                        <Text>cargando...</Text>
-                    </View>
-                )
-            }
+
             {
                 categories.length <= 0 && !isLoading && (
                     <View>
@@ -38,14 +31,16 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
                 )
             }
             {
-                categories.length > 0 && !isLoading && (
+                 (
                     <Container width={width}>
-                        <Content>
+                        
                             <SwipeListView
                                 data={categories}
                                 renderItem={ (category, rowMap) => (
                                     <CategoryListItem style={styles.rowFront} key={category.item.categoryId} name={`${category.item.categoryName}`} category={category.item} navigation={navigation} />
                                 )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
                                 keyExtractor={category => category.categoryId}
                                 renderHiddenItem={
                                     (category, rowMap) => (
@@ -85,7 +80,7 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
                                 previewOpenDelay={1000}
                             />
 
-                        </Content>            
+                                  
                         <FloatingAction
                             buttonSize={65}
                             color='black'
@@ -93,7 +88,7 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
                             onPressItem={() => newCategory(navigation)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 3, }}/>
+                                    <MaterialCommunityIcons name="plus-circle" color='white' size={30} style={{ marginRight: 3, }}/>
                                   ),
                                 name:'AddCategory'
                               }]}
@@ -175,6 +170,9 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
+            dispatch(actions.startFetchingCategories());
+        },
+         onRefresh() {
             dispatch(actions.startFetchingCategories());
         },
         newCategory(navigation) {
