@@ -28,11 +28,10 @@ function* fetchCategories(action) {
 
 function* addCategory(action) {
     try {
-        var categories = action.payload.category;
+        var categories = action.payload;
         const response = yield updateCategory(categories);
-
         if (response.error == null) {
-            yield put(actions.completeAddingCategory(response.categories));
+            yield put(actions.completeAddingCategory(response.category));
         } else {
             yield put(actions.failAddingCategory(response.error));
         }

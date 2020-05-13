@@ -21,16 +21,12 @@ export const failFetchingCategories = error => ({
 
 export const startAddingCategory = category => ({
     type: types.CATEGORY_ADD_STARTED,
-    payload: {
-        category,
-    },
+    payload: category,
 });
 
 export const completeAddingCategory = category => ({
     type: types.CATEGORY_ADD_COMPLETED,
-    payload: {
-        category,
-    },
+    payload: category,
 });
 
 export const failAddingCategory = error => ({

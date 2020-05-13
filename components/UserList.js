@@ -78,13 +78,13 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
 
                                  
                         <FloatingAction
-                            buttonSize={65}
+                            buttonSize={50}
                             color='black'
                             overrideWithAction={true}
                             onPressItem={() => newUser(navigation)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 3, }}/>
+                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 4, }}/>
                                   ),
                                 name:'AddUser'
                               }]}

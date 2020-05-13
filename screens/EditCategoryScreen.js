@@ -25,7 +25,7 @@ function EditCategoryScreen({ theme, navigation, dirty, valid, handleSubmit, ini
       createCategory(navigation, values)
     } else {
     //   editCategory(navigation,values)
-    console.log('Editar')
+      console.log('Editar')
     }
   }
 

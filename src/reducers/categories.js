@@ -31,16 +31,15 @@ const byId = (state = {}, action) => {
             return newState;
         }
 
-        case types.CATEGORY_ADD_STARTED: {
-            const newState = {...state};
-            newState[action.payload.categoryId] = {
-                ...action.payload,
+        case types.CATEGORY_ADD_COMPLETED: {
+            const category = action.payload;
+            state[category.categoryId] = {
+                ...category,
             }
-            
-            return newState;
+            return state;
         }
 
-        case types.CATEGORY_REMOVE_STARTED: {
+        case types.CATEGORY_REMOVE_COMPLETED: {
             return omit(state, action.payload.categoryId)
         }
         

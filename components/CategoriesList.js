@@ -82,13 +82,13 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
 
                                   
                         <FloatingAction
-                            buttonSize={65}
+                            buttonSize={50}
                             color='black'
                             overrideWithAction={true}
                             onPressItem={() => newCategory(navigation)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="plus-circle" color='white' size={30} style={{ marginRight: 3, }}/>
+                                    <MaterialCommunityIcons name="plus-circle" color='white' size={30}/>
                                   ),
                                 name:'AddCategory'
                               }]}

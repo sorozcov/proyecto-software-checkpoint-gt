@@ -71,7 +71,7 @@ export const updateCategory = async ({categoryId,categoryName})=>{
         }
 
         return { 
-            category: categoryDoc.data(),
+            category: categoryInfo,
             error:null,
             errorMessage:null
         }
