@@ -34,7 +34,7 @@ const byId = (state = {}, action) => {
       };
     }
     case types.USER_REMOVE_COMPLETED: {
-      return omit(state, action.payload.id);
+      return omit(state, action.payload.uid);
     }
     default: {
       return state;
@@ -51,7 +51,7 @@ const order = (state = [], action) => {
       return [...state, action.payload.uid];
     }
     case types.USER_REMOVE_COMPLETED: {
-      return state.filter(id => id !== action.payload.id);
+      return state.filter(id => id !== action.payload.uid);
     }
     default: {
       return state;

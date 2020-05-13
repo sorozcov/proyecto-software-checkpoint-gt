@@ -14,7 +14,7 @@ import * as actionsUsers from '../src/actions/users';
 const width = Dimensions.get('window').width; // full width
 
 
-function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdding, isEditing ,selectUser}) {
+function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser }) {
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
     return(
@@ -57,7 +57,7 @@ function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdd
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => null}
+                                                onPress={() => deleteUser(user.item.uid)}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -169,6 +169,7 @@ export default connect(
         onLoad() {
             dispatch(actions.startFetchingUsers());
         },
+
         newUser(navigation) {
             dispatch(actions.deselectUser());
             navigation.navigate('EditUserScreen');
@@ -177,6 +178,11 @@ export default connect(
         selectUser(navigation, user) {
               dispatch(actionsUsers.selectUser(user));
               navigation.navigate('EditUserScreen');
+        },
+
+        deleteUser(uid) {
+            console.log(uid)
+            dispatch(actions.startRemovingUser(uid))
         },
           
     }),
