@@ -16,7 +16,7 @@ import * as selectors from '../src/reducers';
 import * as actionsUsers from '../src/actions/users';
 
 const userTypesArray = [{ label:'Administrador', value:"1" }, { label:'Mesero', value:"2" }];
-const restaurantsArray = [{ label:'Checkpoint Zona 10', value:"1" }, { label:'Checkpoint Zona 16', value:"2" }];
+const restaurantsArray = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
 
 function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser }) {
   const { colors, roundness } = theme;
