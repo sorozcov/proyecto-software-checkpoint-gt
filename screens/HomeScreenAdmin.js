@@ -61,10 +61,7 @@ function DrawerContent(props) {
    
       <View style={styles.userInfoSection}>
         <Avatar.Image
-          source={{
-            uri:
-              image,
-          }}
+          source={image}
           size={140}
           style={{marginTop:10}}
         />
