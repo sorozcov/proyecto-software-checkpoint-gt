@@ -18,27 +18,28 @@ import categories from '../src/reducers/categories';
 
 function* fetchCategories(action) {
     try {
-        console.log('entra?')
         const result = yield getCategories();
-        const { byId, order } = result;
-        
-        yield put(actions.completeFetchingCategories(byId, order));
+
+        yield put(actions.completeFetchingCategories(result.categories.byId, result.categories.order));
     } catch (error) {
         yield put(actions.failFetchingCategories('Ha ocurrido un error haciendo fetch a las categorias'));
     }
 }
 
-// function* addCategory(action) {
-//     try {
-//         const category = action.payload.;
+function* addCategory(action) {
+    try {
+        var categories = action.payload.category;
+        const response = yield updateCategory(categories);
 
-//         newCategory = updateCategory(null, category);
-
-//         id = newCategory
-//     } catch(error) {
-//         yield put(actions.failAddingCategory('Ha ocurrido un error añadiendo la categoría'));
-//     }
-// }
+        if (response.error == null) {
+            yield put(actions.completeAddingCategory(response.categories));
+        } else {
+            yield put(actions.failAddingCategory(response.error));
+        }
+    } catch (error) {
+        yield put(actions.failAddingCategory('Falló al crear la categoría'));
+    }
+}
 
 export function* watchFetchCategories() {
     yield takeEvery(
@@ -47,9 +48,9 @@ export function* watchFetchCategories() {
     );
 };
 
-// export function* watchAddCategory() {
-//     yield takeEvery(
-//         types.CATEGORY_ADD_STARTED,
-//         addCategory,
-//     );
-// };
+export function* watchAddCategory() {
+    yield takeEvery(
+        types.CATEGORY_ADD_STARTED,
+        addCategory,
+    );
+};

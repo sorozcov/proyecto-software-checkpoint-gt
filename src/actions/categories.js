@@ -4,11 +4,11 @@ export const startFetchingCategories = () => ({
     type: types.CATEGORIES_FETCH_STARTED,
 });
 
-export const completeFetchingCategories = (entities, result) => ({
+export const completeFetchingCategories = (entities, order) => ({
     type: types.CATEGORIES_FETCH_COMPLETED,
     payload: {
         entities,
-        result,
+        order,
     },
 });
 
@@ -26,18 +26,16 @@ export const startAddingCategory = category => ({
     },
 });
 
-export const completeAddingCategory = (oldId, category)=> ({
+export const completeAddingCategory = category => ({
     type: types.CATEGORY_ADD_COMPLETED,
     payload: {
-        oldId,
-        CATEGORY_ADD_STARTED,
+        category,
     },
 });
 
-export const failAddingCategory = (oldId, error) => ({
+export const failAddingCategory = error => ({
     type: types.CATEGORY_ADD_FAILED,
     payload: {
-        oldId,
         error,
     },
 });
@@ -59,4 +57,13 @@ export const failRemovingCategory = (id, error) => ({
         id, 
         error,
     },
+});
+
+export const selectCategory = category => ({
+    type: types.CATEGORY_SELECTED,
+    payload: category,
+})
+
+export const deselectCategory = () => ({
+    type: types.CATEGORY_DESELECTED,
 });

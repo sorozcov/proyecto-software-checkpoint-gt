@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
 import UsersStackScreen from './UsersStackScreen';
+import MenuStackScreen from './MenuStackScreen';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
 import {useTheme,Avatar,Title,Caption,Paragraph,Drawer } from 'react-native-paper';
 import {connect} from 'react-redux';
@@ -43,6 +44,12 @@ function AnotherScreen2() {
   );
 }
 
+function Categories() {
+  return(
+    <MenuStackScreen />
+  );
+}
+
 const DrawerR = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
@@ -60,11 +67,13 @@ function DrawerContent(props) {
     >
    
       <View style={styles.userInfoSection}>
+
         {image!=18 && <Avatar.Image
           source={{
             uri:
               image,
           }}
+
           size={140}
           style={{marginTop:10}}
         />}
@@ -130,7 +139,7 @@ function Main({theme, navigation}) {
         barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
       >
        
-        <Tab.Screen name="Menu"  component={HomeScreen}
+        <Tab.Screen name="Menu"  component={Categories}
                 options={{
                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> MENÚ </Text>,
                   
