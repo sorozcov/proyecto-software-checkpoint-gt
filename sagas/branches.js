@@ -38,7 +38,7 @@ export function* watchBranchesRemove() {
 export function* watchBranchesUpdate() {
     yield takeEvery(
         types.BRANCH_UPDATE_STARTED,
-        updateBranch,
+        editBranch,
     );
 }
 
@@ -77,7 +77,7 @@ function* removeBranch(action) {
 }
 
 //TODO: BRANCHES UPDATE SAGA
-function* updateBranch(action) {
+function* editBranch(action) {
     try {
         const branch = action.payload;
         const result = yield updateBranch({ branchId: branch.id, BranchName: branch.name, location: branch.location });

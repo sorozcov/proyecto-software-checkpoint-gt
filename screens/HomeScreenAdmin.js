@@ -2,14 +2,15 @@ import * as React from 'react';
 import { Text, View, StyleSheet,Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import {withTheme} from 'react-native-paper';
+import { withTheme } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
 import UsersStackScreen from './UsersStackScreen';
+import BranchesStackScreen from './branchesScreens/BranchesStackScreen';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
-import {useTheme,Avatar,Title,Caption,Paragraph,Drawer } from 'react-native-paper';
-import {connect} from 'react-redux';
+import { useTheme, Avatar, Title, Caption, Paragraph, Drawer } from 'react-native-paper';
+import { connect } from 'react-redux';
 import * as selectors from '../src/reducers';
 import default_pic from '../src/resources/default.png';
 
@@ -35,11 +36,9 @@ function Users() {
   );
 }
 
-function AnotherScreen2() {
+function Branches() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
+    <BranchesStackScreen />
   );
 }
 

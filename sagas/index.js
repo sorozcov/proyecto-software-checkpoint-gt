@@ -3,22 +3,26 @@ import { fork, all } from 'redux-saga/effects';
 //Importamos los watchers
 //import { watchLoginStarted } from './auth';
 import { watchFetchCategories } from './categories';
-
+import { watchBranchesFetch, watchBranchesAdd, watchBranchesRemove, watchBranchesUpdate } from './branches';
 
 import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted } from './users';
 
 
-function* mainSaga(){
-  yield all([
+function* mainSaga() {
+    yield all([
 
-    //fork(watchLoginStarted),
-    //fork(watchLoginStarted),
-    fork (watchFetchCategories),
-    fork(watchUsersFetchStarted),
-    fork(watchAddUsersStarted),
-    fork(watchEditUsersStarted)
+        //fork(watchLoginStarted),
+        //fork(watchLoginStarted),
+        fork(watchFetchCategories),
+        fork(watchUsersFetchStarted),
+        fork(watchAddUsersStarted),
+        fork(watchEditUsersStarted),
+        fork(watchBranchesFetch),
+        fork(watchBranchesAdd),
+        fork(watchBranchesRemove),
+        fork(watchBranchesUpdate),
 
-  ]);
+    ]);
 }
 
 export default mainSaga;
