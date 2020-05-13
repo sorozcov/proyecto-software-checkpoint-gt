@@ -36,6 +36,7 @@ function* addUser(action) {
     try {
         var user = action.payload;
         const response = yield updateUser(user);
+        
         if (response.error == null) {
             yield put(actions.completeAddingUser(response.user));
         } else {
@@ -58,6 +59,7 @@ function* editUser(action) {
     try {
         var user = action.payload;
         const response = yield updateUser(user);
+        
         if (response.error == null) {
             yield put(actions.completeEditingUser(response.user));
         } else {

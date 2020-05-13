@@ -45,7 +45,7 @@ const byId = (state = {}, action) => {
 const order = (state = [], action) => {
   switch(action.type) {
     case types.USERS_FETCH_COMPLETED: {
-      return union(state, action.payload.order);
+      return union(action.payload.order);
     }
     case types.USER_ADD_COMPLETED: {
       return [...state, action.payload.uid];

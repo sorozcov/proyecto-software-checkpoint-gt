@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View,Modal,Alert,Keyboard ,KeyboardAvoidingView} from 'react-native';
-import { TextInput, withTheme,ActivityIndicator ,Text, Button } from 'react-native-paper';
+import { Image, StyleSheet, ActivityIndicator,View,Modal,Alert,Keyboard ,KeyboardAvoidingView} from 'react-native';
+import { TextInput, withTheme ,Text, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import * as firebase from "firebase";
 
