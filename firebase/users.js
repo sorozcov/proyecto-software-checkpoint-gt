@@ -140,14 +140,21 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
 //Funcion para eliminar un usuario.
 export const deleteUser = async ({uid})=>{
   try {
-
       let userDoc = await firebaseFirestore.collection(collection).doc(uid);
       userDoc = await userDoc.delete();
-      return { uid:uid,error:null,errorMessage:null}
+      return { 
+        uid: uid,
+        error: null,
+        errorMessage: null
+      }
     } catch (error) {
       console.log("ERROR" + error.toString());
       let errorMessage = "No se pudo eliminar el usuario."
-      return {errorMessage:errorMessage,error:error,uid:null}
+      return {
+        errorMessage: errorMessage,
+        error: error,
+        uid: null
+      }
     }
 
 }

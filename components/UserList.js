@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,TouchableHighlight } from "react-native";
-import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
+import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,ActivityIndicator } from "react-native";
+import { withTheme,Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -14,31 +14,30 @@ import * as actionsUsers from '../src/actions/users';
 const width = Dimensions.get('window').width; // full width
 
 
-function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdding, isEditing ,selectUser}) {
+function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser }) {
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            {
-                isLoading && (
-                    <Spinner color='red' />
-                )
-            }
+           
             {
                 users.length < 0 && !isLoading && (
-                    <View>No hay usuarios registrados</View>
+                    <Text>No hay usuarios registrados</Text>
                 )
             }
             {
-                users.length > 0 && !isLoading && (
-                    <Container width={width}>
-                        <Content>
+                users.length > 0 && (
+                    <Container  width={width}>
+                        
                             <SwipeListView
+                                style={{marginTop:8}}
                                 data={users}
                                 renderItem={ (user, rowMap) => (
                                     <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
                                 )}
-                                keyExtractor={user => user.userid}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
+                                keyExtractor={user => user.uid}
                                 renderHiddenItem={
                                     (user, rowMap) => (
                                         <View style={styles.rowBack}>
@@ -57,7 +56,7 @@ function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdd
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => null}
+                                                onPress={() => deleteUser(user.item.uid)}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -77,7 +76,7 @@ function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdd
                                 previewOpenDelay={1000}
                             />
 
-                        </Content>            
+                                 
                         <FloatingAction
                             buttonSize={65}
                             color='black'
@@ -169,6 +168,10 @@ export default connect(
         onLoad() {
             dispatch(actions.startFetchingUsers());
         },
+        onRefresh() {
+            dispatch(actions.startFetchingUsers());
+        },
+
         newUser(navigation) {
             dispatch(actions.deselectUser());
             navigation.navigate('EditUserScreen');
@@ -177,6 +180,11 @@ export default connect(
         selectUser(navigation, user) {
               dispatch(actionsUsers.selectUser(user));
               navigation.navigate('EditUserScreen');
+        },
+
+        deleteUser(uid) {
+            console.log(uid)
+            dispatch(actions.startRemovingUser(uid))
         },
           
     }),

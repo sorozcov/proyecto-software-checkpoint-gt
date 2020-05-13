@@ -49,22 +49,22 @@ export const failEditingUser = (id, error) => ({
   },
 });
 
-export const startRemovingUser = id => ({
+export const startRemovingUser = uid => ({
   type: types.USER_REMOVE_STARTED,
   payload: {
-    id,
+    uid,
   },
 });
-export const completeRemovingUser = id => ({
+export const completeRemovingUser = uid => ({
   type: types.USER_REMOVE_COMPLETED,
   payload: {
-    id,
+    uid,
   },
 });
-export const failRemovingUser = (id, error) => ({
+export const failRemovingUser = (uid, error) => ({
   type: types.USER_REMOVE_FAILED,
   payload: {
-    id,
+    uid,
     error,
   },
 });

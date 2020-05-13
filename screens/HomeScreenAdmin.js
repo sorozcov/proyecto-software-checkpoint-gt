@@ -67,11 +67,23 @@ function DrawerContent(props) {
     >
    
       <View style={styles.userInfoSection}>
-        <Avatar.Image
-          source={image}
+
+        {image!=18 && <Avatar.Image
+          source={{
+            uri:
+              image,
+          }}
+
           size={140}
           style={{marginTop:10}}
-        />
+        />}
+        {image==18 && <Avatar.Image
+          source={
+              image
+          }
+          size={140}
+          style={{marginTop:10}}
+        />}
         <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
         <Caption style={styles.caption}>{user.restaurantName}</Caption>
        
