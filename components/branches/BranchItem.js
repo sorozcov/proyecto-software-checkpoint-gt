@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ListItem, Left, Thumbnail, Body, Text, Right, Button } from 'native-base';
 
-import default_pic from '../../src/resources/default.png';
+import default_pic from '../../src/resources/checkpoint.jpg';
 import * as actions from '../../src/actions/branches';
 
 

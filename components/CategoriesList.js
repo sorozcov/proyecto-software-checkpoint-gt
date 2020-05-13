@@ -35,6 +35,7 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                     <Container width={width}>
                         
                             <SwipeListView
+                                style={{marginTop:8}}
                                 data={categories}
                                 renderItem={ (category, rowMap) => (
                                     <CategoryListItem style={styles.rowFront} key={category.item.categoryId} name={`${category.item.categoryName}`} category={category.item} navigation={navigation} />
@@ -88,7 +89,7 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                             onPressItem={() => newCategory(navigation)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="plus-circle" color='white' size={30}/>
+                                    <MaterialCommunityIcons name="plus" color='white' size={25}/>
                                   ),
                                 name:'AddCategory'
                               }]}

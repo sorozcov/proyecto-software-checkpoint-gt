@@ -14,7 +14,7 @@ import { HeaderBackground } from '@react-navigation/stack';
 const width = Dimensions.get('window').width; // full width
 
 
-function UserList ({ theme, onLoad, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch }) {
+function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch }) {
     const { colors, roundness } = theme;
 
     console.log('isAdding: ', isAdding)
@@ -24,26 +24,25 @@ function UserList ({ theme, onLoad, branches, isLoading, navigation, newBranch, 
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
-            {
-                isLoading && (
-                    <Spinner color='red' />
-                )
-            }
+           
             {
                 branches.length <= 0 && !isLoading && (
                     <Text>No hay sucursales</Text>
                 )
             }
             {
-                branches.length > 0 && !isLoading && (
+                 (
                     <Container width={width}>
-                        <Text>Sucursales</Text>
-                        <Content>
+                        
+                      
                             <SwipeListView
+                                style={{marginTop:8}}
                                 data={branches}
                                 renderItem={ (branch, rowMap) => (
                                     <BranchItem style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
                                 )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
                                 keyExtractor={(branch, index) => (index.toString())}
                                 renderHiddenItem={
                                     (branch, rowMap) => (
@@ -78,22 +77,22 @@ function UserList ({ theme, onLoad, branches, isLoading, navigation, newBranch, 
                                 }
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
-                                previewRowKey={'0'}
+                                
                                 
                                 previewOpenDelay={1000}
                             />
-                        </Content>            
+                                  
                     </Container>
                 )
             }
             <FloatingAction
-                buttonSize={65}
+                buttonSize={50}
                 color='black'
                 overrideWithAction={true}
                 onPressItem={() => newBranch(navigation)}
                 actions={[{
                     icon: (
-                        <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 3, }}/>
+                        <MaterialCommunityIcons name="plus" color='white' size={25} style={{ marginRight: 3, }}/>
                       ),
                     name:'addBranch'
                   }]}
@@ -175,15 +174,18 @@ export default connect(
         onLoad() {
             dispatch(actions.startFetchingBranch());
         },
+        onRefresh() {
+            dispatch(actions.startFetchingBranch());
+        },
         newBranch(navigation) {
             dispatch(actions.deselectBranch());
             navigation.navigate('EditBranchScreen');
         },
-
+        
         selectBranch(navigation, branch) {
               dispatch(actions.selectBranch(branch));
               navigation.navigate('EditBranchScreen');
         },
           
     }),
-)(withTheme(UserList));
+)(withTheme(BranchesList));
