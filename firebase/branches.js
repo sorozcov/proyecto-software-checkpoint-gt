@@ -56,7 +56,7 @@ export const updateBranch = async({ id, name, location }) => {
 
             await branchDoc.update(branchInfo);
         }
-        return { branch: branchDoc.data(), error: null, errorMessage: null }
+        return { branch: branchInfo, error: null, errorMessage: null }
 
     } catch (error) {
         console.log("ERROR" + error.toString());

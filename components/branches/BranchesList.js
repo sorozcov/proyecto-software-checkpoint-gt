@@ -31,7 +31,7 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                 )
             }
             {
-                 (
+                branches.length > 0 && (
                     <Container width={width}>
                         
                       
@@ -92,7 +92,7 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                 onPressItem={() => newBranch(navigation)}
                 actions={[{
                     icon: (
-                        <MaterialCommunityIcons name="plus" color='white' size={25} style={{ marginRight: 3, }}/>
+                        <MaterialCommunityIcons name="plus" color='white' size={25}/>
                       ),
                     name:'addBranch'
                   }]}

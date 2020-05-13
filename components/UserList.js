@@ -21,7 +21,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
            
             {
-                users.length < 0 && !isLoading && (
+                users.length <= 0 && !isLoading && (
                     <Text>No hay usuarios registrados</Text>
                 )
             }

@@ -19,15 +19,15 @@ const byId = (state = {}, action) => {
             }
         case types.BRANCH_ADD_COMPLETED:
             {
-                const { oldId, Branch } = action.payload;
-                const newState = omit(state, oldId);
-                newState[Branch.id] = {
-                    ...Branch,
-                }
+                const branch = action.payload;
+                state[branch.id] = {
+                    ...branch,
+                };
+                return state;
             }
         case types.BRANCH_REMOVE_COMPLETED:
             {
-                return omit(state, action.payload);
+                return omit(state, action.payload.id);
             }
         case types.BRANCH_UPDATE_COMPLETED:
             {
@@ -39,8 +39,9 @@ const byId = (state = {}, action) => {
                     },
                 };
             }
-        default:
+        default: {
             return state;
+        }
     };
 };
 
@@ -48,15 +49,15 @@ const order = (state = [], action) => {
     switch (action.type) {
         case types.BRANCH_FETCH_COMPLETED:
             {
-                return union(state, action.payload.order);
+                return union(action.payload.order);
             }
         case types.BRANCH_ADD_COMPLETED:
             {
-                return [...state, action.payload.Branch.id];
+                return [...state, action.payload.id];
             }
         case types.BRANCH_REMOVE_COMPLETED:
             {
-                return state.filter(id => id !== action.payload);
+                return state.filter(id => id !== action.payload.id);
             }
         default:
             return state;

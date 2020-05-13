@@ -31,7 +31,7 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                 )
             }
             {
-                 (
+                categories.length > 0 && (
                     <Container width={width}>
                         
                             <SwipeListView

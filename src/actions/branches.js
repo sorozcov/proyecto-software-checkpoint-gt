@@ -23,17 +23,13 @@ export const startAddingBranch = Branch => ({
     type: types.BRANCH_ADD_STARTED,
     payload: Branch,
 });
-export const completeAddingBranch = (oldId, Branch) => ({
+export const completeAddingBranch = Branch => ({
     type: types.BRANCH_ADD_COMPLETED,
-    payload: {
-        oldId,
-        Branch,
-    },
+    payload: Branch,
 });
-export const failAddingBranch = (oldId, error) => ({
+export const failAddingBranch = error => ({
     type: types.BRANCH_ADD_FAILED,
     payload: {
-        oldId,
         error,
     },
 });
@@ -64,11 +60,9 @@ export const startUpdatingBranch = Branch => ({
     type: types.BRANCH_UPDATE_STARTED,
     payload: Branch,
 });
-export const completeUpdatingBranch = id => ({
+export const completeUpdatingBranch = Branch => ({
     type: types.BRANCH_UPDATE_COMPLETED,
-    payload: {
-        id,
-    },
+    payload: Branch,
 });
 export const failUpdatingBranch = (id, error) => ({
     type: types.BRANCH_UPDATE_FAILED,
