@@ -2,7 +2,7 @@ import { fork, all } from 'redux-saga/effects';
 
 //Importamos los watchers
 //import { watchLoginStarted } from './auth';
-import { watchFetchCategories } from './categories';
+import { watchFetchCategories , watchAddCategory } from './categories';
 
 
 import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted } from './users';
@@ -16,7 +16,8 @@ function* mainSaga(){
     fork (watchFetchCategories),
     fork(watchUsersFetchStarted),
     fork(watchAddUsersStarted),
-    fork(watchEditUsersStarted)
+    fork(watchEditUsersStarted),
+    fork(watchAddCategory)
 
   ]);
 }

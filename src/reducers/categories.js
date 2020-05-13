@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 import omit from 'lodash/omit';
+import union from 'lodash/union';
 
 import * as types from '../types/categories';
+import { useNavigation } from '@react-navigation/native';
 
 
 /*
@@ -18,12 +20,11 @@ const byId = (state = {}, action) => {
     switch(action.type) {
         case types.CATEGORIES_FETCH_COMPLETED: {
             const { entities, order } = action.payload;
-            const newState = {...state};
+            const newState = { ...state };
 
             order.forEach(id => {
                 newState[id] = {
                     ...entities[id],
-                    isConfirmed: true,
                 };
             });
 
@@ -32,16 +33,15 @@ const byId = (state = {}, action) => {
 
         case types.CATEGORY_ADD_STARTED: {
             const newState = {...state};
-            newState[action.payload.id] = {
+            newState[action.payload.categoryId] = {
                 ...action.payload,
-                isConfirmed: false,
             }
             
             return newState;
         }
 
         case types.CATEGORY_REMOVE_STARTED: {
-            return omit(state, action.payload.id)
+            return omit(state, action.payload.categoryId)
         }
         
         default: {
@@ -53,20 +53,15 @@ const byId = (state = {}, action) => {
 const order = (state = [], action) => {
     switch(action.type) {
         case types.CATEGORIES_FETCH_COMPLETED: {
-            return [...state, ...action.payload.result];
-        }
-        
-        case types.CATEGORY_ADD_STARTED: {
-            return [...state, action.payload.id];
+            return union(action.payload.order);
         }
 
         case types.CATEGORY_ADD_COMPLETED: {
-            const { oldId, category } = action.payload;
-            return state.map(id => id === oldId ? category.id : id);
+            return [...state, action.payload.categoryId];
         }
 
         case types.CATEGORY_REMOVE_COMPLETED: {
-            return state.filter(id => id !== action.payload.id);
+            return state.filter(id => id !== action.payload.categoryId);
         }
 
         default: {
@@ -74,6 +69,22 @@ const order = (state = [], action) => {
         }
     }
 };
+
+const categorySelected = (state = null, action) => {
+    switch(action.type) {
+        case types.CATEGORY_SELECTED: {
+            return action.payload;
+        }
+        
+        case types.CATEGORY_DESELECTED: {
+            return null;
+        }
+
+        default: {
+            return state;
+        }
+    }
+}
 
 const isFetching = (state = false, action) => {
     switch(action.type) {
@@ -182,6 +193,7 @@ const error = (state = null, action) => {
 export default combineReducers ({
     byId,
     order,
+    categorySelected,
     isFetching,
     isCreating,
     isRemoving,
@@ -190,6 +202,7 @@ export default combineReducers ({
 
 export const getCategory = (state, id) => state.byId[id];
 export const getCategories = state => state.order.map(id => getCategory(state, id));
+export const getCategorySelected = state => state.categorySelected;
 export const isFetchingCategories = state => state.isFetching;
 export const isCreatingCategory = state => state.isCreating;
 export const isRemovingCategory = state => state.isRemoving;
