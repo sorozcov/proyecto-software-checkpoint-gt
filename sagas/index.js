@@ -5,7 +5,7 @@ import { fork, all } from 'redux-saga/effects';
 import { watchFetchCategories } from './categories';
 import { watchBranchesFetch, watchBranchesAdd, watchBranchesRemove, watchBranchesUpdate } from './branches';
 
-import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted } from './users';
+import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted, watchDeleteUserStarted } from './users';
 
 
 function* mainSaga() {
@@ -17,6 +17,7 @@ function* mainSaga() {
         fork(watchUsersFetchStarted),
         fork(watchAddUsersStarted),
         fork(watchEditUsersStarted),
+        fork(watchDeleteUserStarted),
         fork(watchBranchesFetch),
         fork(watchBranchesAdd),
         fork(watchBranchesRemove),

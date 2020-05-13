@@ -12,7 +12,7 @@ import * as selectors from '../src/reducers';
 import * as actions from '../src/actions/users';
 import * as types from '../src/types/users';
 
-import { getUsers, updateUser } from '../firebase/users';
+import { getUsers, updateUser, deleteUser } from '../firebase/users';
 
 function* usersFetchStarted(action) {
     try {
@@ -74,4 +74,19 @@ export function* watchEditUsersStarted() {
         editUser,
     );
 }
-  
+
+function* deleteUserStarted(action){
+    try {
+        const deleted = yield deleteUser(action.payload)
+        yield put(actions.completeRemovingUser(deleted.uid))
+    } catch (error) {
+        yield put(actions.failRemovingUser(action.payload.uid, 'Falló el remove de usuario'))
+    }
+}
+
+export function* watchDeleteUserStarted() {
+    yield takeEvery(
+        types.USER_REMOVE_STARTED,
+        deleteUserStarted,
+    )
+}
