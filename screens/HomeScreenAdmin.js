@@ -8,6 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
 import UsersStackScreen from './UsersStackScreen';
 import BranchesStackScreen from './branchesScreens/BranchesStackScreen';
+import MenuStackScreen from './MenuStackScreen';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
 import { useTheme, Avatar, Title, Caption, Paragraph, Drawer } from 'react-native-paper';
 import { connect } from 'react-redux';
@@ -42,6 +43,12 @@ function Branches() {
   );
 }
 
+function Categories() {
+  return(
+    <MenuStackScreen />
+  );
+}
+
 const DrawerR = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
@@ -59,11 +66,23 @@ function DrawerContent(props) {
     >
    
       <View style={styles.userInfoSection}>
-        <Avatar.Image
-          source={image}
+
+        {image!=18 && <Avatar.Image
+          source={{
+            uri:
+              image,
+          }}
+
           size={140}
           style={{marginTop:10}}
-        />
+        />}
+        {image==18 && <Avatar.Image
+          source={
+              image
+          }
+          size={140}
+          style={{marginTop:10}}
+        />}
         <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
         <Caption style={styles.caption}>{user.restaurantName}</Caption>
        
@@ -119,7 +138,7 @@ function Main({theme, navigation}) {
         barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
       >
        
-        <Tab.Screen name="Menu"  component={HomeScreen}
+        <Tab.Screen name="Menu"  component={Categories}
                 options={{
                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> MENÚ </Text>,
                   

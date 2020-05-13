@@ -12,11 +12,12 @@ import users, * as usersSelectors from './users';
 
 
 const reducer = combineReducers({
-    loggedUser,
-    categories,
-    form: formReducer,
-    users,
-    branches,
+
+  loggedUser,
+  categories,
+  users,
+  branches,
+  form: formReducer,
 
 });
 
@@ -27,9 +28,10 @@ export default reducer;
 export const getLoggedUser = state => loggedUserSelectors.getLoggedUser(state.loggedUser);
 export const isLoggedUser = state => loggedUserSelectors.isLoggedUser(state.loggedUser);
 
-
+//Categories 
 export const getCategory = (state, id) => categoriesSelectors.getCategory(state.categories, id);
 export const getCategories = state => categoriesSelectors.getCategories(state.categories);
+export const getCategorySelected = state => categoriesSelectors.getCategorySelected(state.categories);
 export const isFetchingCategories = state => categoriesSelectors.isFetchingCategories(state.categories);
 export const isCreatingCategory = state => categoriesSelectors.isCreatingCategory(state.categories);
 export const isRemovingCategory = state => categoriesSelectors.isRemovingCategory(state.categories);

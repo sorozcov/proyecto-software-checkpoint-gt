@@ -23,14 +23,20 @@ export const getCategories= async () =>{
         let categoriesNormalizer = {};
         let categoryById ={};
         
-        categoryNormalizer['byOrder']=categoriesArray.map((category)=>{category.categoryId})
-        categoriesArray.map((category)=>{categoryById[category.categoryId]=category})
-        categoryNormalizer['byId']=categoryById;
-        categoriesArrayNormalizer['array']=categoriesArray;
+        categoriesNormalizer['order'] = categoriesArray.map(category => category.categoryId)
+        categoriesArray.map((category) => {categoryById[category.categoryId] = category})
+        categoriesNormalizer['byId'] = categoryById;
+        categoriesNormalizer['array'] = categoriesArray;
         
-        return {categories:categoriesNormalizer,error:null};
+        return {
+          categories: categoriesNormalizer,
+          error: null
+        };
     }catch(error){
-        return {categories:null,error}
+        return {
+          categories: null,
+          error,
+        }
     }
 }
 
@@ -38,7 +44,6 @@ export const getCategories= async () =>{
 // Si es nuevo enviar categoryId=null o no enviar
 export const updateCategory = async ({categoryId,categoryName})=>{
     try {
-
         let categoryDoc = null;
         let isNew = categoryId==null;
         if(isNew){
@@ -66,7 +71,7 @@ export const updateCategory = async ({categoryId,categoryName})=>{
         }
 
         return { 
-            category: categoryDoc.data(),
+            category: categoryInfo,
             error:null,
             errorMessage:null
         }
@@ -88,11 +93,19 @@ export const deleteCategory = async ({categoryId})=>{
 
         let categoryDoc = await firebaseFirestore.collection(collection).doc(categoryId);
         categoryDoc = await categoryDoc.delete();
-        return { categoryId:categoryId,error:null,errorMessage:null}
+        return { 
+          categoryId: categoryId,
+          error: null,
+          errorMessage: null
+        };
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar la categoría."
-        return {errorMessage:errorMessage,error,categoryId: null}
+        return {
+          errorMessage: errorMessage,
+          error,
+          categoryId: null
+        };
       }
 
 }
