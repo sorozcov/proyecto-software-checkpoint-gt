@@ -38,7 +38,7 @@ function UserList ({ theme, onLoad, users, isLoading, navigation, newUser, isAdd
                                 renderItem={ (user, rowMap) => (
                                     <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
                                 )}
-                                keyExtractor={user => user.userid}
+                                keyExtractor={user => user.uid}
                                 renderHiddenItem={
                                     (user, rowMap) => (
                                         <View style={styles.rowBack}>
