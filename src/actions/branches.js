@@ -77,3 +77,12 @@ export const failUpdatingBranch = (id, error) => ({
         error,
     },
 });
+
+//SELECT BRANCH
+export const selectBranch = branch => ({
+    type: types.BRANCH_SELECTED,
+    payload: branch,
+});
+export const deselectBranch = branch => ({
+    type: types.BRANCH_DESELECTED,
+});
