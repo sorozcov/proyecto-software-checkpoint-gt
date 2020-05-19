@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,ActivityIndicator } from "react-native";
-import { withTheme,Button } from 'react-native-paper';
+import { Container } from 'native-base';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { withTheme } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -11,6 +11,7 @@ import * as actions from '../src/actions/users';
 import * as selectors from '../src/reducers';
 import { HeaderBackground } from '@react-navigation/stack';
 import * as actionsUsers from '../src/actions/users';
+
 const width = Dimensions.get('window').width; // full width
 
 
@@ -59,7 +60,26 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => deleteUser(user.item.uid)}
+                                                onPress={ () => {
+                                                    Alert.alert(
+                                                        '¿Eliminar usuario?',
+                                                        'Esta acción no puede ser revertida',
+                                                        [
+                                                            {
+                                                                text: 'Cancelar', 
+                                                                style: 'cancel'
+                                                            },
+                                                            {
+                                                                text: 'Eliminar',
+                                                                onPress: () => deleteUser(user.item.uid),
+                                                                style: 'destructive'
+                                                            }
+                                                        ],
+                                                        {
+                                                            cancelable: true,
+                                                        },
+                                                    )
+                                                }}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -181,12 +201,11 @@ export default connect(
         },
 
         selectUser(navigation, user) {
-              dispatch(actionsUsers.selectUser(user));
-              navigation.navigate('EditUserScreen');
+            dispatch(actionsUsers.selectUser(user));
+            navigation.navigate('EditUserScreen');
         },
 
         deleteUser(uid) {
-            console.log(uid)
             dispatch(actions.startRemovingUser(uid))
         },
           
