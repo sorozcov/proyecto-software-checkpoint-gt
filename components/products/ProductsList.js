@@ -18,7 +18,7 @@ import CategoryListItem from '../CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct,productsByCategories}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct,productsByCategories,products}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
                 Array(5)
@@ -42,7 +42,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
         }
     };
     console.log(products);
-    console.log(productsByCategories[0].data);
+    console.log(productsByCategories);
 
     const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
