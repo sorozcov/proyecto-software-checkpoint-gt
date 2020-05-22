@@ -27,7 +27,7 @@ function* productsFetchStarted(action) {
 
 export function* watchProductsFetchStarted(){
     yield takeEvery(
-        types.USERS_FETCH_STARTED,
+        types.PRODUCTS_FETCH_STARTED,
         productsFetchStarted,
     );
 }
@@ -36,20 +36,20 @@ function* addProduct(action) {
     try {
         var product = action.payload;
         const response = yield updateProduct(product);
-        
         if (response.error == null) {
             yield put(actions.completeAddingProduct(response.product));
         } else {
             yield put(actions.failAddingProduct(response.error));
         }
     } catch (error) {
+        console.log(error)
         yield put(actions.failAddingProduct('Falló al crear el producto'));
     }
 }
 
 export function* watchAddProductsStarted() {
     yield takeEvery(
-        types.USER_ADD_STARTED,
+        types.PRODUCT_ADD_STARTED,
         addProduct,
     );
 }
@@ -71,7 +71,7 @@ function* editProduct(action) {
 
 export function* watchEditProductsStarted() {
     yield takeEvery(
-        types.USER_EDIT_STARTED,
+        types.PRODUCT_EDIT_STARTED,
         editProduct,
     );
 }
@@ -87,7 +87,7 @@ function* deleteProductStarted(action){
 
 export function* watchDeleteProductStarted() {
     yield takeEvery(
-        types.USER_REMOVE_STARTED,
+        types.PRODUCT_REMOVE_STARTED,
         deleteProductStarted,
     )
 }

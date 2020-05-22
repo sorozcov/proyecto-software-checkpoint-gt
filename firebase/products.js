@@ -63,7 +63,7 @@ export const updateProduct = async ({productId,productName,description,category,
 
           await productDoc.update(productInfo);
         }
-        return { product:productDoc.data(),error:null,errorMessage:null}
+        return { product:productInfo,error:null,errorMessage:null}
   
       } catch (error) {
         console.log("ERROR" + error.toString());

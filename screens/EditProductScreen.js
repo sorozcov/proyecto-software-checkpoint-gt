@@ -19,13 +19,13 @@ const restaurantsArray = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkp
 function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createProduct, editProduct, categories }) {
   const { colors, roundness } = theme;
   const isNew = initialValues==null;
-  console.log(categories)
   if(!isNew)
     navigation.setOptions({ title: 'EDITAR PRODUCTO' });
 
   const signUp = values => {
     var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
     values.category = selectedCategory;
+    values.categoryId = selectedCategory.categoryId;
     console.log('Submitting form', values)
 
     if(isNew){
@@ -45,6 +45,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
         <View style={styles.formContainer}>
           <Field name={'productName'} component={MyTextInput} label='Nombre' placeholder='Ingresa el nombre del producto'/>
           <Field name={'description'} component={MyTextInput} label='Descripción' placeholder='Ingresa la descripción del producto'  multiline={true}/>
+          <Field name={'price'} component={MyTextInput} label='Precio' placeholder='Ingresa el precio que tendrá el producto' keyboardType='numeric'/>
           <Field name={'category'} component={PickerInput} title='Categoría' single={true} selectedText="Categoría" placeholderText="Seleccionar una categoría" 
             options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
             selectedItems={!isNew?[initialValues.restaurantId]:[]}/>
@@ -131,10 +132,10 @@ export default connect(
   enableReinitialize : true,
   validate: (values) => {
     const errors = {};
-    errors.productName = !values.productName ? 'Este campo es obligatorio' : undefined
-    errors.description = !values.description ? 'Este campo es obligatorio' : undefined
-    errors.category = values.category && values.category.length === 0 ? 'Este campo es obligatorio' : undefined
-  
+    errors.productName = !values.productName ? 'Este campo es obligatorio' : undefined;
+    errors.description = !values.description ? 'Este campo es obligatorio' : undefined;
+    errors.category = values.category && values.category.length === 0 ? 'Este campo es obligatorio' : undefined;
+    errors.price = !values.price ? 'Este campo es obligatorio' : isNaN(parseInt(values.price)) ? 'Ingresa un número correcto' : undefined;
     return errors;
   }
 })(withTheme(EditProductScreen)));
