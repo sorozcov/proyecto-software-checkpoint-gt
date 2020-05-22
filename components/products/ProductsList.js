@@ -18,28 +18,31 @@ import CategoryListItem from '../CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct,productsByCategories,products}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
-        Array(5)
-            .fill('')
-            .map((_, i) => ({
-                title: `title${i + 1}`,
-                data: [
-                    ...Array(5)
-                        .fill('')
-                        .map((_, j) => ({
-                            key: `${i}.${j}`,
-                            text: `item #${j}`,
-                        })),
-                ],
-            }))
-    );
+                Array(5)
+                    .fill('')
+                    .map((_, i) => ({
+                        title: `title${i + 1}`,
+                        data: [
+                            ...Array(5)
+                                .fill('')
+                                .map((_, j) => ({
+                                    key: `${i}.${j}`,
+                                    text: `item #${j}`,
+                                })),
+                        ],
+                    }))
+           );
+    
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
             rowMap[rowKey].closeRow();
         }
     };
+    console.log(products);
+    console.log(productsByCategories);
 
     const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
@@ -96,11 +99,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
     <Text style={{fontSize:15,fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
-    useEffect(()=>{onLoad();
-        setListData(categories.map(item=>{
-            return {title:item.categoryName,
-            data:[{key:0,text:"hola"},{key:1,text:"holaK"}]}
-        }))}, []);
+    useEffect(()=>{onLoad();}, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
@@ -119,16 +118,16 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                             <SwipeListView
                                 style={{marginTop:8}}
                                 useSectionList
-                                sections={listData}
+                                sections={productsByCategories}
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
-                                    <CategoryListItem style={styles.rowFront} key={category.item.key} name={`${category.item.text}`} category={category.item} navigation={navigation} />
+                                    <CategoryListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} category={category.item} navigation={navigation} />
                                 )}
                                 disableRightSwipe={true}
                                 closeOnRowPress={true}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
-                                keyExtractor={category => category.key}
+                               
                                 renderHiddenItem={
                                     (category, rowMap) => (
                                         <View style={styles.rowBack}>
@@ -275,6 +274,7 @@ const styles = StyleSheet.create({
 export default connect(
     state => ({
         categories: selectors.getCategories(state),
+        products:selectors.getProducts(state),
         productsByCategories: selectors.getProductsByCategory(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
         isCreating: selectors.isCreatingCategory(state),
@@ -283,9 +283,11 @@ export default connect(
     dispatch => ({
         onLoad() {
             dispatch(actions.startFetchingCategories());
+            dispatch(actionsProducts.startFetchingProducts());
         },
          onRefresh() {
             dispatch(actions.startFetchingCategories());
+            dispatch(actionsProducts.startFetchingProducts());
         },
         newProduct(navigation) {
             dispatch(actionsProducts.deselectProduct());
