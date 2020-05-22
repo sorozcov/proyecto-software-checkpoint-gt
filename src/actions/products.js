@@ -49,22 +49,22 @@ export const failEditingProduct = (id, error) => ({
   },
 });
 
-export const startRemovingProduct = productid => ({
+export const startRemovingProduct = productId => ({
   type: types.PRODUCT_REMOVE_STARTED,
   payload: {
-    productid,
+    productId,
   },
 });
-export const completeRemovingProduct = productid => ({
+export const completeRemovingProduct = productId => ({
   type: types.PRODUCT_REMOVE_COMPLETED,
   payload: {
-    productid,
+    productId,
   },
 });
-export const failRemovingProduct = (productid, error) => ({
+export const failRemovingProduct = (productId, error) => ({
   type: types.PRODUCT_REMOVE_FAILED,
   payload: {
-    productid,
+    productId,
     error,
   },
 });
