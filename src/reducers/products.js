@@ -19,7 +19,7 @@ const byId = (state = {}, action) => {
     }
     case types.PRODUCT_ADD_COMPLETED: {
       const product = action.payload;
-      state[product.productid] = {
+      state[product.productId] = {
         ...product,
       };
       return state;
@@ -27,14 +27,14 @@ const byId = (state = {}, action) => {
     case types.PRODUCT_EDIT_COMPLETED: {
       return {
         ...state,
-        [action.payload.productid]: {
-          ...state[action.payload.productid],
+        [action.payload.productId]: {
+          ...state[action.payload.productId],
           ...action.payload,
         },
       };
     }
     case types.PRODUCT_REMOVE_COMPLETED: {
-      return omit(state, action.payload.productid);
+      return omit(state, action.payload.productId);
     }
     default: {
       return state;
@@ -48,10 +48,10 @@ const order = (state = [], action) => {
       return union(action.payload.order);
     }
     case types.PRODUCT_ADD_COMPLETED: {
-      return [...state, action.payload.productid];
+      return [...state, action.payload.productId];
     }
     case types.PRODUCT_REMOVE_COMPLETED: {
-      return state.filter(id => id !== action.payload.productid);
+      return state.filter(id => id !== action.payload.productId);
     }
     default: {
       return state;
