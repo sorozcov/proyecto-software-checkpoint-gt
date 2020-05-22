@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
 import CategoriesList from '../components/CategoriesList';
+import ProductListScreen from '../components/products/ProductsList';
 import EditCategoryScreen from './EditCategoryScreen';
 import * as actions from '../src/actions/categories';
 
@@ -19,8 +20,9 @@ function MenuStackScreen({ theme }) {
           fontFamily: 'dosis-bold',          
         },
         headerMode: 'screen'
-      })} initialRouteName="CategoriesList">
-      <MenuStack.Screen name="CategoriesList" options={{ title: 'MENU', headerTitleAlign:'center'}} component={CategoriesList} />
+      })} initialRouteName="Menu">
+      <MenuStack.Screen name="Menu" options={{ title: 'MENU', headerTitleAlign:'center'}} component={ProductListScreen} />
+      <MenuStack.Screen name="CategoriesList" options={{ title: 'CATEGORÍAS', headerTitleAlign:'center'}} component={CategoriesList} />
       <MenuStack.Screen name="EditCategoryScreen"   options={{ title: 'NUEVA CATEGORÍA', headerTitleAlign:'center'}} component={EditCategoryScreen} />
     </MenuStack.Navigator>
   );
