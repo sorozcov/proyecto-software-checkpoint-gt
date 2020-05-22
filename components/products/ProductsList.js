@@ -9,6 +9,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { HeaderBackground } from '@react-navigation/stack';
 
 import * as actions from '../../src/actions/categories';
+import * as actionsProducts from '../../src/actions/products';
 import * as selectors from '../../src/reducers';
 
 import CategoryListItem from '../CategoryListItem';
@@ -17,7 +18,7 @@ import CategoryListItem from '../CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newCategory, isCreating, /*isEditing,*/ selectCategory}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
         Array(5)
@@ -92,7 +93,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
              
     </Left>
     <Body>
-    <Text style={{fontSize:'15',fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
+    <Text style={{fontSize:15,fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
     useEffect(()=>{onLoad();
@@ -134,7 +135,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => selectCategory(navigation, category.item)}
+                                                onPress={() => selectProduct(navigation, category.item)}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -172,12 +173,12 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                             buttonSize={50}
                             color='black'
                             overrideWithAction={true}
-                            onPressItem={() => newCategory(navigation)}
+                            onPressItem={() => newProduct(navigation)}
                             actions={[{
                                 icon: (
                                     <MaterialCommunityIcons name="plus" color='white' size={25}/>
                                   ),
-                                name:'AddCategory'
+                                name:'AddProduct'
                               }]}
                         />
                         <Button
@@ -285,14 +286,14 @@ export default connect(
          onRefresh() {
             dispatch(actions.startFetchingCategories());
         },
-        newCategory(navigation) {
-            dispatch(actions.deselectCategory());
-            navigation.navigate('EditCategoryScreen');
+        newProduct(navigation) {
+            dispatch(actionsProducts.deselectProduct());
+            navigation.navigate('EditProductScreen');
         },
 
-        selectCategory(navigation, category) {
-              dispatch(actions.selectCategory(category));
-              navigation.navigate('EditCategoryScreen');
+        selectProduct(navigation, product) {
+              dispatch(actionsProducts.selectProduct(product));
+              navigation.navigate('EditProductScreen');
         },
           
     }),
