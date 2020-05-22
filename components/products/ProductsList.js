@@ -275,7 +275,8 @@ const styles = StyleSheet.create({
 export default connect(
     state => ({
         categories: selectors.getCategories(state),
-        isLoading: selectors.isFetchingCategories(state),
+        productsByCategories: selectors.getProductsByCategory(state),
+        isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
         isCreating: selectors.isCreatingCategory(state),
         // isEditing: selectors.isEditingUsers(state),
     }),
