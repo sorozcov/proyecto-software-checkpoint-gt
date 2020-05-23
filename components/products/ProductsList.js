@@ -12,7 +12,7 @@ import * as actions from '../../src/actions/categories';
 import * as actionsProducts from '../../src/actions/products';
 import * as selectors from '../../src/reducers';
 
-import CategoryListItem from '../CategoryListItem';
+import ProductListItem from './ProductListItem';
 
 
 const width = Dimensions.get('window').width; // full width
@@ -96,7 +96,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
              
     </Left>
     <Body>
-    <Text style={{fontSize:15,fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
+    <Text style={{fontSize:18,fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
    useEffect(onLoad, []);
@@ -122,7 +122,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
-                                    <CategoryListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} category={category.item} navigation={navigation} />
+                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} category={category.item} navigation={navigation} />
                                 )}
                                 disableRightSwipe={true}
                                 closeOnRowPress={true}
@@ -169,40 +169,48 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
 
                                   
                         <FloatingAction
+                            
                             distanceToEdge={20}
                             buttonSize={50}
                             color='black'
-                            overrideWithAction={true}
-                            onPressItem={() => newProduct(navigation)}
+                            
+                            onPressItem={(name) => newProduct(navigation,name)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="plus" color='white' size={25}/>
+                                    <MaterialCommunityIcons name="food" color='white' size={25}/>
                                   ),
-                                name:'AddProduct'
+                                name:'EditProductScreen',
+                                text:'Agregar Producto',
+                                position:1,
+                                textStyle:{fontFamily:'dosis-light'},
+                                buttonSize:45,
+                                color:'#00A8C8'
+                                
+                              },
+                              {
+                                icon: (
+                                    <MaterialCommunityIcons name="view-list" color='white' size={25}/>
+                                  ),
+                                name:'CategoriesList',
+                                text:'Ver Categorías',
+                                position:2,
+                                textStyle:{fontFamily:'dosis-light'},
+                                buttonSize:45,
+                                color:'#00A8C8'
+                              },
+                              {
+                                icon: (
+                                    <MaterialCommunityIcons name="playlist-plus" color='white' size={25}/>
+                                  ),
+                                name:'EditCategoryScreen',
+                                text:'Agregar Categoría',
+                                position:3,
+                                textStyle:{fontFamily:'dosis-light'},
+                                buttonSize:45,
+                                color:'#00A8C8'
                               }]}
                         />
-                        <Button
-              
-                            theme={roundness}
-                            color={'#000000'}
-                            icon={'pencil'}
-                            height={50}
-                            mode="contained"
-                            labelStyle={{
-                                fontFamily: "dosis-bold",
-                                fontSize: 15,
-                            }}
-                            style={{
-                                fontFamily: 'dosis',
-                                marginLeft: '5%',
-                                marginBottom:'3%',
-                                marginRight: '20%',
-                                justifyContent: 'center',
-                                alignItems:'center'
-                            }}
-                            onPress={()=>navigation.navigate("CategoriesList")}>
-                            {'CATEGORÍAS'}
-                        </Button>
+                        
                     </Container>
                 )
             }
@@ -290,9 +298,10 @@ export default connect(
             dispatch(actions.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
         },
-        newProduct(navigation) {
+        newProduct(navigation,screen) {
             dispatch(actionsProducts.deselectProduct());
-            navigation.navigate('EditProductScreen');
+            dispatch(actions.deselectCategory());
+            navigation.navigate(screen);
         },
 
         selectProduct(navigation, product) {

@@ -21,8 +21,8 @@ class BranchItem extends Component{
                     <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} />
                 </Left>
                 <Body>
-                    <Text>{this.props.name}</Text>
-                    <Text note numberOfLines={1}>{this.props.description}</Text>
+                    <Text style={{fontFamily:'dosis-semi-bold',fontSize:18}}>{this.props.name}</Text>
+                    <Text style={{fontFamily:'dosis-light',fontSize:15}} note numberOfLines={1}>{this.props.description}</Text>
                 </Body>
                
             </ListItem>
