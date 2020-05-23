@@ -1,7 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, Spinner,ListItem,Left,Icon,Body } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,TouchableHighlight } from "react-native";
+import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,TouchableHighlight, Alert } from "react-native";
 import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,7 +18,7 @@ import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct,productsByCategories,products}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,productsByCategories, deleteProduct}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
                 Array(5)
@@ -147,7 +147,26 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => null}
+                                                onPress={ () => {
+                                                    Alert.alert(
+                                                        '¿Eliminar producto?',
+                                                        'Esta acción no puede ser revertida',
+                                                        [
+                                                            {
+                                                                text: 'Cancelar', 
+                                                                style: 'cancel'
+                                                            },
+                                                            {
+                                                                text: 'Eliminar',
+                                                                onPress: () => deleteProduct(category.item.productId),
+                                                                style: 'destructive'
+                                                            }
+                                                        ],
+                                                        {
+                                                            cancelable: true,
+                                                        },
+                                                    )
+                                                }}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -218,10 +237,10 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isCreating /*|| isEditing*/}>
+                visible={isCreating || isEditing || isRemoving}>
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isCreating /*|| isEditing*/} color={colors.primary} />
+                    <ActivityIndicator size="large" animating={isCreating || isEditing || isRemoving} color={colors.primary} />
                 </View>
                 </View>
             </Modal>
@@ -283,11 +302,11 @@ const styles = StyleSheet.create({
 export default connect(
     state => ({
         categories: selectors.getCategories(state),
-        products:selectors.getProducts(state),
         productsByCategories: selectors.getProductsByCategory(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
-        isCreating: selectors.isCreatingCategory(state),
-        // isEditing: selectors.isEditingUsers(state),
+        isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
+        isEditing: selectors.isEditingProducts(state),
+        isRemoving: selectors.isRemovingProducts(state),
     }),
     dispatch => ({
         onLoad() {
@@ -308,6 +327,8 @@ export default connect(
               dispatch(actionsProducts.selectProduct(product));
               navigation.navigate('EditProductScreen');
         },
-          
+        deleteProduct(productId) {
+            dispatch(actionsProducts.startRemovingProduct(productId))
+        },
     }),
 )(withTheme(ProductsList));

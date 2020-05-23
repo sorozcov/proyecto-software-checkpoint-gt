@@ -80,9 +80,9 @@ export function* watchEditProductsStarted() {
 function* deleteProductStarted(action){
     try {
         const deleted = yield deleteProduct(action.payload)
-        yield put(actions.completeRemovingProduct(deleted.productid))
+        yield put(actions.completeRemovingProduct(deleted.productId))
     } catch (error) {
-        yield put(actions.failRemovingProduct(action.payload.productid, 'Falló el remove de producto'))
+        yield put(actions.failRemovingProduct(action.payload.productId, 'Falló el remove de producto'))
     }
 }
 
