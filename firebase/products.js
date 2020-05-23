@@ -18,12 +18,12 @@ export const getProducts= async () =>{
         await products.docs.forEach(product => {
             productsArray.push(product.data());
         });
-
+        
         let productsNormalizer = {};
         let productById = {};
     
-        productsNormalizer['order'] = productsArray.map(product => product.uid)
-        productsArray.map((product) => {productById[product.uid] = product})
+        productsNormalizer['order'] = productsArray.map(product => product.productId)
+        productsArray.map((product) => {productById[product.productId] = product})
         productsNormalizer['byId'] = productById;
         productsNormalizer['array'] = productsArray;
         

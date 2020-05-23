@@ -41,7 +41,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
             rowMap[rowKey].closeRow();
         }
     };
-    console.log(products);
+    
     
 
     const deleteRow = (rowMap, rowKey) => {
@@ -111,7 +111,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 productsByCategories.length <= 0 && !isLoading && (
                                     <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                             <MaterialCommunityIcons name="information" color='black' size={50} />
-                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay categorías registradas</Text>
+                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay productos registrados</Text>
                                     </View>
                                 )
                             }
@@ -119,6 +119,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 style={{marginTop:8}}
                                 useSectionList
                                 sections={productsByCategories}
+                                
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
                                     <CategoryListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} category={category.item} navigation={navigation} />
@@ -127,7 +128,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 closeOnRowPress={true}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
-                               
+                                keyExtractor={product => product.productId}
                                 renderHiddenItem={
                                     (category, rowMap) => (
                                         <View style={styles.rowBack}>
