@@ -96,7 +96,7 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                 onPressItem={() => newBranch(navigation)}
                 actions={[{
                     icon: (
-                        <MaterialCommunityIcons name="plus" color='white' size={25}/>
+                        <MaterialCommunityIcons name="plus" color='white' size={26}/>
                       ),
                     name:'addBranch'
                   }]}

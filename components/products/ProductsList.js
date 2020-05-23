@@ -189,7 +189,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                   
                         <FloatingAction
                             
-                            distanceToEdge={20}
+                           
                             buttonSize={50}
                             color='black'
                             
