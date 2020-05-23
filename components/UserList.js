@@ -39,6 +39,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 renderItem={ (user, rowMap) => (
                                     <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
                                 )}
+                                disableRightSwipe={true}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
                                 keyExtractor={user => user.uid}
@@ -48,7 +49,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => selectUser(navigation, user.item)}
+                                                onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -60,7 +61,9 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
+                                                
                                                 onPress={ () => {
+                                                    rowMap[user.item.uid].closeRow();
                                                     Alert.alert(
                                                         '¿Eliminar usuario?',
                                                         'Esta acción no puede ser revertida',
@@ -170,11 +173,11 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-        borderRadius:10,
+        
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
-        borderRadius:10,
+        
         right: 0,
     },
     

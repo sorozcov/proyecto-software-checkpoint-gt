@@ -96,7 +96,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
              
     </Left>
     <Body>
-    <Text style={{fontSize:18,fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
+    <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
    useEffect(onLoad, []);
@@ -289,11 +289,11 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-        borderRadius:10,
+      
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
-        borderRadius:10,
+        
         right: 0,
     },
     

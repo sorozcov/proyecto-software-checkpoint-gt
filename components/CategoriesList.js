@@ -50,7 +50,7 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => selectCategory(navigation, category.item)}
+                                                onPress={() => {selectCategory(navigation, category.item);rowMap[category.item.categoryId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -62,7 +62,7 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => null}
+                                                onPress={() => {rowMap[category.item.categoryId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -78,7 +78,7 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
                                 previewRowKey={'0'}
-                                
+                                disableRightSwipe={true}
                                 previewOpenDelay={1000}
                             />
 
@@ -153,11 +153,11 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-        borderRadius:10,
+       
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
-        borderRadius:10,
+        
         right: 0,
     },
     
