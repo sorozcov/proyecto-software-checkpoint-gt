@@ -16,7 +16,7 @@ import { firebaseApp } from './firebase';
 
 
 //Mute warnings
-console.disableYellowBox = true;
+//console.disableYellowBox = true;
 
 
 
