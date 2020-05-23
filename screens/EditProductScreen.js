@@ -48,7 +48,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
           <Field name={'price'} component={MyTextInput} label='Precio' placeholder='Ingresa el precio que tendrá el producto' keyboardType='numeric'/>
           <Field name={'category'} component={PickerInput} title='Categoría' single={true} selectedText="Categoría" placeholderText="Seleccionar una categoría" 
             options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
-            selectedItems={!isNew?[initialValues.restaurantId]:[]}/>
+            selectedItems={!isNew?[initialValues.categoryId]:[]}/>
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
               disabled={!(dirty && valid)}

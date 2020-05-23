@@ -18,7 +18,7 @@ import CategoryListItem from '../CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, /*isEditing,*/ selectProduct,productsByCategories,products}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, selectProduct,productsByCategories,products}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
                 Array(5)
@@ -210,10 +210,10 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isCreating /*|| isEditing*/}>
+                visible={isCreating || isEditing}>
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isCreating /*|| isEditing*/} color={colors.primary} />
+                    <ActivityIndicator size="large" animating={isCreating || isEditing} color={colors.primary} />
                 </View>
                 </View>
             </Modal>
@@ -278,8 +278,8 @@ export default connect(
         products:selectors.getProducts(state),
         productsByCategories: selectors.getProductsByCategory(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
-        isCreating: selectors.isCreatingCategory(state),
-        // isEditing: selectors.isEditingUsers(state),
+        isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
+        isEditing: selectors.isEditingProducts(state),
     }),
     dispatch => ({
         onLoad() {
