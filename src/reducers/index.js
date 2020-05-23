@@ -7,6 +7,7 @@ import categories, * as categoriesSelectors from './categories';
 import branches, * as branchSelectors from './branches';
 
 import users, * as usersSelectors from './users';
+import products, * as productsSelectors from './products';
 
 
 
@@ -16,6 +17,7 @@ const reducer = combineReducers({
   loggedUser,
   categories,
   users,
+  products,
   branches,
   form: formReducer,
 
@@ -57,3 +59,22 @@ export const isAddingUsers = state => usersSelectors.isAddingUsers(state.users);
 export const isEditingUsers = state => usersSelectors.isEditingUsers(state.users);
 export const isRemovingUsers = state => usersSelectors.isRemovingUsers(state.users);
 export const getUsersError = state => usersSelectors.getUsersError(state.users);
+
+//Products
+
+export const getProduct = (state, id) => productsSelectors.getProduct(state.products, id);
+export const getProducts = state => productsSelectors.getProducts(state.products);
+export const getSelectedProduct = state => productsSelectors.getSelectedProduct(state.products);
+export const isFetchingProducts = state => productsSelectors.isFetchingProducts(state.products);
+export const isAddingProducts = state => productsSelectors.isAddingProducts(state.products);
+export const isEditingProducts = state => productsSelectors.isEditingProducts(state.products);
+export const isRemovingProducts = state => productsSelectors.isRemovingProducts(state.products);
+export const getProductsError = state => productsSelectors.getProductsError(state.products);
+
+export const getProductsByCategory = state => {
+  let categories = getCategories(state)
+  let products = getProducts(state)
+  return categories.map(category=>{
+    return {title:category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)}
+  })};

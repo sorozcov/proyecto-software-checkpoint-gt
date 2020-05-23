@@ -21,6 +21,7 @@ export default function MyTextInput(props) {
         placeholder={inputProps.placeholder}
         keyboardType={inputProps.keyboardType}
         secureTextEntry={inputProps.secureTextEntry}
+        multiline={inputProps.multiline}
         />
       {meta.touched && (meta.error && <Text style={styles.textError}>{meta.error}</Text>)}
     </View>

@@ -46,14 +46,15 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                                 )}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
-                                keyExtractor={(branch, index) => (index.toString())}
+                                disableRightSwipe={true}
+                                keyExtractor={(branch, index) => (branch.restaurantId)}
                                 renderHiddenItem={
                                     (branch, rowMap) => (
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => selectBranch(navigation, branch.item)}
+                                                onPress={() => {selectBranch(navigation, branch.item);rowMap[branch.item.restaurantId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -65,7 +66,7 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => null}
+                                                onPress={() => {rowMap[branch.item.restaurantId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -155,11 +156,11 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-        borderRadius:10,
+        
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
-        borderRadius:10,
+        
         right: 0,
     },
     

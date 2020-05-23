@@ -133,7 +133,7 @@ function Main({theme, navigation}) {
         initialRouteName="Home"
         activeColor="#f0edf6"
         inactiveColor="#000000"
-       
+        lazy={false}
         shifting={false}
         barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
       >

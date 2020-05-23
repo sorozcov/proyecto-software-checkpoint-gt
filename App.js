@@ -15,6 +15,8 @@ import HomeScreen from './screens/HomeScreenAdmin';
 import { firebaseApp } from './firebase';
 
 
+//Mute warnings
+//console.disableYellowBox = true;
 
 
 

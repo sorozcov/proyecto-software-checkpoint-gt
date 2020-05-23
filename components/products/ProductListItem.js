@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { ListItem, Left, Thumbnail, Body, Text, Right, Button } from 'native-base';
 
-import * as actions from '../src/actions/categories';
+import * as actions from '../../src/actions/categories';
 
 
 class CategoryListItem extends Component{
@@ -18,7 +18,7 @@ class CategoryListItem extends Component{
                     {/* <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} /> */}
                 </Left>
                 <Body>
-                    <Text style={{fontFamily:'dosis-semi-bold',fontSize:18}}>{this.props.name}</Text>
+                    <Text  style={{fontFamily:'dosis-light',fontSize:17}}>{this.props.name}</Text>
                 </Body>
             </ListItem>
         );
