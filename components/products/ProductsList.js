@@ -42,7 +42,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
         }
     };
     console.log(products);
-    console.log(productsByCategories);
+    
 
     const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey);
@@ -99,7 +99,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
     <Text style={{fontSize:15,fontFamily:'dosis-bold',paddingLeft:0}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
-    useEffect(()=>{onLoad();}, []);
+   useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
@@ -108,7 +108,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                  (
                     <Container width={width}>
                           {
-                                categories.length <= 0 && !isLoading && (
+                                productsByCategories.length <= 0 && !isLoading && (
                                     <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                             <MaterialCommunityIcons name="information" color='black' size={50} />
                                             <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay categorías registradas</Text>

@@ -21,6 +21,7 @@ function* productsFetchStarted(action) {
         yield put(actions.completeFetchingProducts(result.products.byId, result.products.order));
     } catch (error) {
         console.log("Falló el fetch de productos")
+        console.log(error);
         yield put(actions.failFetchingProducts('Falló el fetch'))
     }
 }
@@ -79,9 +80,9 @@ export function* watchEditProductsStarted() {
 function* deleteProductStarted(action){
     try {
         const deleted = yield deleteProduct(action.payload)
-        yield put(actions.completeRemovingProduct(deleted.productId))
+        yield put(actions.completeRemovingProduct(deleted.productid))
     } catch (error) {
-        yield put(actions.failRemovingProduct(action.payload.productId, 'Falló el remove de producto'))
+        yield put(actions.failRemovingProduct(action.payload.productid, 'Falló el remove de producto'))
     }
 }
 

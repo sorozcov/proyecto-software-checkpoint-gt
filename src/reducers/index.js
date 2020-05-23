@@ -76,5 +76,5 @@ export const getProductsByCategory = state => {
   let products = getProducts(state)
   return categories.map(category=>{
     return {title:category.categoryName,
-            data: products.filter(product => product.categoryId == category.categoryId)}
+            data: products.filter(product => product.categoryId === category.categoryId)}
   })};
