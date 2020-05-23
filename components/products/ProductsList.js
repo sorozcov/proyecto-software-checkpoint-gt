@@ -6,15 +6,12 @@ import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { HeaderBackground } from '@react-navigation/stack';
 
-import * as actions from '../../src/actions/categories';
+
+import * as actionsCategories from '../../src/actions/categories';
 import * as actionsProducts from '../../src/actions/products';
 import * as selectors from '../../src/reducers';
-
 import ProductListItem from './ProductListItem';
-
-
 const width = Dimensions.get('window').width; // full width
 
 
@@ -130,12 +127,12 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 onRefresh={()=>onRefresh()}
                                 keyExtractor={product => product.productId}
                                 renderHiddenItem={
-                                    (category, rowMap) => (
+                                    (product, rowMap) => (
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => selectProduct(navigation, category.item)}
+                                                onPress={() => {selectProduct(navigation, product.item);rowMap[product.item.productId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -148,6 +145,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
                                                 onPress={ () => {
+                                                    rowMap[product.item.productId].closeRow();
                                                     Alert.alert(
                                                         '¿Eliminar producto?',
                                                         'Esta acción no puede ser revertida',
@@ -158,7 +156,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                                             },
                                                             {
                                                                 text: 'Eliminar',
-                                                                onPress: () => deleteProduct(category.item.productId),
+                                                                onPress: () => deleteProduct(product.item.productId),
                                                                 style: 'destructive'
                                                             }
                                                         ],
@@ -310,16 +308,16 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingCategories());
+            dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
         },
          onRefresh() {
-            dispatch(actions.startFetchingCategories());
+            dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
         },
         newProduct(navigation,screen) {
             dispatch(actionsProducts.deselectProduct());
-            dispatch(actions.deselectCategory());
+            dispatch(actionsCategories.deselectCategory());
             navigation.navigate(screen);
         },
 
