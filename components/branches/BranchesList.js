@@ -47,6 +47,7 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
                                 disableRightSwipe={true}
+                                closeOnRowPress={true}
                                 keyExtractor={(branch, index) => (branch.restaurantId)}
                                 renderHiddenItem={
                                     (branch, rowMap) => (
