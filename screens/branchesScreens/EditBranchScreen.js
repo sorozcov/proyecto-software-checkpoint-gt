@@ -22,8 +22,7 @@ function EditBranchScreen({ theme, navigation, dirty, valid, handleSubmit, initi
     navigation.setOptions({ title: 'EDITAR SUCURSAL' });
 
   const branchForm = values => {
-    console.log('Submitting form', values)
-
+    
     if(isNew){
       createBranch(navigation, values)
     } else {

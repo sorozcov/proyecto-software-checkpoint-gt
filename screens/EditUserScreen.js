@@ -16,16 +16,23 @@ import * as selectors from '../src/reducers';
 import * as actionsUsers from '../src/actions/users';
 
 const userTypesArray = [{ label:'Administrador', value:"1" }, { label:'Mesero', value:"2" }];
-const restaurantsArray = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
+// const restaurants = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
 
-function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser }) {
+function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser, branches }) {
+
+  let restaurants = [];
+  branches.map(branch => restaurants.push({
+    label: branch.name,
+    value: branch.id
+  }));
+
   const { colors, roundness } = theme;
   const isNew = initialValues==null;
   if(!isNew)
     navigation.setOptions({ title: 'EDITAR USUARIO' });
 
   const signUp = values => {
-    var selectedRestaurant = restaurantsArray.filter(restaurant => restaurant.value == values.restaurant[0])[0];
+    var selectedRestaurant = restaurants.filter(restaurant => restaurant.value == values.restaurant[0])[0];
     values.restaurantId = selectedRestaurant.value;
     values.restaurantName = selectedRestaurant.label;
     var selectedUserType = userTypesArray.filter(userType => userType.value == values.userType[0])[0];
@@ -54,7 +61,7 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
           <Field name={'userType'} component={PickerInput} title='Tipo' single={true} selectedText="Tipo" placeholderText="Seleccionar tipo de usuario" options={userTypesArray}
             selectedItems={!isNew?[initialValues.userTypeId]:[]}/>
-          <Field name={'restaurant'} component={PickerInput} title='Sucursal' single={true} selectedText="Sucursal" placeholderText="Seleccionar una sucursal" options={restaurantsArray}
+          <Field name={'restaurant'} component={PickerInput} title='Sucursal' single={true} selectedText="Sucursal" placeholderText="Seleccionar una sucursal" options={restaurants}
             selectedItems={!isNew?[initialValues.restaurantId]:[]}/>
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
@@ -121,6 +128,7 @@ const styles = StyleSheet.create({
 
 export default connect(
   state => ({
+    branches: selectors.getBranches(state),
     initialValues: selectors.getSelectedUser(state),
   }),
   dispatch => ({

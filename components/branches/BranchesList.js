@@ -17,10 +17,6 @@ const width = Dimensions.get('window').width; // full width
 function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch }) {
     const { colors, roundness } = theme;
 
-    console.log('isAdding: ', isAdding)
-    console.log('branches: ', branches)
-    console.log('branches.length: ', branches.length)
-
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
