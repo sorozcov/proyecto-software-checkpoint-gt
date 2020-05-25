@@ -49,6 +49,7 @@ export const getSelectedBranch = state => branchSelectors.getSelectedBranch(stat
 export const isAddingBranches = state => branchSelectors.isAddingBranches(state.branches);
 export const isEditingBranches = state => branchSelectors.isEditingBranches(state.branches);
 export const isRemovingBranches = state => branchSelectors.isRemovingBranches(state.branches);
+export const getViewedBranch = state => branchSelectors.getViewedBranch(state.branches);
 
 //Users
 export const getUser = (state, id) => usersSelectors.getUser(state.users, id);

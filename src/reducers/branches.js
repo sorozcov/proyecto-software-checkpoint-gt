@@ -198,6 +198,20 @@ const branchSelected = (state = null, action) => {
     }
 };
 
+const branchViewed = (state = null, action) => {
+    switch (action.type) {
+        case types.BRANCH_VIEWED: {
+            return action.payload;
+        }
+        case types.BRANCH_UNVIEWED: {
+            return null;
+        }
+        default: {
+            return state;
+        }
+    }
+};
+
 export default combineReducers({
     byId,
     order,
@@ -207,6 +221,7 @@ export default combineReducers({
     isEditing,
     isRemoving,
     branchSelected,
+    branchViewed,
 });
 
 // Selectores locales.
@@ -218,3 +233,4 @@ export const getSelectedBranch = state => state.branchSelected;
 export const isAddingBranches = state => state.isAdding;
 export const isEditingBranches = state => state.isEditing;
 export const isRemovingBranches = state => state.isRemoving;
+export const getViewedBranch = state => state.branchViewed;

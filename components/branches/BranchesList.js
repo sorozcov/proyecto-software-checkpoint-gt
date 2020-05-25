@@ -14,7 +14,7 @@ import { HeaderBackground } from '@react-navigation/stack';
 const width = Dimensions.get('window').width; // full width
 
 
-function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch }) {
+function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch, viewBranch }) {
     const { colors, roundness } = theme;
 
     console.log('isAdding: ', isAdding)
@@ -42,7 +42,7 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                                 style={{marginTop:8}}
                                 data={branches}
                                 renderItem={ (branch, rowMap) => (
-                                    <BranchItem style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
+                                    <BranchItem onPress={() => viewBranch(navigation, branch.item)} style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
                                 )}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
@@ -191,6 +191,9 @@ export default connect(
               dispatch(actions.selectBranch(branch));
               navigation.navigate('EditBranchScreen');
         },
-          
+        viewBranch(navigation, branch) {
+            navigation.navigate('UserList');
+            dispatch(actions.viewBranch(branch))
+        }
     }),
 )(withTheme(BranchesList));

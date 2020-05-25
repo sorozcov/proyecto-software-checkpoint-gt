@@ -12,11 +12,12 @@ class BranchItem extends Component{
         // this.image = (props.image != null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/BranchImages%2F${props.image}_400x400.jpg?alt=media` : null);
         this.image = null;
         this.style = props.style;
+        this.onPress = props.onPress;
     }
     render(){
      
         return(
-            <ListItem thumbnail style={{...this.style}}>
+            <ListItem onPress={this.onPress} thumbnail style={{...this.style}}>
                 <Left>
                     <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} />
                 </Left>

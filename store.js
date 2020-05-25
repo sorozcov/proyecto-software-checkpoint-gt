@@ -11,6 +11,9 @@ const configureStore = () => {
   const store = createStore(reducer,
     applyMiddleware(sagaMiddleware));
   sagaMiddleware.run(mainSaga)
+
+  store.subscribe(() => console.log(store.getState()))
+
   return store;
 }
 
