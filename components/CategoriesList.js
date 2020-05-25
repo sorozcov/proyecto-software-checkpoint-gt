@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,TouchableHighlight } from "react-native";
-import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
+import { Dimensions, Modal, View, StyleSheet,Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { withTheme } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -17,35 +17,31 @@ import CategoryListItem from './CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, newCategory, isCreating, /*isEditing,*/ selectCategory}) {
+function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navigation, newCategory, isCreating, isEditing, selectCategory, deleteCategory}) {
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+
             {
-                isLoading && (
-                    <View>
-                        <Spinner color='red' />
-                        <Text>cargando...</Text>
-                    </View>
-                )
-            }
-            {
-                categories.length <= 0 && !isLoading && (
-                    <View>
-                        <Text>No hay categorías registradas</Text>
-                    </View>
-                )
-            }
-            {
-                categories.length > 0 && !isLoading && (
+                 (
                     <Container width={width}>
-                        <Content>
+                          {
+                                categories.length <= 0 && !isLoading && (
+                                    <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
+                                            <MaterialCommunityIcons name="information" color='black' size={50} />
+                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay categorías registradas</Text>
+                                    </View>
+                                )
+                            }
                             <SwipeListView
+                                style={{marginTop:8}}
                                 data={categories}
                                 renderItem={ (category, rowMap) => (
                                     <CategoryListItem style={styles.rowFront} key={category.item.categoryId} name={`${category.item.categoryName}`} category={category.item} navigation={navigation} />
                                 )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
                                 keyExtractor={category => category.categoryId}
                                 renderHiddenItem={
                                     (category, rowMap) => (
@@ -53,7 +49,7 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => selectCategory(navigation, category.item)}
+                                                onPress={() => {selectCategory(navigation, category.item);rowMap[category.item.categoryId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -65,7 +61,28 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => null}
+                                                
+                                                onPress={() => {
+                                                    rowMap[category.item.categoryId].closeRow();
+                                                    Alert.alert(
+                                                        '¿Eliminar usuario?',
+                                                        'Esta acción no puede ser revertida',
+                                                        [
+                                                            {
+                                                                text: 'Cancelar',
+                                                                style: 'cancel'
+                                                            },
+                                                            {
+                                                                text: 'Eliminar',
+                                                                onPress: () => deleteCategory(category.item.categoryId),
+                                                                style: 'destructive'
+                                                            }
+                                                        ],
+                                                        {
+                                                            cancelable: true,
+                                                        },
+                                                    )
+                                                }}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -81,19 +98,19 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
                                 previewRowKey={'0'}
-                                
+                                disableRightSwipe={true}
                                 previewOpenDelay={1000}
                             />
 
-                        </Content>            
+                                  
                         <FloatingAction
-                            buttonSize={65}
+                            buttonSize={50}
                             color='black'
                             overrideWithAction={true}
                             onPressItem={() => newCategory(navigation)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 3, }}/>
+                                    <MaterialCommunityIcons name="plus" color='white' size={25}/>
                                   ),
                                 name:'AddCategory'
                               }]}
@@ -104,10 +121,10 @@ function CategoriesList ({ theme, onLoad, categories, isLoading, navigation, new
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isCreating /*|| isEditing*/}>
+                visible={isCreating || isEditing}>
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isCreating /*|| isEditing*/} color={colors.primary} />
+                    <ActivityIndicator size="large" animating={isCreating || isEditing} color={colors.primary} />
                 </View>
                 </View>
             </Modal>
@@ -156,11 +173,11 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-        borderRadius:10,
+       
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
-        borderRadius:10,
+        
         right: 0,
     },
     
@@ -171,12 +188,17 @@ export default connect(
         categories: selectors.getCategories(state),
         isLoading: selectors.isFetchingCategories(state),
         isCreating: selectors.isCreatingCategory(state),
-        // isEditing: selectors.isEditingUsers(state),
+        isEditing: selectors.isEditingCategory(state),
     }),
     dispatch => ({
         onLoad() {
             dispatch(actions.startFetchingCategories());
         },
+
+         onRefresh() {
+            dispatch(actions.startFetchingCategories());
+        },
+
         newCategory(navigation) {
             dispatch(actions.deselectCategory());
             navigation.navigate('EditCategoryScreen');
@@ -186,6 +208,9 @@ export default connect(
               dispatch(actions.selectCategory(category));
               navigation.navigate('EditCategoryScreen');
         },
-          
+        
+        deleteCategory(categoryId) {
+            dispatch(actions.startRemovingCategory(categoryId));
+        }
     }),
 )(withTheme(CategoriesList));

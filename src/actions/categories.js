@@ -23,14 +23,12 @@ export const startAddingCategory = category => ({
     type: types.CATEGORY_ADD_STARTED,
     payload: {
         category,
-    },
+    }
 });
 
 export const completeAddingCategory = category => ({
     type: types.CATEGORY_ADD_COMPLETED,
-    payload: {
-        category,
-    },
+    payload: category,
 });
 
 export const failAddingCategory = error => ({
@@ -40,24 +38,45 @@ export const failAddingCategory = error => ({
     },
 });
 
-export const startRemovingCategory = id => ({
+export const startRemovingCategory = categoryId => ({
     type: types.CATEGORY_REMOVE_STARTED,
     payload: {
-        id,
+        categoryId,
     },
 });
 
-export const completeRemovingCategory = () => ({
+export const completeRemovingCategory = categoryId => ({
     type: types.CATEGORY_REMOVE_COMPLETED,
+    payload: {
+        categoryId,
+    },
 });
 
-export const failRemovingCategory = (id, error) => ({
+export const failRemovingCategory = (categoryId, error) => ({
     type: types.CATEGORY_REMOVE_FAILED,
     payload: {
-        id, 
+        categoryId, 
         error,
     },
 });
+
+export const startEditingCategory = category => ({
+    type: types.CATEGORY_EDIT_STARTED,
+    payload: category,
+});
+
+export const completeEditingCategory = category => ({
+    type: types.CATEGORY_EDIT_COMPLETED,
+    payload: category,
+});
+
+export const failEditingCategory = error => ({
+    type: types.CATEGORY_EDIT_FAILED,
+    payload: {
+        categoryId,
+        error,
+    }
+})
 
 export const selectCategory = category => ({
     type: types.CATEGORY_SELECTED,

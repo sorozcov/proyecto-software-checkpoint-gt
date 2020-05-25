@@ -33,6 +33,7 @@ export const getCategorySelected = state => categoriesSelectors.getCategorySelec
 export const isFetchingCategories = state => categoriesSelectors.isFetchingCategories(state.categories);
 export const isCreatingCategory = state => categoriesSelectors.isCreatingCategory(state.categories);
 export const isRemovingCategory = state => categoriesSelectors.isRemovingCategory(state.categories);
+export const isEditingCategory = state => categoriesSelectors.isEditingCategory(state.categories);
 export const getError = state => categoriesSelectors.getError(state.categories); 
 
 

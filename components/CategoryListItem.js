@@ -14,11 +14,8 @@ class CategoryListItem extends Component{
      
         return(
             <ListItem thumbnail style={{...this.style}}>
-                <Left>
-                    {/* <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} /> */}
-                </Left>
                 <Body>
-                    <Text>{this.props.name}</Text>
+                    <Text style={{fontFamily:'dosis-semi-bold',fontSize:18}}>{this.props.name}</Text>
                 </Body>
             </ListItem>
         );

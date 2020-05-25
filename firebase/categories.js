@@ -63,6 +63,7 @@ export const updateCategory = async ({categoryId,categoryName})=>{
             categoryName: categoryName,
             dateModified:dateModified
         };
+
         
         if(isNew){
           await categoryDoc.set(categoryInfo);
@@ -71,7 +72,7 @@ export const updateCategory = async ({categoryId,categoryName})=>{
         }
 
         return { 
-            category: categoryDoc.data(),
+            category: categoryInfo,
             error:null,
             errorMessage:null
         }
