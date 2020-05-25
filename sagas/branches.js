@@ -71,8 +71,7 @@ function* addBranch(action) {
 //TODO: BRANCHES REMOVE SAGA
 function* removeBranch(action) {
     try {
-        const result = yield deleteBranch({ id: action.payload });
-        console.log("REMOVE BRANCH RESULT:", result);
+        const result = yield deleteBranch({ id: action.payload.id });
 
         yield put(actions.completeRemovingBranch(result.id));
 
@@ -86,7 +85,7 @@ function* editBranch(action) {
     try {
         const branch = action.payload;
         const result = yield updateBranch(branch);
-        
+
         if (result.error == null) {
             yield put(actions.completeUpdatingBranch(result.branch));
         } else {
