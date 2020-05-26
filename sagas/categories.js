@@ -8,7 +8,8 @@ import {
 
 import { 
     getCategories,
-    updateCategory 
+    updateCategory,
+    deleteCategory, 
 } from '../firebase/categories';
 
 import * as selectors from '../src/reducers';
@@ -22,14 +23,15 @@ function* fetchCategories(action) {
 
         yield put(actions.completeFetchingCategories(result.categories.byId, result.categories.order));
     } catch (error) {
-        yield put(actions.failFetchingCategories('Ha ocurrido un error haciendo fetch a las categorias'));
+        yield put(actions.failFetchingCategories('Falló al obtener categorías'));
     }
 }
 
 function* addCategory(action) {
     try {
-        var categories = action.payload;
-        const response = yield updateCategory(categories);
+        var category = action.payload.category;
+        const response = yield updateCategory(category);
+
         if (response.error == null) {
             yield put(actions.completeAddingCategory(response.category));
         } else {
@@ -37,6 +39,37 @@ function* addCategory(action) {
         }
     } catch (error) {
         yield put(actions.failAddingCategory('Falló al crear la categoría'));
+    }
+}
+
+function* removeCategory(action) {
+    //  FALTA VERIFICAR SI ESTA CATEGORÍA ES PARTE DE UN PRODUCTO
+    //  ESTO SE HARÁ ANTES DE ENTRAR AL TRY - CATCH
+    try {
+        var category = action.payload;
+        const response = yield deleteCategory(category);
+
+        yield put(actions.completeRemovingCategory(response.categoryId));
+    } catch(error) {
+        yield put(actions.failRemovingCategory('Falló al eliminar categoría'));
+    }
+}
+
+function* editCategory(action) {
+    try {
+        var category = action.payload;
+        console.log('CATEGORYYYYY', category)
+
+        const response = yield updateCategory(category);
+        console.log('REPONSEEEEEE', response)
+
+        if(response.error == null) {
+            yield put(actions.completeEditingCategory(response.category));
+        } else {
+            yield put(actions.failEditingCategory('Falló al editar categoría'));
+        }
+    } catch(error) {
+        yield put(actions.failEditingCategory('Falló al editar categoría'));
     }
 }
 
@@ -51,5 +84,19 @@ export function* watchAddCategory() {
     yield takeEvery(
         types.CATEGORY_ADD_STARTED,
         addCategory,
+    );
+};
+
+export function* watchRemoveCategory() {
+    yield takeEvery(
+        types.CATEGORY_REMOVE_STARTED,
+        removeCategory,
+    );
+};
+
+export function* watchEditCategory() {
+    yield takeEvery(
+        types.CATEGORY_EDIT_STARTED,
+        editCategory,
     );
 };

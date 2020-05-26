@@ -16,7 +16,7 @@ import { getProducts, updateProduct, deleteProduct } from '../firebase/products'
 
 function* productsFetchStarted(action) {
     try {
-        const result = yield getProducts()
+        const result = yield getProducts();
 
         yield put(actions.completeFetchingProducts(result.products.byId, result.products.order));
     } catch (error) {

@@ -14,7 +14,7 @@ import PickerInput from '../components/PickerInput';
 import * as selectors from '../src/reducers';
 import * as actions from '../src/actions/categories';
 
-function EditCategoryScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createCategory, /*editUser*/ }) {
+function EditCategoryScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createCategory, editCategory }) {
   const { colors, roundness } = theme;
   const isNew = initialValues==null;
   if(!isNew)
@@ -24,8 +24,7 @@ function EditCategoryScreen({ theme, navigation, dirty, valid, handleSubmit, ini
     if(isNew){
       createCategory(navigation, values)
     } else {
-    //   editCategory(navigation,values)
-      console.log('Editar')
+      editCategory(navigation,values)
     }
   }
 
@@ -110,10 +109,10 @@ export default connect(
       dispatch(actions.startAddingCategory(category));
       navigation.navigate('CategoriesList');
     },
-    // editCategory(navigation, user) {
-    //   dispatch(actionsUsers.startEditingUser(user));
-    //   navigation.navigate('UserList');
-    // },
+    editCategory(navigation, category) {
+      dispatch(actions.startEditingCategory(category));
+      navigation.navigate('CategoriesList');
+    },
   }),
 )(reduxForm({
   form: 'newCategory',

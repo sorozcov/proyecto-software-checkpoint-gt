@@ -63,7 +63,7 @@ export const updateCategory = async ({categoryId,categoryName})=>{
             categoryName: categoryName,
             dateModified:dateModified
         };
-        
+
         if(isNew){
           await categoryDoc.set(categoryInfo);
         } else {

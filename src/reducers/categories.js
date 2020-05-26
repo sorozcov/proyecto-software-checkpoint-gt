@@ -36,6 +36,7 @@ const byId = (state = {}, action) => {
             state[category.categoryId] = {
                 ...category,
             }
+
             return state;
         }
 
@@ -43,6 +44,16 @@ const byId = (state = {}, action) => {
             return omit(state, action.payload.categoryId)
         }
         
+        case types.CATEGORY_EDIT_COMPLETED: {
+            return {
+                ...state,
+                [action.payload.categoryId]: {
+                    ...state[action.payload.categoryId],
+                    ...action.payload,
+                },
+            };
+        }
+
         default: {
             return state;
         }
@@ -145,6 +156,26 @@ const isRemoving = (state = false, action) => {
     }
 };
 
+const isEditing = (state = false, action) => {
+    switch(action.type) {
+        case types.CATEGORY_EDIT_STARTED: {
+            return true;
+        }
+
+        case types.CATEGORY_EDIT_COMPLETED: {
+            return false;
+        }
+
+        case types.CATEGORY_EDIT_FAILED: {
+            return false;
+        }
+
+        default: {
+            return state;
+        }
+    }
+}
+
 const error = (state = null, action) => {
     switch(action.type) {
         case types.CATEGORIES_FETCH_FAILED: {
@@ -182,6 +213,18 @@ const error = (state = null, action) => {
         case types.CATEGORY_REMOVE_COMPLETED: {
             return null;
         }
+        
+        case types.CATEGORY_EDIT_STARTED: {
+            return null;
+        }
+
+        case types.CATEGORY_EDIT_COMPLETED: {
+            return null;
+        }
+
+        case types.CATEGORY_EDIT_FAILED: {
+            return action.payload.error;
+        }
 
         default: {
             return state;
@@ -196,6 +239,7 @@ export default combineReducers ({
     isFetching,
     isCreating,
     isRemoving,
+    isEditing,
     error,
 });
 
@@ -205,4 +249,5 @@ export const getCategorySelected = state => state.categorySelected;
 export const isFetchingCategories = state => state.isFetching;
 export const isCreatingCategory = state => state.isCreating;
 export const isRemovingCategory = state => state.isRemoving;
+export const isEditingCategory = state => state.isEditing;
 export const getError = state => state.error; 
