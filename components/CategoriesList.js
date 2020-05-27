@@ -65,7 +65,7 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                 onPress={() => {
                                                     rowMap[category.item.categoryId].closeRow();
                                                     Alert.alert(
-                                                        '¿Eliminar usuario?',
+                                                        '¿Eliminar categoría?',
                                                         'Esta acción no puede ser revertida',
                                                         [
                                                             {
