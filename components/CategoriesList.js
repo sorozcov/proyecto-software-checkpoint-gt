@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,TouchableHighlight } from "react-native";
-import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
+import { Dimensions, Modal, View, StyleSheet,Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { withTheme } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -17,13 +17,12 @@ import CategoryListItem from './CategoryListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newCategory, isCreating, /*isEditing,*/ selectCategory}) {
+function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navigation, newCategory, isCreating, isEditing, selectCategory, deleteCategory, productsByCategories}) {
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
-           
             {
                  (
                     <Container width={width}>
@@ -62,7 +61,48 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => {rowMap[category.item.categoryId].closeRow();}}
+                                                
+                                                onPress={() => {
+                                                    rowMap[category.item.categoryId].closeRow();
+                                                    Alert.alert(
+                                                        '¿Eliminar categoría?',
+                                                        'Esta acción no puede ser revertida',
+                                                        [
+                                                            {
+                                                                text: 'Cancelar',
+                                                                style: 'cancel'
+                                                            },
+                                                            {
+                                                                text: 'Eliminar',
+                                                                onPress: () => {
+                                                                    const cate = productsByCategories.some(
+                                                                        product => product.data.length > 0 && (product.title == category.item.categoryName));
+                                                                    console.log('ELIMINA? ->', cate);
+                                                                    console.log('ELIMINA? ->', category.item.categoryName);
+                                                                    if(cate === false) {
+                                                                        deleteCategory(category.item.categoryId);
+                                                                    } else {
+                                                                        Alert.alert(
+                                                                            "Error al eliminar",
+                                                                            "No se puede eliminar porque hay productos que pertecen a esta categoría",
+                                                                            
+                                                                            [
+                                                                                {
+                                                                                    text: "OK",
+                                                                                    onPress: () => console.log('OK, no eliminar categoría!')
+                                                                                }
+                                                                            ],
+                                                                        );
+                                                                    }
+                                                                },
+                                                                style: 'destructive'
+                                                            }
+                                                        ],
+                                                        {
+                                                            cancelable: true,
+                                                        },
+                                                    )
+                                                }}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -101,10 +141,10 @@ function CategoriesList ({ theme, onRefresh,onLoad, categories, isLoading, navig
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isCreating /*|| isEditing*/}>
+                visible={isCreating || isEditing}>
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isCreating /*|| isEditing*/} color={colors.primary} />
+                    <ActivityIndicator size="large" animating={isCreating || isEditing} color={colors.primary} />
                 </View>
                 </View>
             </Modal>
@@ -168,15 +208,18 @@ export default connect(
         categories: selectors.getCategories(state),
         isLoading: selectors.isFetchingCategories(state),
         isCreating: selectors.isCreatingCategory(state),
-        // isEditing: selectors.isEditingUsers(state),
+        isEditing: selectors.isEditingCategory(state),
+        productsByCategories: selectors.getProductsByCategory(state),
     }),
     dispatch => ({
         onLoad() {
             dispatch(actions.startFetchingCategories());
         },
+
          onRefresh() {
             dispatch(actions.startFetchingCategories());
         },
+
         newCategory(navigation) {
             dispatch(actions.deselectCategory());
             navigation.navigate('EditCategoryScreen');
@@ -186,6 +229,9 @@ export default connect(
               dispatch(actions.selectCategory(category));
               navigation.navigate('EditCategoryScreen');
         },
-          
+        
+        deleteCategory(categoryId) {
+            dispatch(actions.startRemovingCategory(categoryId));
+        }
     }),
 )(withTheme(CategoriesList));

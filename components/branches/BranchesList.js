@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text,    TouchableOpacity,TouchableHighlight } from "react-native";
-import { ActivityIndicator, withTheme,Button } from 'react-native-paper';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert  } from "react-native";
+import { withTheme, Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -13,13 +13,21 @@ import { HeaderBackground } from '@react-navigation/stack';
 
 const width = Dimensions.get('window').width; // full width
 
-
-function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigation, newBranch, isAdding, isEditing ,selectBranch, viewBranch }) {
+function BranchesList ({
+    theme,
+    onLoad,
+    onRefresh,
+    branches,
+    isLoading,
+    navigation,
+    newBranch,
+    isAdding,
+    isEditing,
+    selectBranch,
+    viewBranch
+    deleteBranch }) {
+  
     const { colors, roundness } = theme;
-
-    console.log('isAdding: ', isAdding)
-    console.log('branches: ', branches)
-    console.log('branches.length: ', branches.length)
 
     useEffect(onLoad, []);
     return(
@@ -48,14 +56,14 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                                 onRefresh={()=>onRefresh()}
                                 disableRightSwipe={true}
                                 closeOnRowPress={true}
-                                keyExtractor={(branch, index) => (branch.restaurantId)}
+                                keyExtractor={(branch, index) => (branch.id)}
                                 renderHiddenItem={
                                     (branch, rowMap) => (
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectBranch(navigation, branch.item);rowMap[branch.item.restaurantId].closeRow();}}
+                                                onPress={() => {selectBranch(navigation, branch.item);rowMap[branch.item.id].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -65,9 +73,31 @@ function BranchesList ({ theme, onLoad,onRefresh, branches, isLoading, navigatio
                                                  <Text style={styles.backTextWhite}>Editar</Text>
                                                
                                             </TouchableOpacity>
+
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={() => {rowMap[branch.item.restaurantId].closeRow();}}
+                                                
+                                                onPress={ () => {
+                                                    rowMap[branch.item.id].closeRow();
+                                                    Alert.alert(
+                                                        '¿Eliminar sucursal?',
+                                                        'Esta acción no puede ser revertida',
+                                                        [
+                                                            {
+                                                                text: 'Cancelar', 
+                                                                style: 'cancel'
+                                                            },
+                                                            {
+                                                                text: 'Eliminar',
+                                                                onPress: () => deleteBranch(branch.item.id),
+                                                                style: 'destructive'
+                                                            }
+                                                        ],
+                                                        {
+                                                            cancelable: true,
+                                                        },
+                                                    )
+                                                }}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="delete"
@@ -185,8 +215,7 @@ export default connect(
         newBranch(navigation) {
             dispatch(actions.deselectBranch());
             navigation.navigate('EditBranchScreen');
-        },
-        
+        },     
         selectBranch(navigation, branch) {
               dispatch(actions.selectBranch(branch));
               navigation.navigate('EditBranchScreen');
@@ -194,6 +223,9 @@ export default connect(
         viewBranch(navigation, branch) {
             navigation.navigate('UserList');
             dispatch(actions.viewBranch(branch))
+        }
+        deleteBranch(id){
+            dispatch(actions.startRemovingBranch(id));
         }
     }),
 )(withTheme(BranchesList));
