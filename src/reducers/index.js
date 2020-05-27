@@ -52,6 +52,8 @@ export const isEditingBranches = state => branchSelectors.isEditingBranches(stat
 export const isRemovingBranches = state => branchSelectors.isRemovingBranches(state.branches);
 export const getViewedBranch = state => branchSelectors.getViewedBranch(state.branches);
 
+
+export const branchHasUsers = (branchId,state) => usersSelectors.getUsers(state.users).some(user => user.restaurantId==branchId);
 //Users
 export const getUser = (state, id) => usersSelectors.getUser(state.users, id);
 export const getUsers = state => usersSelectors.getUsers(state.users);

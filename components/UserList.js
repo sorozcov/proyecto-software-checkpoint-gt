@@ -11,6 +11,7 @@ import * as actions from '../src/actions/users';
 import * as selectors from '../src/reducers';
 import { HeaderBackground } from '@react-navigation/stack';
 import * as actionsUsers from '../src/actions/users';
+import * as actionBranches from '../src/actions/branches';
 
 const width = Dimensions.get('window').width; // full width
 
@@ -194,6 +195,7 @@ export default connect(
     dispatch => ({
         onLoad() {
             dispatch(actions.startFetchingUsers());
+            dispatch(actionBranches.startFetchingBranch());
         },
         onRefresh() {
             dispatch(actions.startFetchingUsers());

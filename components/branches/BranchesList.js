@@ -8,6 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { SwipeListView } from 'react-native-swipe-list-view';
 import BranchItem from './BranchItem';
 import * as actions from '../../src/actions/branches';
+import * as actionsUsers from '../../src/actions/users';
 import * as selectors from '../../src/reducers';
 import { HeaderBackground } from '@react-navigation/stack';
 
@@ -24,11 +25,12 @@ function BranchesList ({
     isAdding,
     isEditing,
     selectBranch,
-    viewBranch
-    deleteBranch }) {
+    viewBranch,
+    deleteBranch,
+    branchHasUsers,
+    cannotDeleteBranch }) {
   
     const { colors, roundness } = theme;
-
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
@@ -89,7 +91,7 @@ function BranchesList ({
                                                             },
                                                             {
                                                                 text: 'Eliminar',
-                                                                onPress: () => deleteBranch(branch.item.id),
+                                                                onPress: () => branchHasUsers(branch.item.id) ? cannotDeleteBranch():deleteBranch(branch.item.id),
                                                                 style: 'destructive'
                                                             }
                                                         ],
@@ -204,10 +206,12 @@ export default connect(
         isLoading: selectors.isFetchingBranches(state),
         isAdding: selectors.isAddingBranches(state),
         isEditing: selectors.isEditingBranches(state),
+        branchHasUsers: (branchId)=>selectors.branchHasUsers(branchId,state)
     }),
     dispatch => ({
         onLoad() {
             dispatch(actions.startFetchingBranch());
+            dispatch(actionsUsers.startFetchingUsers());
         },
         onRefresh() {
             dispatch(actions.startFetchingBranch());
@@ -223,9 +227,25 @@ export default connect(
         viewBranch(navigation, branch) {
             navigation.navigate('UserList');
             dispatch(actions.viewBranch(branch))
-        }
+        },
         deleteBranch(id){
             dispatch(actions.startRemovingBranch(id));
+        },
+        cannotDeleteBranch(){
+            Alert.alert(
+                'Error al eliminar sucursal.',
+                'Esta sucursal tiene usuarios. Para eliminarla, debe eliminar primero todos los usuarios dentro de la sucursal.',
+                [
+                    {
+                        text: 'Ok', 
+                        style: 'cancel'
+                    },
+                    
+                ],
+                {
+                    cancelable: true,
+                },
+            )
         }
     }),
 )(withTheme(BranchesList));
