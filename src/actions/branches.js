@@ -80,3 +80,12 @@ export const selectBranch = branch => ({
 export const deselectBranch = branch => ({
     type: types.BRANCH_DESELECTED,
 });
+
+export const viewBranch = branch => ({
+    type: types.BRANCH_VIEWED,
+    payload: branch,
+})
+
+export const unviewBranch = () => ({
+    type: types.BRANCH_UNVIEWED,
+})
