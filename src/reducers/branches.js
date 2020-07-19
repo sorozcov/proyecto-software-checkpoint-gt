@@ -39,9 +39,10 @@ const byId = (state = {}, action) => {
                     },
                 };
             }
-        default: {
-            return state;
-        }
+        default:
+            {
+                return state;
+            }
     };
 };
 
@@ -146,7 +147,6 @@ const isRemoving = (state = false, action) => {
     }
 };
 
-
 const error = (state = null, action) => {
     switch (action.type) {
         case types.BRANCH_FETCH_STARTED:
@@ -200,15 +200,18 @@ const branchSelected = (state = null, action) => {
 
 const branchViewed = (state = null, action) => {
     switch (action.type) {
-        case types.BRANCH_VIEWED: {
-            return action.payload;
-        }
-        case types.BRANCH_UNVIEWED: {
-            return null;
-        }
-        default: {
-            return state;
-        }
+        case types.BRANCH_VIEWED:
+            {
+                return action.payload;
+            }
+        case types.BRANCH_UNVIEWED:
+            {
+                return null;
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 

@@ -14,98 +14,94 @@ import * as actionsUsers from '../../src/actions/users';
 
 const width = Dimensions.get('window').width; // full width
 
-
 function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, branch }) {
     const { colors, roundness } = theme;
 
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
-           
             {
-                 (
+                (
                     <Container  width={width}>
-                             {
-                                users.filter(user => branch === null ? user : user.restaurantName === branch.name).length <= 0 && !isLoading && (
-                                    <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
-                                            <MaterialCommunityIcons name="information" color='black' size={50} />
-                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay usuarios registrados en esta sucursal</Text>
-                                    </View>
-                                )
-                            }
-                            <SwipeListView
-                                style={{marginTop:8}}
-                                data={users.filter(user => branch === null ? user : user.restaurantName === branch.name)}
-                                renderItem={ (user, rowMap) => (
-                                    <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
-                                )}
-                                disableRightSwipe={true}
-                                refreshing={isLoading}
-                                onRefresh={()=>onRefresh()}
-                                keyExtractor={user => user.uid}
-                                renderHiddenItem={
-                                    (user, rowMap) => (
-                                        <View style={styles.rowBack}>
-                                            
-                                            <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
-                                            >
-                                                <MaterialCommunityIcons
+                        {
+                            users.filter(user => branch === null ? user : user.restaurantName === branch.name).length <= 0 && !isLoading && (
+                                <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
+                                        <MaterialCommunityIcons name="information" color='black' size={50} />
+                                        <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay usuarios registrados en esta sucursal</Text>
+                                </View>
+                            )
+                        }
+                        <SwipeListView
+                            style={{marginTop:8}}
+                            data={users.filter(user => branch === null ? user : user.restaurantName === branch.name)}
+                            renderItem={ (user, rowMap) => (
+                                <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
+                            )}
+                            disableRightSwipe={true}
+                            refreshing={isLoading}
+                            onRefresh={()=>onRefresh()}
+                            keyExtractor={user => user.uid}
+                            renderHiddenItem={
+                                (user, rowMap) => (
+                                    <View style={styles.rowBack}>
+                                        
+                                        <TouchableOpacity
+                                            style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                                            onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
+                                        >
+                                            <MaterialCommunityIcons
                                                 name="pencil"
                                                 color={'black'}
                                                 size={30}
-                                                />
-                                                 <Text style={styles.backTextWhite}>Editar</Text>
-                                               
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                
-                                                onPress={ () => {
-                                                    rowMap[user.item.uid].closeRow();
-                                                    Alert.alert(
-                                                        '¿Eliminar usuario?',
-                                                        'Esta acción no puede ser revertida',
-                                                        [
-                                                            {
-                                                                text: 'Cancelar', 
-                                                                style: 'cancel'
-                                                            },
-                                                            {
-                                                                text: 'Eliminar',
-                                                                onPress: () => deleteUser(user.item.uid),
-                                                                style: 'destructive'
-                                                            }
-                                                        ],
+                                            />
+                                                <Text style={styles.backTextWhite}>Editar</Text>
+                                            
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.backRightBtn, styles.backRightBtnRight]}
+                                            
+                                            onPress={ () => {
+                                                rowMap[user.item.uid].closeRow();
+                                                Alert.alert(
+                                                    '¿Eliminar usuario?',
+                                                    'Esta acción no puede ser revertida',
+                                                    [
                                                         {
-                                                            cancelable: true,
+                                                            text: 'Cancelar', 
+                                                            style: 'cancel'
                                                         },
-                                                    )
-                                                }}
-                                            >
-                                                <MaterialCommunityIcons
+                                                        {
+                                                            text: 'Eliminar',
+                                                            onPress: () => deleteUser(user.item.uid),
+                                                            style: 'destructive'
+                                                        }
+                                                    ],
+                                                    {
+                                                        cancelable: true,
+                                                    },
+                                                )
+                                            }}
+                                        >
+                                            <MaterialCommunityIcons
                                                 name="delete"
                                                 color={'black'}
                                                 size={30}
-                                                />
-                                                 <Text style={styles.backTextWhite}>Eliminar</Text>
-                                               
-                                            </TouchableOpacity>
-                                        </View>
-                                    )
-                                }
-                                leftOpenValue={0}
-                                rightOpenValue={-150}
-                                previewRowKey={'0'}
-                                
-                                previewOpenDelay={1000}
-                            />
+                                            />
+                                            <Text style={styles.backTextWhite}>Eliminar</Text>
+                                            
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+                            leftOpenValue={0}
+                            rightOpenValue={-150}
+                            previewRowKey={'0'}
+                            
+                            previewOpenDelay={1000}
+                        />
 
                                  
                         <FloatingAction
-                            
                             buttonSize={50}
                             color='black'
                             overrideWithAction={true}

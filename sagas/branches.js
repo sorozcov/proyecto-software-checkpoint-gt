@@ -14,35 +14,8 @@ import * as types from '../src/types/branches';
 
 import { getBranches, updateBranch, deleteBranch } from '../firebase/branches';
 
-export function* watchBranchesFetch() {
-    yield takeEvery(
-        types.BRANCH_FETCH_STARTED,
-        fetchBranches,
-    );
-}
 
-export function* watchBranchesAdd() {
-    yield takeEvery(
-        types.BRANCH_ADD_STARTED,
-        addBranch,
-    );
-}
-
-export function* watchBranchesRemove() {
-    yield takeEvery(
-        types.BRANCH_REMOVE_STARTED,
-        removeBranch,
-    );
-}
-
-export function* watchBranchesUpdate() {
-    yield takeEvery(
-        types.BRANCH_UPDATE_STARTED,
-        editBranch,
-    );
-}
-
-//BRANCHES FETCH SAGA
+// BRANCHES FETCH SAGA
 function* fetchBranches(action) {
     try {
         const result = yield getBranches();
@@ -53,7 +26,14 @@ function* fetchBranches(action) {
     }
 }
 
-//TODO: BRANCHES ADD SAGA
+export function* watchBranchesFetch() {
+    yield takeEvery(
+        types.BRANCH_FETCH_STARTED,
+        fetchBranches,
+    );
+}
+
+// BRANCHES ADD SAGA
 function* addBranch(action) {
     try {
         const branch = action.payload;
@@ -68,7 +48,15 @@ function* addBranch(action) {
     }
 }
 
-//TODO: BRANCHES REMOVE SAGA
+
+export function* watchBranchesAdd() {
+    yield takeEvery(
+        types.BRANCH_ADD_STARTED,
+        addBranch,
+    );
+}
+
+// BRANCHES REMOVE SAGA
 function* removeBranch(action) {
     try {
         const result = yield deleteBranch({ id: action.payload.id });
@@ -80,7 +68,14 @@ function* removeBranch(action) {
     }
 }
 
-//TODO: BRANCHES UPDATE SAGA
+export function* watchBranchesRemove() {
+    yield takeEvery(
+        types.BRANCH_REMOVE_STARTED,
+        removeBranch,
+    );
+}
+
+// BRANCHES UPDATE SAGA
 function* editBranch(action) {
     try {
         const branch = action.payload;
@@ -94,6 +89,13 @@ function* editBranch(action) {
     } catch (error) {
         yield put(actions.failUpdatingBranch("Error:", error));
     }
+}
+
+export function* watchBranchesUpdate() {
+    yield takeEvery(
+        types.BRANCH_UPDATE_STARTED,
+        editBranch,
+    );
 }
 
 

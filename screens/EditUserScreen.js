@@ -21,9 +21,9 @@ const userTypesArray = [{ label:'Administrador', value:"1" }, { label:'Mesero', 
 function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser, branches }) {
 
   let restaurants = [];
-  branches.map(branch => restaurants.push({
+  branches.map((branch, index) => restaurants.push({
     label: branch.name,
-    value: branch.id
+    value: branch.id,
   }));
 
   const { colors, roundness } = theme;
@@ -32,18 +32,20 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
     navigation.setOptions({ title: 'EDITAR USUARIO' });
 
   const signUp = values => {
+
     var selectedRestaurant = restaurants.filter(restaurant => restaurant.value == values.restaurant[0])[0];
-    values.restaurantId = selectedRestaurant.value;
+
+    values.restaurantId = selectedRestaurant.value;``
     values.restaurantName = selectedRestaurant.label;
     var selectedUserType = userTypesArray.filter(userType => userType.value == values.userType[0])[0];
     values.userTypeId = selectedUserType.value;
     values.userTypeName = selectedUserType.label;
-    console.log('Submitting form', values)
+
 
     if(isNew){
-      createUser(navigation,values)
+      createUser(navigation, values)
     } else {
-      editUser(navigation,values)
+      editUser(navigation, values)
     }
   }
 
@@ -62,7 +64,7 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
           <Field name={'userType'} component={PickerInput} title='Tipo' single={true} selectedText="Tipo" placeholderText="Seleccionar tipo de usuario" options={userTypesArray}
             selectedItems={!isNew?[initialValues.userTypeId]:[]}/>
           <Field name={'restaurant'} component={PickerInput} title='Sucursal' single={true} selectedText="Sucursal" placeholderText="Seleccionar una sucursal" options={restaurants}
-            selectedItems={!isNew?[initialValues.restaurantId]:[]}/>
+            selectedItems={!isNew ? [initialValues.restaurantId] : []}/>
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
               disabled={!(dirty && valid)}

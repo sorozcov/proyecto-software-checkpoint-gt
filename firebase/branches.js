@@ -4,12 +4,12 @@ import { firebaseFirestore, firebaseAuth, firebase } from '.';
 const db = firebaseFirestore;
 const collection = "branches";
 
-//Funcion para obtener Branches de Firebase
+//Función para obtener Branches de Firebase
 export const getBranches = async() => {
     try {
         const branches = await db.collection(collection).get();
         let branchesArray = [];
-        await branches.docs.forEach(branch => {
+        branches.docs.forEach(branch => {
             branchesArray.push(branch.data());
         });
         let branchesNormalizer = {};
@@ -27,18 +27,18 @@ export const getBranches = async() => {
     }
 }
 
-//Funcion para crear o hacer update de un Branch
+//Función para crear o hacer update de un Branch
 //Si es nuevo enviar id=null o no enviar
 export const updateBranch = async({ id, name, location }) => {
     try {
-
         let branchDoc = null;
         let isNew = id == null;
+
         if (isNew) {
-            branchDoc = await firebaseFirestore.collection(collection).doc();
+            branchDoc = firebaseFirestore.collection(collection).doc();
             id = branchDoc.id;
         } else {
-            branchDoc = await firebaseFirestore.collection(collection).doc(id);
+            branchDoc = firebaseFirestore.collection(collection).doc(id);
             id = branchDoc.id;
         }
 
@@ -50,33 +50,47 @@ export const updateBranch = async({ id, name, location }) => {
             name,
             location,
         };
+
         if (isNew) {
             await branchDoc.set(branchInfo);
         } else {
-
             await branchDoc.update(branchInfo);
         }
+
         return { branch: branchInfo, error: null, errorMessage: null }
 
     } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo guardar la sucursal."
-        return { errorMessage, error, branch: null }
+
+        return {
+            errorMessage,
+            error,
+            branch: null
+        };
     }
 }
 
-//Funcion para eliminar un Branch.
+//Función para eliminar un Branch.
 export const deleteBranch = async({ id }) => {
     try {
-        let branchDoc = await firebaseFirestore.collection(collection).doc(id);
+        let branchDoc = firebaseFirestore.collection(collection).doc(id);
         branchDoc = await branchDoc.delete();
 
-        return { id, error: null, errorMessage: null };
+        return {
+            id,
+            error: null,
+            errorMessage: null
+        };
 
     } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar la sucursal."
 
-        return { errorMessage, error, id: null };
+        return {
+            errorMessage,
+            error,
+            id: null
+        };
     }
 }
