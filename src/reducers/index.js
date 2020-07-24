@@ -81,4 +81,5 @@ export const getProductsByCategory = state => {
   return categories.map(category=>{
     return {title:category.categoryName,
             data: products.filter(product => product.categoryId === category.categoryId)}
-  })};
+  })
+};

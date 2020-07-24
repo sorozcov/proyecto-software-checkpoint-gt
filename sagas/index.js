@@ -11,22 +11,21 @@ import { watchProductsFetchStarted, watchAddProductsStarted, watchEditProductsSt
 
 function* mainSaga() {
     yield all([
-
-    //fork(watchLoginStarted),
-    //fork(watchLoginStarted),
-
     fork(watchUsersFetchStarted),
     fork(watchAddUsersStarted),
     fork(watchEditUsersStarted),
     fork(watchDeleteUserStarted),
+
     fork(watchFetchCategories),
     fork(watchAddCategory),
     fork(watchEditCategory),
-    fork(watchRemoveCategory),  
+    fork(watchRemoveCategory), 
+
     fork(watchBranchesFetch),
     fork(watchBranchesAdd),
     fork(watchBranchesRemove),
     fork(watchBranchesUpdate),
+    
     fork(watchProductsFetchStarted),
     fork(watchAddProductsStarted),
     fork(watchEditProductsStarted),

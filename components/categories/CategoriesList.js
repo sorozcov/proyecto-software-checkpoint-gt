@@ -6,10 +6,9 @@ import { withTheme } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { HeaderBackground } from '@react-navigation/stack';
 
-import * as actions from '../src/actions/categories';
-import * as selectors from '../src/reducers';
+import * as actions from '../../src/actions/categories';
+import * as selectors from '../../src/reducers';
 
 import CategoryListItem from './CategoryListItem';
 
@@ -65,11 +64,8 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                 onPress={() => {
                                                     rowMap[category.item.categoryId].closeRow();
                                                     Alert.alert(
-<<<<<<< HEAD
-                                                        '¿Eliminar usuario?',
-=======
                                                         '¿Eliminar categoría?',
->>>>>>> master
+                                                        
                                                         'Esta acción no puede ser revertida',
                                                         [
                                                             {
@@ -78,9 +74,6 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                             },
                                                             {
                                                                 text: 'Eliminar',
-<<<<<<< HEAD
-                                                                onPress: () => deleteCategory(category.item.categoryId),
-=======
                                                                 onPress: () => {
                                                                     const cate = productsByCategories.some(
                                                                         product => product.data.length > 0 && (product.title == category.item.categoryName));
@@ -102,7 +95,6 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                                         );
                                                                     }
                                                                 },
->>>>>>> master
                                                                 style: 'destructive'
                                                             }
                                                         ],
@@ -217,10 +209,7 @@ export default connect(
         isLoading: selectors.isFetchingCategories(state),
         isCreating: selectors.isCreatingCategory(state),
         isEditing: selectors.isEditingCategory(state),
-<<<<<<< HEAD
-=======
         productsByCategories: selectors.getProductsByCategory(state),
->>>>>>> master
     }),
     dispatch => ({
         onLoad() {
