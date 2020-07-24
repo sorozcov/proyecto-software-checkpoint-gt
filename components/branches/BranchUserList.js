@@ -1,55 +1,56 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { Container } from 'native-base';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { withTheme } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import UserListItem from '.././UserListItem';
+import * as actions from '../../src/actions/users';
+import * as selectors from '../../src/reducers';
 import { HeaderBackground } from '@react-navigation/stack';
-
-import * as actions from '../src/actions/categories';
-import * as selectors from '../src/reducers';
-
-import CategoryListItem from './CategoryListItem';
-
+import * as actionsUsers from '../../src/actions/users';
 
 const width = Dimensions.get('window').width; // full width
 
 
-function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navigation, newCategory, isCreating, isEditing, selectCategory, deleteCategory, productsByCategories}) {
+function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, branch }) {
     const { colors, roundness } = theme;
+
     useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 
+           
             {
                  (
-                    <Container width={width}>
-                          {
-                                categories.length <= 0 && !isLoading && (
+                    <Container  width={width}>
+                             {
+                                users.filter(user => branch === null ? user : user.restaurantName === branch.name).length <= 0 && !isLoading && (
                                     <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                             <MaterialCommunityIcons name="information" color='black' size={50} />
-                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay categorías registradas</Text>
+                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay usuarios registrados en esta sucursal</Text>
                                     </View>
                                 )
                             }
                             <SwipeListView
                                 style={{marginTop:8}}
-                                data={categories}
-                                renderItem={ (category, rowMap) => (
-                                    <CategoryListItem style={styles.rowFront} key={category.item.categoryId} name={`${category.item.categoryName}`} category={category.item} navigation={navigation} />
+                                data={users.filter(user => branch === null ? user : user.restaurantName === branch.name)}
+                                renderItem={ (user, rowMap) => (
+                                    <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
                                 )}
+                                disableRightSwipe={true}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
-                                keyExtractor={category => category.categoryId}
+                                keyExtractor={user => user.uid}
                                 renderHiddenItem={
-                                    (category, rowMap) => (
+                                    (user, rowMap) => (
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectCategory(navigation, category.item);rowMap[category.item.categoryId].closeRow();}}
+                                                onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -62,47 +63,19 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
                                                 
-                                                onPress={() => {
-                                                    rowMap[category.item.categoryId].closeRow();
+                                                onPress={ () => {
+                                                    rowMap[user.item.uid].closeRow();
                                                     Alert.alert(
-<<<<<<< HEAD
                                                         '¿Eliminar usuario?',
-=======
-                                                        '¿Eliminar categoría?',
->>>>>>> master
                                                         'Esta acción no puede ser revertida',
                                                         [
                                                             {
-                                                                text: 'Cancelar',
+                                                                text: 'Cancelar', 
                                                                 style: 'cancel'
                                                             },
                                                             {
                                                                 text: 'Eliminar',
-<<<<<<< HEAD
-                                                                onPress: () => deleteCategory(category.item.categoryId),
-=======
-                                                                onPress: () => {
-                                                                    const cate = productsByCategories.some(
-                                                                        product => product.data.length > 0 && (product.title == category.item.categoryName));
-                                                                    console.log('ELIMINA? ->', cate);
-                                                                    console.log('ELIMINA? ->', category.item.categoryName);
-                                                                    if(cate === false) {
-                                                                        deleteCategory(category.item.categoryId);
-                                                                    } else {
-                                                                        Alert.alert(
-                                                                            "Error al eliminar",
-                                                                            "No se puede eliminar porque hay productos que pertecen a esta categoría",
-                                                                            
-                                                                            [
-                                                                                {
-                                                                                    text: "OK",
-                                                                                    onPress: () => console.log('OK, no eliminar categoría!')
-                                                                                }
-                                                                            ],
-                                                                        );
-                                                                    }
-                                                                },
->>>>>>> master
+                                                                onPress: () => deleteUser(user.item.uid),
                                                                 style: 'destructive'
                                                             }
                                                         ],
@@ -126,21 +99,22 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
                                 previewRowKey={'0'}
-                                disableRightSwipe={true}
+                                
                                 previewOpenDelay={1000}
                             />
 
-                                  
+                                 
                         <FloatingAction
+                            
                             buttonSize={50}
                             color='black'
                             overrideWithAction={true}
-                            onPressItem={() => newCategory(navigation)}
+                            onPressItem={() => newUser(navigation)}
                             actions={[{
                                 icon: (
-                                    <MaterialCommunityIcons name="plus" color='white' size={25}/>
+                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 4, }}/>
                                   ),
-                                name:'AddCategory'
+                                name:'AddUser'
                               }]}
                         />
                     </Container>
@@ -149,10 +123,10 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isCreating || isEditing}>
+                visible={isAdding || isEditing}>
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isCreating || isEditing} color={colors.primary} />
+                    <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
                 </View>
                 </View>
             </Modal>
@@ -201,7 +175,7 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-       
+        
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
@@ -213,36 +187,32 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
-        categories: selectors.getCategories(state),
-        isLoading: selectors.isFetchingCategories(state),
-        isCreating: selectors.isCreatingCategory(state),
-        isEditing: selectors.isEditingCategory(state),
-<<<<<<< HEAD
-=======
-        productsByCategories: selectors.getProductsByCategory(state),
->>>>>>> master
+        users: selectors.getUsers(state),
+        isLoading: selectors.isFetchingUsers(state),
+        isAdding: selectors.isAddingUsers(state),
+        isEditing: selectors.isEditingUsers(state),
+        branch: selectors.getViewedBranch(state)
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingCategories());
+            dispatch(actions.startFetchingUsers());
+        },
+        onRefresh() {
+            dispatch(actions.startFetchingUsers());
         },
 
-         onRefresh() {
-            dispatch(actions.startFetchingCategories());
+        newUser(navigation) {
+            dispatch(actions.deselectUser());
+            navigation.navigate('EditUserScreen');
         },
 
-        newCategory(navigation) {
-            dispatch(actions.deselectCategory());
-            navigation.navigate('EditCategoryScreen');
+        selectUser(navigation, user) {
+            dispatch(actionsUsers.selectUser(user));
+            navigation.navigate('EditUserScreen');
         },
 
-        selectCategory(navigation, category) {
-              dispatch(actions.selectCategory(category));
-              navigation.navigate('EditCategoryScreen');
+        deleteUser(uid) {
+            dispatch(actions.startRemovingUser(uid))
         },
-        
-        deleteCategory(categoryId) {
-            dispatch(actions.startRemovingCategory(categoryId));
-        }
     }),
-)(withTheme(CategoriesList));
+)(withTheme(UserList))

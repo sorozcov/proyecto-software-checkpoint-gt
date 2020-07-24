@@ -1,56 +1,71 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Container } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import { withTheme } from 'react-native-paper';
+import { Container, Content, List, Spinner } from 'native-base';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert  } from "react-native";
+import { withTheme, Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import UserListItem from './UserListItem';
-import * as actions from '../src/actions/users';
-import * as selectors from '../src/reducers';
+import BranchItem from './BranchItem';
+import * as actions from '../../src/actions/branches';
+import * as actionsUsers from '../../src/actions/users';
+import * as selectors from '../../src/reducers';
 import { HeaderBackground } from '@react-navigation/stack';
-import * as actionsUsers from '../src/actions/users';
-import * as actionBranches from '../src/actions/branches';
 
 const width = Dimensions.get('window').width; // full width
 
-
-function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser }) {
+function BranchesList ({
+    theme,
+    onLoad,
+    onRefresh,
+    branches,
+    isLoading,
+    navigation,
+    newBranch,
+    isAdding,
+    isEditing,
+    selectBranch,
+    viewBranch,
+    deleteBranch,
+    branchHasUsers,
+    cannotDeleteBranch }) {
+  
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
     return(
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
            
+          
             {
-                 (
-                    <Container  width={width}>
-                             {
-                                users.length <= 0 && !isLoading && (
+               (
+                    <Container width={width}>
+                        {
+                                branches.length <= 0 && !isLoading && (
                                     <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                             <MaterialCommunityIcons name="information" color='black' size={50} />
-                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay usuarios registrados</Text>
+                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay sucursales registradas</Text>
                                     </View>
                                 )
                             }
+                      
                             <SwipeListView
                                 style={{marginTop:8}}
-                                data={users}
-                                renderItem={ (user, rowMap) => (
-                                    <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
+                                data={branches}
+                                renderItem={ (branch, rowMap) => (
+                                    <BranchItem onPress={() => viewBranch(navigation, branch.item)} style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
                                 )}
-                                disableRightSwipe={true}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
-                                keyExtractor={user => user.uid}
+                                disableRightSwipe={true}
+                                closeOnRowPress={true}
+                                keyExtractor={(branch, index) => (branch.id)}
                                 renderHiddenItem={
-                                    (user, rowMap) => (
+                                    (branch, rowMap) => (
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
+                                                onPress={() => {selectBranch(navigation, branch.item);rowMap[branch.item.id].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                 name="pencil"
@@ -60,13 +75,14 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                                  <Text style={styles.backTextWhite}>Editar</Text>
                                                
                                             </TouchableOpacity>
+
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
                                                 
                                                 onPress={ () => {
-                                                    rowMap[user.item.uid].closeRow();
+                                                    rowMap[branch.item.id].closeRow();
                                                     Alert.alert(
-                                                        '¿Eliminar usuario?',
+                                                        '¿Eliminar sucursal?',
                                                         'Esta acción no puede ser revertida',
                                                         [
                                                             {
@@ -75,7 +91,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                                             },
                                                             {
                                                                 text: 'Eliminar',
-                                                                onPress: () => deleteUser(user.item.uid),
+                                                                onPress: () => branchHasUsers(branch.item.id) ? cannotDeleteBranch():deleteBranch(branch.item.id),
                                                                 style: 'destructive'
                                                             }
                                                         ],
@@ -98,36 +114,34 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 }
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
-                                previewRowKey={'0'}
+                                
                                 
                                 previewOpenDelay={1000}
                             />
-
-                                 
-                        <FloatingAction
-                            
-                            buttonSize={50}
-                            color='black'
-                            overrideWithAction={true}
-                            onPressItem={() => newUser(navigation)}
-                            actions={[{
-                                icon: (
-                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 4, }}/>
-                                  ),
-                                name:'AddUser'
-                              }]}
-                        />
+                                  
                     </Container>
                 )
             }
+            <FloatingAction
+                buttonSize={50}
+                color='black'
+                overrideWithAction={true}
+                onPressItem={() => newBranch(navigation)}
+                actions={[{
+                    icon: (
+                        <MaterialCommunityIcons name="plus" color='white' size={26}/>
+                      ),
+                    name:'addBranch'
+                  }]}
+            />
             <Modal
                 transparent={true}
                 animationType={'none'}
                 visible={isAdding || isEditing}>
                 <View style={styles.modalBackground}>
-                <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
-                </View>
+                    <View style={styles.activityIndicatorWrapper}>
+                        <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
+                    </View>
                 </View>
             </Modal>
         </View>
@@ -185,35 +199,53 @@ const styles = StyleSheet.create({
     
 })
 
+
 export default connect(
     state => ({
-        users: selectors.getUsers(state),
-        isLoading: selectors.isFetchingUsers(state),
-        isAdding: selectors.isAddingUsers(state),
-        isEditing: selectors.isEditingUsers(state),
+        branches: selectors.getBranches(state),
+        isLoading: selectors.isFetchingBranches(state),
+        isAdding: selectors.isAddingBranches(state),
+        isEditing: selectors.isEditingBranches(state),
+        branchHasUsers: (branchId)=>selectors.branchHasUsers(branchId,state)
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingUsers());
-            dispatch(actionBranches.startFetchingBranch());
+            dispatch(actions.startFetchingBranch());
+            dispatch(actionsUsers.startFetchingUsers());
         },
         onRefresh() {
-            dispatch(actions.startFetchingUsers());
+            dispatch(actions.startFetchingBranch());
         },
-
-        newUser(navigation) {
-            dispatch(actions.deselectUser());
-            navigation.navigate('EditUserScreen');
+        newBranch(navigation) {
+            dispatch(actions.deselectBranch());
+            navigation.navigate('EditBranchScreen');
+        },     
+        selectBranch(navigation, branch) {
+              dispatch(actions.selectBranch(branch));
+              navigation.navigate('EditBranchScreen');
         },
-
-        selectUser(navigation, user) {
-            dispatch(actionsUsers.selectUser(user));
-            navigation.navigate('EditUserScreen');
+        viewBranch(navigation, branch) {
+            navigation.navigate('UserList');
+            dispatch(actions.viewBranch(branch))
         },
-
-        deleteUser(uid) {
-            dispatch(actions.startRemovingUser(uid))
+        deleteBranch(id){
+            dispatch(actions.startRemovingBranch(id));
         },
-          
+        cannotDeleteBranch(){
+            Alert.alert(
+                'Error al eliminar sucursal.',
+                'Esta sucursal tiene usuarios. Para eliminarla, debe eliminar primero todos los usuarios dentro de la sucursal.',
+                [
+                    {
+                        text: 'Ok', 
+                        style: 'cancel'
+                    },
+                    
+                ],
+                {
+                    cancelable: true,
+                },
+            )
+        }
     }),
-)(withTheme(UserList))
+)(withTheme(BranchesList));

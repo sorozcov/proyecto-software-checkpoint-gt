@@ -43,7 +43,6 @@ function* addUser(action) {
             yield put(actions.failAddingUser(response.error));
         }
     } catch (error) {
-        console.log(error)
         yield put(actions.failAddingUser('Falló al crear el usuario'));
     }
 }

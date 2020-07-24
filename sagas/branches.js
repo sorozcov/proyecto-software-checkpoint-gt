@@ -38,7 +38,7 @@ export function* watchBranchesRemove() {
 export function* watchBranchesUpdate() {
     yield takeEvery(
         types.BRANCH_UPDATE_STARTED,
-        updateBranch,
+        editBranch,
     );
 }
 
@@ -49,7 +49,7 @@ function* fetchBranches(action) {
         yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
 
     } catch (error) {
-        yield put(actions.failFetchingBranch("Error:", error));
+        yield put(actions.failFetchingBranch("Error:", result.error));
     }
 }
 
@@ -57,9 +57,12 @@ function* fetchBranches(action) {
 function* addBranch(action) {
     try {
         const branch = action.payload;
-        const result = yield updateBranch({ branchId: null, BranchName: branch.name, location: branch.location });
-        yield put(actions.completeAddingBranch(action.payload.id, result.branch));
-
+        const result = yield updateBranch(branch);
+        if (result.error == null) {
+            yield put(actions.completeAddingBranch(result.branch));
+        } else {
+            yield put(actions.failAddingBranch(result.error));
+        }
     } catch (error) {
         yield put(actions.failAddingBranch("Error:", error));
     }
@@ -68,8 +71,9 @@ function* addBranch(action) {
 //TODO: BRANCHES REMOVE SAGA
 function* removeBranch(action) {
     try {
-        const result = yield deleteBranch({ branchId: action.payload });
-        yield put(actions.completeRemovingBranch(result.branchId));
+        const result = yield deleteBranch({ id: action.payload.id });
+
+        yield put(actions.completeRemovingBranch(result.id));
 
     } catch (error) {
         yield put(actions.failRemovingBranch("Error:", error));
@@ -77,13 +81,18 @@ function* removeBranch(action) {
 }
 
 //TODO: BRANCHES UPDATE SAGA
-function* updateBranch(action) {
+function* editBranch(action) {
     try {
         const branch = action.payload;
-        const result = yield updateBranch({ branchId: branch.id, BranchName: branch.name, location: branch.location });
-        yield put(actions.completeUpdatingBranch(result.branch.branchId));
+        const result = yield updateBranch(branch);
+
+        if (result.error == null) {
+            yield put(actions.completeUpdatingBranch(result.branch));
+        } else {
+            yield put(actions.failUpdatingBranch(result.error));
+        }
     } catch (error) {
-        yield put(actions.failAddingBranch("Error:", error));
+        yield put(actions.failUpdatingBranch("Error:", error));
     }
 }
 

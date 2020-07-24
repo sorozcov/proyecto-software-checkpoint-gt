@@ -15,12 +15,14 @@ import HomeScreen from './screens/HomeScreenAdmin';
 import { firebaseApp } from './firebase';
 
 
+//Mute warnings
+//console.disableYellowBox = true;
 
 
 
 //Se crea el store
 const store = configureStore();
-store.subscribe(() => console.log(store.getState()))
+//store.subscribe(() => console.log(store.getState()))
 
 //Se configura el tema 
 const theme = {

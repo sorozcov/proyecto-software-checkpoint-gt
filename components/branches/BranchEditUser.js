@@ -9,30 +9,24 @@ import randomString from 'random-string'
 import * as firebase from "firebase";
 import 'firebase/firestore';
 
-import ImagePicker from '../components/ImagePickerUser';
-import MyTextInput from '../components/textInput';
-import PickerInput from '../components/PickerInput';
-import * as selectors from '../src/reducers';
-import * as actionsUsers from '../src/actions/users';
+import ImagePicker from '../ImagePickerUser';
+import MyTextInput from '../textInput';
+import PickerInput from '../PickerInput';
+import * as selectors from '../../src/reducers';
+import * as actionsUsers from '../../src/actions/users';
 
 const userTypesArray = [{ label:'Administrador', value:"1" }, { label:'Mesero', value:"2" }];
-// const restaurants = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
+const restaurantsArray = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
 
-function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser, branches }) {
-
-  let restaurants = [];
-  branches.map(branch => restaurants.push({
-    label: branch.name,
-    value: branch.id
-  }));
-
+function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser, branch }) {
   const { colors, roundness } = theme;
   const isNew = initialValues==null;
+  console.log(initialValues);
   if(!isNew)
     navigation.setOptions({ title: 'EDITAR USUARIO' });
 
   const signUp = values => {
-    var selectedRestaurant = restaurants.filter(restaurant => restaurant.value == values.restaurant[0])[0];
+    var selectedRestaurant = restaurantsArray.filter(restaurant => restaurant.value == values.restaurant[0])[0];
     values.restaurantId = selectedRestaurant.value;
     values.restaurantName = selectedRestaurant.label;
     var selectedUserType = userTypesArray.filter(userType => userType.value == values.userType[0])[0];
@@ -61,8 +55,8 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
           <Field name={'userType'} component={PickerInput} title='Tipo' single={true} selectedText="Tipo" placeholderText="Seleccionar tipo de usuario" options={userTypesArray}
             selectedItems={!isNew?[initialValues.userTypeId]:[]}/>
-          <Field name={'restaurant'} component={PickerInput} title='Sucursal' single={true} selectedText="Sucursal" placeholderText="Seleccionar una sucursal" options={restaurants}
-            selectedItems={!isNew?[initialValues.restaurantId]:[]}/>
+          <Field name={'restaurant'} component={PickerInput} title='Sucursal' single={true} selectedText="Sucursal" placeholderText="Seleccionar una sucursal" options={restaurantsArray}
+            selectedItems={[restaurantsArray.filter(obj => obj.label === branch.name)[0].value]}/>
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
               disabled={!(dirty && valid)}
@@ -128,8 +122,8 @@ const styles = StyleSheet.create({
 
 export default connect(
   state => ({
-    branches: selectors.getBranches(state),
     initialValues: selectors.getSelectedUser(state),
+    branch: selectors.getViewedBranch(state),
   }),
   dispatch => ({
     createUser(navigation, user) {

@@ -58,7 +58,10 @@ function* removeCategory(action) {
 function* editCategory(action) {
     try {
         var category = action.payload;
+        console.log('CATEGORYYYYY', category)
+
         const response = yield updateCategory(category);
+        console.log('REPONSEEEEEE', response)
 
         if(response.error == null) {
             yield put(actions.completeEditingCategory(response.category));

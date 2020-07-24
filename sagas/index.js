@@ -2,24 +2,15 @@ import { fork, all } from 'redux-saga/effects';
 
 //Importamos los watchers
 //import { watchLoginStarted } from './auth';
-import { 
-  watchFetchCategories, 
-  watchAddCategory,
-  watchRemoveCategory,
-  watchEditCategory
-} from './categories';
+
+import { watchBranchesFetch, watchBranchesAdd, watchBranchesRemove, watchBranchesUpdate } from './branches';
+import { watchFetchCategories , watchAddCategory, watchEditCategory, watchRemoveCategory } from './categories';
+import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted, watchDeleteUserStarted } from './users';
+import { watchProductsFetchStarted, watchAddProductsStarted, watchEditProductsStarted, watchDeleteProductStarted } from './products';
 
 
-import { 
-  watchUsersFetchStarted, 
-  watchAddUsersStarted, 
-  watchEditUsersStarted, 
-  watchDeleteUserStarted, 
-} from './users';
-
-
-function* mainSaga(){
-  yield all([
+function* mainSaga() {
+    yield all([
 
     //fork(watchLoginStarted),
     //fork(watchLoginStarted),
@@ -28,11 +19,19 @@ function* mainSaga(){
     fork(watchAddUsersStarted),
     fork(watchEditUsersStarted),
     fork(watchDeleteUserStarted),
-    fork (watchFetchCategories),
+    fork(watchFetchCategories),
     fork(watchAddCategory),
-    fork(watchRemoveCategory),
     fork(watchEditCategory),
-  ]);
+    fork(watchRemoveCategory),  
+    fork(watchBranchesFetch),
+    fork(watchBranchesAdd),
+    fork(watchBranchesRemove),
+    fork(watchBranchesUpdate),
+    fork(watchProductsFetchStarted),
+    fork(watchAddProductsStarted),
+    fork(watchEditProductsStarted),
+    fork(watchDeleteProductStarted),    
+    ]);
 }
 
 export default mainSaga;
