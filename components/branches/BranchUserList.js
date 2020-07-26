@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import React, { useEffect } from 'react';
 import { withTheme } from 'react-native-paper';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SwipeListView } from 'react-native-swipe-list-view';
-import UserListItem from '.././UserListItem';
-import * as actions from '../../src/actions/users';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+
 import * as selectors from '../../src/reducers';
-import { HeaderBackground } from '@react-navigation/stack';
+import UserListItem from '../users/UserListItem';
+import * as actions from '../../src/actions/users';
 import * as actionsUsers from '../../src/actions/users';
 
 const width = Dimensions.get('window').width; // full width

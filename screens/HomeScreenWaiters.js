@@ -1,19 +1,24 @@
 import * as React from 'react';
-import { Text, View, StyleSheet,Image } from 'react-native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import {withTheme} from 'react-native-paper';
+import { connect } from 'react-redux';
+import { withTheme } from 'react-native-paper';
+import { Text, View, StyleSheet, Image } from 'react-native';
+import { Avatar, Title, Caption, Drawer } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {connect} from 'react-redux';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
-import {useTheme,Avatar,Title,Caption,Paragraph,Drawer } from 'react-native-paper';
+
 import * as selectors from '../src/reducers';
-const DrawerR = createDrawerNavigator();
-const Tab = createMaterialBottomTabNavigator();
+import OrderStackScreen from './orders/OrderStackScreen';
+
 import default_pic from '../src/resources/default.png';
 
+const DrawerR = createDrawerNavigator();
+const Tab = createMaterialBottomTabNavigator();
+
+import * as actionsLoggedUser from '../src/actions/loggedUser';
 
 function DrawerContent(props) {
-  const {navigation,user} = props;
+  const {navigation,user,logOff} = props;
   const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
 
   return (
@@ -56,7 +61,7 @@ function DrawerContent(props) {
           )}
           label="Cerrar sesión"
           labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-          onPress={() => {navigation.replace('Login') }}
+          onPress={() => logOff(navigation)}
         />
         
       </Drawer.Section>
@@ -78,9 +83,7 @@ function DrawerContent(props) {
 
 function HomeScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-     <Text>Nuevo Pedido!</Text>
-    </View>
+    <OrderStackScreen />
   );
 }
 
@@ -92,9 +95,9 @@ function SettingsScreen() {
   );
 }
 
-function RootNavigator({theme,navigation,user}) {
+function RootNavigator({theme,navigation,user,logOff}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user}/>}>
+    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} logOff={logOff}/>}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
@@ -259,5 +262,13 @@ export default connect(
   }),
   dispatch => ({
     
+      logOff:(navigation)=>{
+  
+        //Hacemos dispatch de loggoff
+        navigation.replace('Login')
+        dispatch(actionsLoggedUser.logout());
+        
+      },
+   
   }),
 )(withTheme(RootNavigator));
