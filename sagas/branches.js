@@ -22,7 +22,7 @@ function* fetchBranches(action) {
         yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
 
     } catch (error) {
-        yield put(actions.failFetchingBranch("Error:", result.error));
+        yield put(actions.failFetchingBranch(result.error));
     }
 }
 
@@ -44,7 +44,7 @@ function* addBranch(action) {
             yield put(actions.failAddingBranch(result.error));
         }
     } catch (error) {
-        yield put(actions.failAddingBranch("Error:", error));
+        yield put(actions.failAddingBranch(error));
     }
 }
 
@@ -64,7 +64,7 @@ function* removeBranch(action) {
         yield put(actions.completeRemovingBranch(result.id));
 
     } catch (error) {
-        yield put(actions.failRemovingBranch("Error:", error));
+        yield put(actions.failRemovingBranch(action.payload.id, error));
     }
 }
 
@@ -84,10 +84,10 @@ function* editBranch(action) {
         if (result.error == null) {
             yield put(actions.completeUpdatingBranch(result.branch));
         } else {
-            yield put(actions.failUpdatingBranch(result.error));
+            yield put(actions.failUpdatingBranch(action.payload.id, result.error));
         }
     } catch (error) {
-        yield put(actions.failUpdatingBranch("Error:", error));
+        yield put(actions.failUpdatingBranch(action.payload.id, error));
     }
 }
 
