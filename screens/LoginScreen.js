@@ -3,6 +3,8 @@ import { Image, StyleSheet, ActivityIndicator,View,Modal,Alert,Keyboard ,Keyboar
 import { TextInput, withTheme ,Text, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import * as firebase from "firebase";
+import { AsyncStorage } from 'react-native';
+
 
 import * as actionsLoggedUser from '../src/actions/loggedUser';
 import {NavigationActions,StackActions } from 'react-navigation';                
@@ -19,6 +21,36 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
   const [modalVisibleIndicatorLogin, setmodalVisibleIndicatorLogin] = useState(false);
   const [mailInput, changeMailInput] = useState('');
   const [password, changePassword] = useState('');
+  const [verifyingUser, setVerifyingUser] = useState(true);
+  async function getPersistedStorage() {
+    
+    if(verifyingUser){
+      
+      try {
+        let userCheckpoint = JSON.parse(await AsyncStorage.getItem('userCheckpoint'));
+        console.log("persisted storage")
+        console.log(userCheckpoint)
+        if(userCheckpoint){
+          let saveLogged = await saveLoggedUser(navigation,userCheckpoint)
+          if(saveLogged){
+            setVerifyingUser(false)
+          }
+          
+          console.log("Relogin succesfull");
+          
+        }else{
+          setVerifyingUser(false)
+        }
+        
+      } catch (error) {
+        console.log(error);
+        setVerifyingUser(false)
+        
+      }
+       
+    }
+  }
+  getPersistedStorage();
   async function login(email, pass) {
     Keyboard.dismiss();
     console.log("started");
@@ -29,11 +61,12 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
              .signInWithEmailAndPassword(email, pass);
    
             
-            setmodalVisibleIndicatorLogin(false);
+            
          // Navigate to the Home page, the user is auto logged in
          user=await firebase.auth().currentUser; 
          if(user.emailVerified){
-            saveLoggedUser(navigation,user)
+            await saveLoggedUser(navigation,user)
+            setmodalVisibleIndicatorLogin(false);
             console.log("Login succesfull");
          }else{
           console.log("Verificar correo!");
@@ -102,6 +135,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       style={styles.container}
     >
+      { !verifyingUser &&
     <View style={styles.container}>
       <View style={{flex:0.4}}/>
       <View style={styles.imageContainer}>
@@ -165,8 +199,20 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
           <ActivityIndicator size="large" animating={modalVisibleIndicatorLogin} color={colors.primary}/>
           </View>
         </View>
-    </Modal>     
+    </Modal>   
+      
     </View>
+    }
+    <Modal
+        transparent={true}
+        animationType={'none'}
+        visible={verifyingUser}>
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+          <ActivityIndicator size="large" animating={verifyingUser} color={colors.primary}/>
+          </View>
+        </View>
+    </Modal>  
     </KeyboardAvoidingView>
   );
 }
@@ -232,14 +278,20 @@ export default connect(
     async saveLoggedUser(navigation,user) {
 
       //Se cargan los usuarios
-      const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
-      dispatch(actionsLoggedUser.login(userLoggedIn.data()));
+      try{
+        const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
+        dispatch(actionsLoggedUser.login(userLoggedIn.data()));
 
-      if(userLoggedIn.data().userTypeId==1){
-        navigation.replace('HomeAdmin');
-      }else{
-        navigation.replace('HomeWaiters');
+        if(userLoggedIn.data().userTypeId==1){
+          navigation.replace('HomeAdmin');
+        }else{
+          navigation.replace('HomeWaiters');
+        }
+      }catch{
+        console.log("Error en loggear internet.")
       }
+      return await true
+      
      
     },
   }),

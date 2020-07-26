@@ -11,9 +11,10 @@ const DrawerR = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
 import default_pic from '../src/resources/default.png';
 
+import * as actionsLoggedUser from '../src/actions/loggedUser';
 
 function DrawerContent(props) {
-  const {navigation,user} = props;
+  const {navigation,user,logOff} = props;
   const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
 
   return (
@@ -56,7 +57,7 @@ function DrawerContent(props) {
           )}
           label="Cerrar sesión"
           labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-          onPress={() => {navigation.replace('Login') }}
+          onPress={() => logOff(navigation)}
         />
         
       </Drawer.Section>
@@ -92,9 +93,9 @@ function SettingsScreen() {
   );
 }
 
-function RootNavigator({theme,navigation,user}) {
+function RootNavigator({theme,navigation,userm,logOff}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user}/>}>
+    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} loggOff={logOff}/>}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
@@ -259,5 +260,13 @@ export default connect(
   }),
   dispatch => ({
     
+      logOff:(navigation)=>{
+  
+        //Hacemos dispatch de loggoff
+        navigation.replace('Login')
+        dispatch(actionsLoggedUser.logout());
+        
+      },
+   
   }),
 )(withTheme(RootNavigator));

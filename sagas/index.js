@@ -7,13 +7,14 @@ import { watchBranchesFetch, watchBranchesAdd, watchBranchesRemove, watchBranche
 import { watchFetchCategories , watchAddCategory, watchEditCategory, watchRemoveCategory } from './categories';
 import { watchUsersFetchStarted, watchAddUsersStarted, watchEditUsersStarted, watchDeleteUserStarted } from './users';
 import { watchProductsFetchStarted, watchAddProductsStarted, watchEditProductsStarted, watchDeleteProductStarted } from './products';
+import { watchLoginStarted, watchLogoffStarted } from './login';
 
 
 function* mainSaga() {
     yield all([
 
-    //fork(watchLoginStarted),
-    //fork(watchLoginStarted),
+    fork(watchLoginStarted),
+    fork(watchLogoffStarted),
 
     fork(watchUsersFetchStarted),
     fork(watchAddUsersStarted),
