@@ -21,20 +21,24 @@ function* mainSaga() {
         fork(watchAddUsersStarted),
         fork(watchEditUsersStarted),
         fork(watchDeleteUserStarted),
+
         fork(watchFetchCategories),
         fork(watchAddCategory),
         fork(watchEditCategory),
         fork(watchRemoveCategory),
+
         fork(watchBranchesFetch),
         fork(watchBranchesAdd),
         fork(watchBranchesRemove),
         fork(watchBranchesUpdate),
+
         fork(watchProductsFetchStarted),
         fork(watchAddProductsStarted),
         fork(watchEditProductsStarted),
         fork(watchDeleteProductStarted),
         fork(watchAddOrderStarted),
         fork(watchOrdersFetch),
+
     ]);
 }
 

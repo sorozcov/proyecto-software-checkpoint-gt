@@ -2,11 +2,10 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
-import CategoriesList from '../components/CategoriesList';
+import CategoriesList from '../components/categories/CategoriesList';
 import ProductListScreen from '../components/products/ProductsList';
 import EditProductScreen from './EditProductScreen';
 import EditCategoryScreen from './EditCategoryScreen';
-import * as actions from '../src/actions/categories';
 
 const MenuStack = createStackNavigator();
 

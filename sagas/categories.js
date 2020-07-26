@@ -1,9 +1,6 @@
 import {
-    //call,
     takeEvery,
     put,
-    //delay,
-    //select,
 } from 'redux-saga/effects';
 
 import { 
@@ -17,6 +14,7 @@ import * as actions from '../src/actions/categories';
 import * as types from '../src/types/categories';
 import categories from '../src/reducers/categories';
 
+//  función que se encarga de traer todas las categorías de la base de datos para luego mostrarlas
 function* fetchCategories(action) {
     try {
         const result = yield getCategories();
@@ -27,6 +25,7 @@ function* fetchCategories(action) {
     }
 }
 
+//  función que se encarga en agregar una categoría, pasa los datos para que luego sea agregada a base de datos
 function* addCategory(action) {
     try {
         var category = action.payload.category;
@@ -42,9 +41,8 @@ function* addCategory(action) {
     }
 }
 
+//  función que se encarga en pasar los datos para eliminar una categoría de la base de datos
 function* removeCategory(action) {
-    //  FALTA VERIFICAR SI ESTA CATEGORÍA ES PARTE DE UN PRODUCTO
-    //  ESTO SE HARÁ ANTES DE ENTRAR AL TRY - CATCH
     try {
         var category = action.payload;
         const response = yield deleteCategory(category);
@@ -55,13 +53,12 @@ function* removeCategory(action) {
     }
 }
 
+//  función que se encarga de pasar los datos para editar una categoría 
 function* editCategory(action) {
     try {
         var category = action.payload;
-        console.log('CATEGORYYYYY', category)
 
         const response = yield updateCategory(category);
-        console.log('REPONSEEEEEE', response)
 
         if(response.error == null) {
             yield put(actions.completeEditingCategory(response.category));
