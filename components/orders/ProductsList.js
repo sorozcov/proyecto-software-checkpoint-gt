@@ -15,7 +15,7 @@ import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,productsByCategories, deleteProduct, user}) {
+function ProductsList ({ theme, onRefresh,onLoad, isLoading, navigation, deleteProduct, addProduct,productsByCategories, deleteProduct, user}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
                 Array(5)
@@ -132,46 +132,24 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectProduct(navigation, product.item);rowMap[product.item.productId].closeRow();}}
+                                                onPress={() => {deleteProduct(product.item);rowMap[product.item.productId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
-                                                name="pencil"
+                                                name="minus"
                                                 color={'black'}
                                                 size={30}
                                                 />
-                                                 <Text style={styles.backTextWhite}>Editar</Text>
                                                
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={ () => {
-                                                    rowMap[product.item.productId].closeRow();
-                                                    Alert.alert(
-                                                        '¿Eliminar producto?',
-                                                        'Esta acción no puede ser revertida',
-                                                        [
-                                                            {
-                                                                text: 'Cancelar', 
-                                                                style: 'cancel'
-                                                            },
-                                                            {
-                                                                text: 'Eliminar',
-                                                                onPress: () => deleteProduct(product.item.productId),
-                                                                style: 'destructive'
-                                                            }
-                                                        ],
-                                                        {
-                                                            cancelable: true,
-                                                        },
-                                                    )
-                                                }}
+                                                onPress={() => {addProduct(product.item); rowMap[product.item.productId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
-                                                name="delete"
+                                                name="plus"
                                                 color={'black'}
                                                 size={30}
                                                 />
-                                                 <Text style={styles.backTextWhite}>Eliminar</Text>
                                                
                                             </TouchableOpacity>
                                         </View>
@@ -183,51 +161,6 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 
                                 previewOpenDelay={1000}
                             />
-
-                        {
-                            user.userTypeId != 2 && (
-                                <FloatingAction
-                                    buttonSize={50}
-                                    color='black'
-                                    
-                                    onPressItem={(name) => newProduct(navigation,name)}
-                                    actions={[{
-                                        icon: (
-                                            <MaterialCommunityIcons name="food" color='white' size={25}/>
-                                        ),
-                                        name:'EditProductScreen',
-                                        text:'Agregar Producto',
-                                        position:1,
-                                        textStyle:{fontFamily:'dosis-light'},
-                                        buttonSize:45,
-                                        color:'#00A8C8'
-                                        
-                                    },
-                                    {
-                                        icon: (
-                                            <MaterialCommunityIcons name="view-list" color='white' size={25}/>
-                                        ),
-                                        name:'CategoriesList',
-                                        text:'Ver Categorías',
-                                        position:2,
-                                        textStyle:{fontFamily:'dosis-light'},
-                                        buttonSize:45,
-                                        color:'#00A8C8'
-                                    },
-                                    {
-                                        icon: (
-                                            <MaterialCommunityIcons name="playlist-plus" color='white' size={25}/>
-                                        ),
-                                        name:'EditCategoryScreen',
-                                        text:'Agregar Categoría',
-                                        position:3,
-                                        textStyle:{fontFamily:'dosis-light'},
-                                        buttonSize:45,
-                                        color:'#00A8C8'
-                                    }]}
-                                />
-                            )
-                        }
                         
                     </Container>
                 )
@@ -236,10 +169,10 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isCreating || isEditing || isRemoving}>
+                visible={false}>
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isCreating || isEditing || isRemoving} color={colors.primary} />
+                    <ActivityIndicator size="large" animating={false} color={colors.primary} />
                 </View>
                 </View>
             </Modal>
@@ -301,12 +234,9 @@ const styles = StyleSheet.create({
 export default connect(
     state => ({
         user: selectors.getLoggedUser(state),
-        categories: selectors.getCategories(state),
         productsByCategories: selectors.getProductsByCategory(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
-        isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
-        isEditing: selectors.isEditingProducts(state),
-        isRemoving: selectors.isRemovingProducts(state),
+        //isRemoving: selectors.isRemovingProducts(state),
     }),
     dispatch => ({
         onLoad() {
@@ -322,13 +252,11 @@ export default connect(
             dispatch(actionsCategories.deselectCategory());
             navigation.navigate(screen);
         },
-
-        selectProduct(navigation, product) {
+        addProduct(product) {
               dispatch(actionsProducts.selectProduct(product));
-              navigation.navigate('EditProductScreen');
         },
-        deleteProduct(productId) {
-            dispatch(actionsProducts.startRemovingProduct(productId))
+        deleteProduct(product) {
+              dispatch(actionsProducts.selectProduct(product));
         },
     }),
 )(withTheme(ProductsList));

@@ -8,8 +8,9 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
 
 import * as selectors from '../src/reducers';
+
 import OrderStackScreen from './orders/OrderStackScreen';
-import OrdersStackScreen from './orders/OrdersStackScreen';
+import NewOrderScreen from './NewOrderScreen';
 
 import default_pic from '../src/resources/default.png';
 
@@ -80,8 +81,11 @@ function DrawerContent(props) {
 }
 
 function HomeScreen() {
+  // return (
+  //   <OrderStackScreen />
+  // );
   return (
-    <OrderStackScreen />
+    <NewOrderScreen />
   );
 }
 
