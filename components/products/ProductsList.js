@@ -15,7 +15,7 @@ import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,productsByCategories, deleteProduct}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,productsByCategories, deleteProduct, user}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
                 Array(5)
@@ -184,49 +184,50 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 previewOpenDelay={1000}
                             />
 
-                                  
-                        <FloatingAction
-                            
-                           
-                            buttonSize={50}
-                            color='black'
-                            
-                            onPressItem={(name) => newProduct(navigation,name)}
-                            actions={[{
-                                icon: (
-                                    <MaterialCommunityIcons name="food" color='white' size={25}/>
-                                  ),
-                                name:'EditProductScreen',
-                                text:'Agregar Producto',
-                                position:1,
-                                textStyle:{fontFamily:'dosis-light'},
-                                buttonSize:45,
-                                color:'#00A8C8'
-                                
-                              },
-                              {
-                                icon: (
-                                    <MaterialCommunityIcons name="view-list" color='white' size={25}/>
-                                  ),
-                                name:'CategoriesList',
-                                text:'Ver Categorías',
-                                position:2,
-                                textStyle:{fontFamily:'dosis-light'},
-                                buttonSize:45,
-                                color:'#00A8C8'
-                              },
-                              {
-                                icon: (
-                                    <MaterialCommunityIcons name="playlist-plus" color='white' size={25}/>
-                                  ),
-                                name:'EditCategoryScreen',
-                                text:'Agregar Categoría',
-                                position:3,
-                                textStyle:{fontFamily:'dosis-light'},
-                                buttonSize:45,
-                                color:'#00A8C8'
-                              }]}
-                        />
+                        {
+                            user.userTypeId != 2 && (
+                                <FloatingAction
+                                    buttonSize={50}
+                                    color='black'
+                                    
+                                    onPressItem={(name) => newProduct(navigation,name)}
+                                    actions={[{
+                                        icon: (
+                                            <MaterialCommunityIcons name="food" color='white' size={25}/>
+                                        ),
+                                        name:'EditProductScreen',
+                                        text:'Agregar Producto',
+                                        position:1,
+                                        textStyle:{fontFamily:'dosis-light'},
+                                        buttonSize:45,
+                                        color:'#00A8C8'
+                                        
+                                    },
+                                    {
+                                        icon: (
+                                            <MaterialCommunityIcons name="view-list" color='white' size={25}/>
+                                        ),
+                                        name:'CategoriesList',
+                                        text:'Ver Categorías',
+                                        position:2,
+                                        textStyle:{fontFamily:'dosis-light'},
+                                        buttonSize:45,
+                                        color:'#00A8C8'
+                                    },
+                                    {
+                                        icon: (
+                                            <MaterialCommunityIcons name="playlist-plus" color='white' size={25}/>
+                                        ),
+                                        name:'EditCategoryScreen',
+                                        text:'Agregar Categoría',
+                                        position:3,
+                                        textStyle:{fontFamily:'dosis-light'},
+                                        buttonSize:45,
+                                        color:'#00A8C8'
+                                    }]}
+                                />
+                            )
+                        }
                         
                     </Container>
                 )
@@ -299,6 +300,7 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
+        user: selectors.getLoggedUser(state),
         categories: selectors.getCategories(state),
         productsByCategories: selectors.getProductsByCategory(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
