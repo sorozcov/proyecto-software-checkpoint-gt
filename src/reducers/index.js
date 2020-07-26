@@ -84,10 +84,8 @@ export const getProductsError = state => productsSelectors.getProductsError(stat
 export const getProductsByCategory = state => {
   let categories = getCategories(state)
   let products = getProducts(state)
-  return categories.map(category => {
-    return {
-      title: category.categoryName,
-      data: products.filter(product => product.categoryId === category.categoryId)
-    }
+  return categories.map(category=>{
+    return {title:category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)}
   })
 };
