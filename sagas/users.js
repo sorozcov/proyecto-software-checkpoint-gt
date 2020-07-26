@@ -1,26 +1,19 @@
 import {
-    call,
     takeEvery,
     put,
-    // race,
-    // all,
-    delay,
-    select,
 } from 'redux-saga/effects';
 
-import * as selectors from '../src/reducers';
 import * as actions from '../src/actions/users';
 import * as types from '../src/types/users';
 
 import { getUsers, updateUser, deleteUser } from '../firebase/users';
 
+
 function* usersFetchStarted(action) {
     try {
         const result = yield getUsers()
-
         yield put(actions.completeFetchingUsers(result.users.byId, result.users.order));
     } catch (error) {
-        console.log("Falló el fetch de usuarios")
         yield put(actions.failFetchingUsers('Falló el fetch'))
     }
 }
@@ -31,6 +24,7 @@ export function* watchUsersFetchStarted(){
         usersFetchStarted,
     );
 }
+
 
 function* addUser(action) {
     try {
@@ -54,6 +48,7 @@ export function* watchAddUsersStarted() {
     );
 }
 
+
 function* editUser(action) {
     try {
         var user = action.payload;
@@ -75,6 +70,7 @@ export function* watchEditUsersStarted() {
         editUser,
     );
 }
+
 
 function* deleteUserStarted(action){
     try {

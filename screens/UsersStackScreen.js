@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
-import UserList from '../components/UserList';
+import UserList from '../components/users/UserList';
 import EditUserScreen from './EditUserScreen';
 
 const UsersStack = createStackNavigator();
