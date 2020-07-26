@@ -12,7 +12,7 @@ const configureStore = () => {
     applyMiddleware(sagaMiddleware));
   sagaMiddleware.run(mainSaga)
 
-  store.subscribe(() => console.log(store.getState()))
+  // store.subscribe(() => console.log(store.getState()))
 
   return store;
 }
