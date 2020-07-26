@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
-import { StyleSheet, View, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView,Text } from 'react-native';
 import { withTheme, Button } from 'react-native-paper';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyTextInput from '../textInput';
 
 import * as actions from '../../src/actions/orders';
@@ -29,6 +29,11 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
         >
             <View style={styles.container}>
                 <View style={styles.formContainer}>
+                    <View style={{alignSelf:"center"}}>
+                        <MaterialCommunityIcons name="food" color={'black'} size={125}
+                        style={{ marginTop: 0,paddingBottom:0,marginBottom:0 }} title="Hola"/>
+                        <Text style={{ fontSize: 22,fontFamily:'dosis-bold',paddingBottom:10,paddingTop:0  }}>NUEVO PEDIDO </Text>
+                    </View>
                     <Field name={'table'} component={MyTextInput} label='Mesa' placeholder='No. de Mesa' keyboardType='numeric'/>
                     <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa un nombre' returnKeyType='done'/>
                     <View style={styles.buttonContainer}>

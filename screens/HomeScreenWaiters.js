@@ -95,9 +95,9 @@ function SettingsScreen() {
   );
 }
 
-function RootNavigator({theme,navigation,userm,logOff}) {
+function RootNavigator({theme,navigation,user,logOff}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} loggOff={logOff}/>}>
+    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} logOff={logOff}/>}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
