@@ -34,7 +34,7 @@ function FinishOrder({ theme, navigation, orderProducts, activeOrder, sendOrder,
                             fontSize: 15,
                         }}
                         style={styles.button}
-                        onPress={() => sendOrder(orderProducts, activeOrder)}
+                        onPress={() => sendOrder(navigation, orderProducts, activeOrder)}
                     >
                         {'FINALIZAR'}
                     </Button>
@@ -91,12 +91,14 @@ export default connect(
         addingError: selectors.getOrdersError(state),
     }),
     dispatch => ({
-        sendOrder(orderProducts, activeOrder) {
+        sendOrder(navigation, orderProducts, activeOrder) {
             dispatch(actions.startAddingOrder(orderProducts, activeOrder));
-        },
-        finish(navigation) {
             dispatch(actions.deactivateOrder());
             navigation.navigate('NewOrder');
-        }
+        },
+        // finish(navigation) {
+        //     dispatch(actions.deactivateOrder());
+        //     navigation.navigate('NewOrder');
+        // }
     }),
 )(withTheme(FinishOrder));
