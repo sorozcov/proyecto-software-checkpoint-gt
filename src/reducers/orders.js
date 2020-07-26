@@ -7,7 +7,7 @@ import * as types from '../types/orders';
 
 const byId = (state = {}, action) => {
     switch(action.type) {
-        case types.PRODUCTS_FETCH_COMPLETED: {
+        case types.ORDERS_FETCH_COMPLETED: {
             const { entities, order } = action.payload;
             const newState = { ...state };
             order.forEach(id => {

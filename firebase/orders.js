@@ -59,13 +59,15 @@ export const getOrders = async() => {
         const orders = await db.collection(collection).get();
         let ordersArray = [];
         orders.docs.forEach(order => {
+            order.data().date = order.data().date.toDate();
+            // console.log(order.data().date.toDate());
             ordersArray.push(order.data());
         });
         let ordersNormalizer = {};
         let orderById = {};
 
-        ordersNormalizer['order'] = ordersArray.map(order => order.id);
-        ordersArray.map((order) => { orderById[order.id] = order })
+        ordersNormalizer['order'] = ordersArray.map(order => order.orderId);
+        ordersArray.map((order) => { orderById[order.orderId] = order });
         ordersNormalizer['byId'] = orderById;
         ordersNormalizer['array'] = ordersArray;
 

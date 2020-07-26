@@ -6,7 +6,7 @@ import {
 import * as actions from '../src/actions/orders';
 import * as types from '../src/types/orders';
 
-import { updateOrder } from '../firebase/orders';
+import { updateOrder, getOrders } from '../firebase/orders';
 
 function* makeOrder(action) {
     try {
@@ -34,10 +34,11 @@ export function* watchAddOrderStarted() {
 
 function* fetchOrders(action) {
     try {
-        const result = yield getOrders();
-        yield put(actions.completeFetchingOrders(result.orders.byId, result.orders.order));
+        const response = yield getOrders();
+        console.log(response);
+        yield put(actions.completeFetchingOrders(response.orders.byId, response.orders.order));
     } catch (error) {
-        yield put(actions.failFetchingOrders(result.error));
+        yield put(actions.failFetchingOrders(response.error));
     }
 }
 
