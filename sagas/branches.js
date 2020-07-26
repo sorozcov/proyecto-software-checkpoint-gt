@@ -14,6 +14,18 @@ import * as types from '../src/types/branches';
 
 import { getBranches, updateBranch, deleteBranch } from '../firebase/branches';
 
+
+// BRANCHES FETCH SAGA
+function* fetchBranches(action) {
+    try {
+        const result = yield getBranches();
+        yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
+
+    } catch (error) {
+        yield put(actions.failFetchingBranch(result.error));
+    }
+}
+
 export function* watchBranchesFetch() {
     yield takeEvery(
         types.BRANCH_FETCH_STARTED,
@@ -21,39 +33,7 @@ export function* watchBranchesFetch() {
     );
 }
 
-export function* watchBranchesAdd() {
-    yield takeEvery(
-        types.BRANCH_ADD_STARTED,
-        addBranch,
-    );
-}
-
-export function* watchBranchesRemove() {
-    yield takeEvery(
-        types.BRANCH_REMOVE_STARTED,
-        removeBranch,
-    );
-}
-
-export function* watchBranchesUpdate() {
-    yield takeEvery(
-        types.BRANCH_UPDATE_STARTED,
-        editBranch,
-    );
-}
-
-//BRANCHES FETCH SAGA
-function* fetchBranches(action) {
-    try {
-        const result = yield getBranches();
-        yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
-
-    } catch (error) {
-        yield put(actions.failFetchingBranch("Error:", result.error));
-    }
-}
-
-//TODO: BRANCHES ADD SAGA
+// BRANCHES ADD SAGA
 function* addBranch(action) {
     try {
         const branch = action.payload;
@@ -64,11 +44,19 @@ function* addBranch(action) {
             yield put(actions.failAddingBranch(result.error));
         }
     } catch (error) {
-        yield put(actions.failAddingBranch("Error:", error));
+        yield put(actions.failAddingBranch(error));
     }
 }
 
-//TODO: BRANCHES REMOVE SAGA
+
+export function* watchBranchesAdd() {
+    yield takeEvery(
+        types.BRANCH_ADD_STARTED,
+        addBranch,
+    );
+}
+
+// BRANCHES REMOVE SAGA
 function* removeBranch(action) {
     try {
         const result = yield deleteBranch({ id: action.payload.id });
@@ -76,11 +64,18 @@ function* removeBranch(action) {
         yield put(actions.completeRemovingBranch(result.id));
 
     } catch (error) {
-        yield put(actions.failRemovingBranch("Error:", error));
+        yield put(actions.failRemovingBranch(action.payload.id, error));
     }
 }
 
-//TODO: BRANCHES UPDATE SAGA
+export function* watchBranchesRemove() {
+    yield takeEvery(
+        types.BRANCH_REMOVE_STARTED,
+        removeBranch,
+    );
+}
+
+// BRANCHES UPDATE SAGA
 function* editBranch(action) {
     try {
         const branch = action.payload;
@@ -89,11 +84,18 @@ function* editBranch(action) {
         if (result.error == null) {
             yield put(actions.completeUpdatingBranch(result.branch));
         } else {
-            yield put(actions.failUpdatingBranch(result.error));
+            yield put(actions.failUpdatingBranch(action.payload.id, result.error));
         }
     } catch (error) {
-        yield put(actions.failUpdatingBranch("Error:", error));
+        yield put(actions.failUpdatingBranch(action.payload.id, error));
     }
+}
+
+export function* watchBranchesUpdate() {
+    yield takeEvery(
+        types.BRANCH_UPDATE_STARTED,
+        editBranch,
+    );
 }
 
 

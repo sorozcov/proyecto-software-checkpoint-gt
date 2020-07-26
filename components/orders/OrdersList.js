@@ -1,69 +1,83 @@
-import { connect } from 'react-redux';
-import { Container } from 'native-base';
 import React, { useEffect } from 'react';
-import { withTheme } from 'react-native-paper';
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { connect } from 'react-redux';
+import { Container, Content, List, Spinner } from 'native-base';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert  } from "react-native";
+import { withTheme, Button } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-
+import { SwipeListView } from 'react-native-swipe-list-view';
+import OrderItem from './OrderItem';
+import * as actions from '../../src/actions/orders';
 import * as selectors from '../../src/reducers';
-import UserListItem from '../users/UserListItem';
-import * as actions from '../../src/actions/users';
-import * as actionsUsers from '../../src/actions/users';
+import { HeaderBackground } from '@react-navigation/stack';
 
 const width = Dimensions.get('window').width; // full width
 
-function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, branch }) {
+function OrdersList ({
+    // deleteOrder,
+    theme,
+    onLoad,
+    onRefresh,
+    orders,
+    isLoading,
+    navigation,
+    newOrder,
+    isAdding,
+    isEditing,
+    selectOrder,
+    viewOrder,}) {
+  
     const { colors, roundness } = theme;
-
     useEffect(onLoad, []);
-    return(
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
             {
-                (
-                    <Container  width={width}>
+               (
+                    <Container width={width}>
                         {
-                            users.filter(user => branch === null ? user : user.restaurantName === branch.name).length <= 0 && !isLoading && (
+                            orders.length <= 0 && !isLoading && (
                                 <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                         <MaterialCommunityIcons name="information" color='black' size={50} />
-                                        <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay usuarios registrados en esta sucursal</Text>
+                                        <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>Aún no hay ordenes</Text>
                                 </View>
                             )
                         }
+                      
                         <SwipeListView
                             style={{marginTop:8}}
-                            data={users.filter(user => branch === null ? user : user.restaurantName === branch.name)}
-                            renderItem={ (user, rowMap) => (
-                                <UserListItem style={styles.rowFront} key={user.item.uid} name={`${user.item.name} ${user.item.lastName}`} description={user.item.email} image={user.item.image} user={user.item} navigation={navigation} />
+                            data={orders}
+                            renderItem={ (order, rowMap) => (
+                                <OrderItem onPress={() => viewOrder(navigation, order.item)} style={styles.rowFront} key={order.item.orderId} name={`${order.item.orderName}`} date={order.item.date.toDate().toString()} total={100} image={order.item.image} order={order.item} navigation={navigation} />
                             )}
-                            disableRightSwipe={true}
                             refreshing={isLoading}
                             onRefresh={()=>onRefresh()}
-                            keyExtractor={user => user.uid}
+                            disableRightSwipe={true}
+                            closeOnRowPress={true}
+                            keyExtractor={(order, index) => (order.id)}
                             renderHiddenItem={
-                                (user, rowMap) => (
+                                (order, rowMap) => (
                                     <View style={styles.rowBack}>
                                         
                                         <TouchableOpacity
                                             style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                            onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
+                                            onPress={() => {selectOrder(navigation, order.item);rowMap[order.item.id].closeRow();}}
                                         >
                                             <MaterialCommunityIcons
                                                 name="pencil"
                                                 color={'black'}
                                                 size={30}
                                             />
-                                                <Text style={styles.backTextWhite}>Editar</Text>
-                                            
+                                            <Text style={styles.backTextWhite}>Editar</Text>  
                                         </TouchableOpacity>
-                                        <TouchableOpacity
+
+                                        {/* <TouchableOpacity
                                             style={[styles.backRightBtn, styles.backRightBtnRight]}
                                             
                                             onPress={ () => {
-                                                rowMap[user.item.uid].closeRow();
+                                                rowMap[order.item.id].closeRow();
                                                 Alert.alert(
-                                                    '¿Eliminar usuario?',
+                                                    '¿Eliminar orden?',
                                                     'Esta acción no puede ser revertida',
                                                     [
                                                         {
@@ -72,7 +86,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                                         },
                                                         {
                                                             text: 'Eliminar',
-                                                            onPress: () => deleteUser(user.item.uid),
+                                                            onPress: () => deleteOrder(order.item.id),
                                                             style: 'destructive'
                                                         }
                                                     ],
@@ -89,41 +103,40 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                             />
                                             <Text style={styles.backTextWhite}>Eliminar</Text>
                                             
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
                                     </View>
                                 )
                             }
                             leftOpenValue={0}
                             rightOpenValue={-150}
-                            previewRowKey={'0'}
                             
                             previewOpenDelay={1000}
                         />
-
-                                 
-                        <FloatingAction
-                            buttonSize={50}
-                            color='black'
-                            overrideWithAction={true}
-                            onPressItem={() => newUser(navigation)}
-                            actions={[{
-                                icon: (
-                                    <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 4, }}/>
-                                  ),
-                                name:'AddUser'
-                              }]}
-                        />
+                                  
                     </Container>
                 )
             }
+            <FloatingAction
+                buttonSize={50}
+                color='black'
+                overrideWithAction={true}
+                onPressItem={() => newOrder(navigation)}
+                actions={[{
+                    icon: (
+                        <MaterialCommunityIcons name="plus" color='white' size={26}/>
+                      ),
+                    name:'addOrder'
+                  }]}
+            />
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isAdding || isEditing}>
+                visible={isAdding || isEditing}
+            >
                 <View style={styles.modalBackground}>
-                <View style={styles.activityIndicatorWrapper}>
-                    <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
-                </View>
+                    <View style={styles.activityIndicatorWrapper}>
+                        <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
+                    </View>
                 </View>
             </Modal>
         </View>
@@ -181,34 +194,32 @@ const styles = StyleSheet.create({
     
 })
 
+
 export default connect(
     state => ({
-        users: selectors.getUsers(state),
-        isLoading: selectors.isFetchingUsers(state),
-        isAdding: selectors.isAddingUsers(state),
-        isEditing: selectors.isEditingUsers(state),
-        branch: selectors.getViewedBranch(state)
+        orders: selectors.getOrders(state),
+        isLoading: selectors.isFetchingOrders(state),
+        isAdding: selectors.isAddingOrders(state),
+        isEditing: selectors.isEditingOrders(state),
+        orderHasUsers: (orderId)=>selectors.orderHasUsers(orderId,state)
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingUsers());
+            dispatch(actions.startFetchingOrders());
         },
         onRefresh() {
-            dispatch(actions.startFetchingUsers());
+            dispatch(actions.startFetchingOrders());
         },
-
-        newUser(navigation) {
-            dispatch(actions.deselectUser());
-            navigation.navigate('EditUserScreen');
+        newOrder(navigation) {
+            dispatch(actions.deselectOrder());
+            navigation.navigate('NewOrder');
         },
-
-        selectUser(navigation, user) {
-            dispatch(actionsUsers.selectUser(user));
-            navigation.navigate('EditUserScreen');
-        },
-
-        deleteUser(uid) {
-            dispatch(actions.startRemovingUser(uid))
-        },
+        // viewOrder(navigation, order) {
+        //     navigation.navigate('UserList');
+        //     dispatch(actions.viewOrder(order));
+        // },
+        // deleteOrder(id){
+        //     dispatch(actions.startRemovingOrder(id));
+        // }
     }),
-)(withTheme(UserList))
+)(withTheme(OrdersList));

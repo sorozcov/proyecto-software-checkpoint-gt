@@ -32,92 +32,89 @@ function BranchesList ({
   
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
+
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
-           
-          
             {
                (
                     <Container width={width}>
                         {
-                                branches.length <= 0 && !isLoading && (
-                                    <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
-                                            <MaterialCommunityIcons name="information" color='black' size={50} />
-                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay sucursales registradas</Text>
-                                    </View>
-                                )
-                            }
+                            branches.length <= 0 && !isLoading && (
+                                <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
+                                        <MaterialCommunityIcons name="information" color='black' size={50} />
+                                        <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay sucursales registradas</Text>
+                                </View>
+                            )
+                        }
                       
-                            <SwipeListView
-                                style={{marginTop:8}}
-                                data={branches}
-                                renderItem={ (branch, rowMap) => (
-                                    <BranchItem onPress={() => viewBranch(navigation, branch.item)} style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
-                                )}
-                                refreshing={isLoading}
-                                onRefresh={()=>onRefresh()}
-                                disableRightSwipe={true}
-                                closeOnRowPress={true}
-                                keyExtractor={(branch, index) => (branch.id)}
-                                renderHiddenItem={
-                                    (branch, rowMap) => (
-                                        <View style={styles.rowBack}>
-                                            
-                                            <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectBranch(navigation, branch.item);rowMap[branch.item.id].closeRow();}}
-                                            >
-                                                <MaterialCommunityIcons
+                        <SwipeListView
+                            style={{marginTop:8}}
+                            data={branches}
+                            renderItem={ (branch, rowMap) => (
+                                <BranchItem onPress={() => viewBranch(navigation, branch.item)} style={styles.rowFront} key={branch.item.id} name={`${branch.item.name}`} description={branch.item.location} image={branch.item.image} branch={branch.item} navigation={navigation} />
+                            )}
+                            refreshing={isLoading}
+                            onRefresh={()=>onRefresh()}
+                            disableRightSwipe={true}
+                            closeOnRowPress={true}
+                            keyExtractor={(branch, index) => (branch.id)}
+                            renderHiddenItem={
+                                (branch, rowMap) => (
+                                    <View style={styles.rowBack}>
+                                        
+                                        <TouchableOpacity
+                                            style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                                            onPress={() => {selectBranch(navigation, branch.item);rowMap[branch.item.id].closeRow();}}
+                                        >
+                                            <MaterialCommunityIcons
                                                 name="pencil"
                                                 color={'black'}
                                                 size={30}
-                                                />
-                                                 <Text style={styles.backTextWhite}>Editar</Text>
-                                               
-                                            </TouchableOpacity>
+                                            />
+                                            <Text style={styles.backTextWhite}>Editar</Text>  
+                                        </TouchableOpacity>
 
-                                            <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                
-                                                onPress={ () => {
-                                                    rowMap[branch.item.id].closeRow();
-                                                    Alert.alert(
-                                                        '¿Eliminar sucursal?',
-                                                        'Esta acción no puede ser revertida',
-                                                        [
-                                                            {
-                                                                text: 'Cancelar', 
-                                                                style: 'cancel'
-                                                            },
-                                                            {
-                                                                text: 'Eliminar',
-                                                                onPress: () => branchHasUsers(branch.item.id) ? cannotDeleteBranch():deleteBranch(branch.item.id),
-                                                                style: 'destructive'
-                                                            }
-                                                        ],
+                                        <TouchableOpacity
+                                            style={[styles.backRightBtn, styles.backRightBtnRight]}
+                                            
+                                            onPress={ () => {
+                                                rowMap[branch.item.id].closeRow();
+                                                Alert.alert(
+                                                    '¿Eliminar sucursal?',
+                                                    'Esta acción no puede ser revertida',
+                                                    [
                                                         {
-                                                            cancelable: true,
+                                                            text: 'Cancelar', 
+                                                            style: 'cancel'
                                                         },
-                                                    )
-                                                }}
-                                            >
-                                                <MaterialCommunityIcons
+                                                        {
+                                                            text: 'Eliminar',
+                                                            onPress: () => branchHasUsers(branch.item.id) ? cannotDeleteBranch():deleteBranch(branch.item.id),
+                                                            style: 'destructive'
+                                                        }
+                                                    ],
+                                                    {
+                                                        cancelable: true,
+                                                    },
+                                                )
+                                            }}
+                                        >
+                                            <MaterialCommunityIcons
                                                 name="delete"
                                                 color={'black'}
                                                 size={30}
-                                                />
-                                                 <Text style={styles.backTextWhite}>Eliminar</Text>
-                                               
-                                            </TouchableOpacity>
-                                        </View>
-                                    )
-                                }
-                                leftOpenValue={0}
-                                rightOpenValue={-150}
-                                
-                                
-                                previewOpenDelay={1000}
-                            />
+                                            />
+                                            <Text style={styles.backTextWhite}>Eliminar</Text>
+                                            
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+                            leftOpenValue={0}
+                            rightOpenValue={-150}
+                            
+                            previewOpenDelay={1000}
+                        />
                                   
                     </Container>
                 )
@@ -137,7 +134,8 @@ function BranchesList ({
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isAdding || isEditing}>
+                visible={isAdding || isEditing}
+            >
                 <View style={styles.modalBackground}>
                     <View style={styles.activityIndicatorWrapper}>
                         <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
@@ -226,7 +224,7 @@ export default connect(
         },
         viewBranch(navigation, branch) {
             navigation.navigate('UserList');
-            dispatch(actions.viewBranch(branch))
+            dispatch(actions.viewBranch(branch));
         },
         deleteBranch(id){
             dispatch(actions.startRemovingBranch(id));

@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from '../components/ImagePickerUser';
 import UsersStackScreen from './UsersStackScreen';
-import BranchesStackScreen from './branchesScreens/BranchesStackScreen';
+import BranchesStackScreen from './branches/BranchesStackScreen';
 import MenuStackScreen from './MenuStackScreen';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
 import { useTheme, Avatar, Title, Caption, Paragraph, Drawer } from 'react-native-paper';

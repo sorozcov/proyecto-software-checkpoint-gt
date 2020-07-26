@@ -80,9 +80,6 @@ function DrawerContent(props) {
   );
 }
 
-
-
-
 function HomeScreen() {
   // return (
   //   <OrderStackScreen />
@@ -94,9 +91,7 @@ function HomeScreen() {
 
 function SettingsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Pedidos!</Text>
-    </View>
+    <OrdersStackScreen />
   );
 }
 
@@ -107,10 +102,6 @@ function RootNavigator({theme,navigation,user,logOff}) {
     </DrawerR.Navigator>
   );
 };
-
-
-
-
 
 
 function Main({theme, navigation}) {
