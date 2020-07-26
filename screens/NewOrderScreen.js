@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
-import ProductListScreen from '../components/products/ProductsList';
+import ProductListScreen from '../components/orders/ProductsList';
 
 const NewOrder = createStackNavigator();
 
