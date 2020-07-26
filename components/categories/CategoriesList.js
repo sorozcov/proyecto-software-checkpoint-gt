@@ -12,6 +12,7 @@ import CategoryListItem from './CategoryListItem';
 import * as selectors from '../../src/reducers';
 import * as actions from '../../src/actions/categories';
 
+
 const width = Dimensions.get('window').width; // full width
 
 
