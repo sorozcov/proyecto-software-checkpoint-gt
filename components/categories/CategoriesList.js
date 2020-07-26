@@ -1,27 +1,27 @@
-import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Container, Content, List, Spinner } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet,Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { Container } from 'native-base';
+import React, { useEffect } from 'react';
 import { withTheme } from 'react-native-paper';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SwipeListView } from 'react-native-swipe-list-view';
-
-import * as actions from '../../src/actions/categories';
-import * as selectors from '../../src/reducers';
+import { Dimensions, Modal, View, StyleSheet,Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 
 import CategoryListItem from './CategoryListItem';
 
+import * as selectors from '../src/reducers';
+import * as actions from '../src/actions/categories';
 
 const width = Dimensions.get('window').width; // full width
 
 
-function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navigation, newCategory, isCreating, isEditing, selectCategory, deleteCategory, productsByCategories}) {
+function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navigation, newCategory, isCreating, isEditing, selectCategory, deleteCategory, productsByCategories }) {
     const { colors, roundness } = theme;
+
     useEffect(onLoad, []);
+
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
             {
                  (
                     <Container width={width}>
@@ -45,22 +45,20 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                 renderHiddenItem={
                                     (category, rowMap) => (
                                         <View style={styles.rowBack}>
-                                            
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
                                                 onPress={() => {selectCategory(navigation, category.item);rowMap[category.item.categoryId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
-                                                name="pencil"
-                                                color={'black'}
-                                                size={30}
+                                                    name="pencil"
+                                                    color={'black'}
+                                                    size={30}
                                                 />
-                                                 <Text style={styles.backTextWhite}>Editar</Text>
+                                                <Text style={styles.backTextWhite}>Editar</Text>
                                                
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                
                                                 onPress={() => {
                                                     rowMap[category.item.categoryId].closeRow();
                                                     Alert.alert(
@@ -77,8 +75,6 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                                 onPress: () => {
                                                                     const cate = productsByCategories.some(
                                                                         product => product.data.length > 0 && (product.title == category.item.categoryName));
-                                                                    console.log('ELIMINA? ->', cate);
-                                                                    console.log('ELIMINA? ->', category.item.categoryName);
                                                                     if(cate === false) {
                                                                         deleteCategory(category.item.categoryId);
                                                                     } else {
@@ -105,11 +101,11 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                 }}
                                             >
                                                 <MaterialCommunityIcons
-                                                name="delete"
-                                                color={'black'}
-                                                size={30}
+                                                    name="delete"
+                                                    color={'black'}
+                                                    size={30}
                                                 />
-                                                 <Text style={styles.backTextWhite}>Eliminar</Text>
+                                                <Text style={styles.backTextWhite}>Eliminar</Text>
                                                
                                             </TouchableOpacity>
                                         </View>
@@ -120,9 +116,7 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                 previewRowKey={'0'}
                                 disableRightSwipe={true}
                                 previewOpenDelay={1000}
-                            />
-
-                                  
+                            />                                  
                         <FloatingAction
                             buttonSize={50}
                             color='black'
@@ -152,23 +146,24 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
     )
 }
 
+
 const styles = StyleSheet.create({
-  modalBackground: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    backgroundColor: '#00000040'
-  },
-  activityIndicatorWrapper: {
-    backgroundColor: '#FFFFFF',
-    height: 150,
-    width: 150,
-    borderRadius: 10,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around'
-  },
+    modalBackground: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        backgroundColor: '#00000040'
+    },
+    activityIndicatorWrapper: {
+        backgroundColor: '#FFFFFF',
+        height: 150,
+        width: 150,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
     rowBack: {
         alignItems: 'center',
         backgroundColor: '#ffff',
@@ -180,7 +175,6 @@ const styles = StyleSheet.create({
     },
     rowFront: {        
         backgroundColor: '#ffffff',
- 
     },
     backRightBtn: {
         alignItems: 'center',
@@ -193,15 +187,14 @@ const styles = StyleSheet.create({
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
         right: 75,
-       
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
-        
         right: 0,
     },
     
 })
+
 
 export default connect(
     state => ({

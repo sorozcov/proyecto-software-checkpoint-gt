@@ -1,28 +1,28 @@
-import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container } from 'native-base';
-import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import React, { useEffect } from 'react';
 import { withTheme } from 'react-native-paper';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { Dimensions, Modal, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+
 import UserListItem from './UserListItem';
-import * as actions from '../src/actions/users';
-import * as selectors from '../src/reducers';
-import { HeaderBackground } from '@react-navigation/stack';
-import * as actionsUsers from '../src/actions/users';
-import * as actionBranches from '../src/actions/branches';
+import * as selectors from '../../src/reducers';
+import * as actions from '../../src/actions/users';
+import * as actionsUsers from '../../src/actions/users';
+import * as actionBranches from '../../src/actions/branches';
 
 const width = Dimensions.get('window').width; // full width
 
 
 function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser }) {
     const { colors, roundness } = theme;
+    
     useEffect(onLoad, []);
+
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-
-           
             {
                  (
                     <Container  width={width}>
@@ -30,7 +30,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 users.length <= 0 && !isLoading && (
                                     <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                             <MaterialCommunityIcons name="information" color='black' size={50} />
-                                            <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay usuarios registrados</Text>
+                                            <Text style={{ paddingTop: 10, fontSize: 20, fontFamily: 'dosis-bold', alignSelf: 'center'}}>No hay usuarios registrados</Text>
                                     </View>
                                 )
                             }
@@ -50,19 +50,18 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectUser(navigation, user.item);rowMap[user.item.uid].closeRow();}}
+                                                onPress={() => {selectUser(navigation, user.item); rowMap[user.item.uid].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
-                                                name="pencil"
-                                                color={'black'}
-                                                size={30}
+                                                    name="pencil"
+                                                    color={'black'}
+                                                    size={30}
                                                 />
-                                                 <Text style={styles.backTextWhite}>Editar</Text>
+                                                <Text style={styles.backTextWhite}>Editar</Text>
                                                
                                             </TouchableOpacity>
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                
                                                 onPress={ () => {
                                                     rowMap[user.item.uid].closeRow();
                                                     Alert.alert(
@@ -86,12 +85,11 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                                 }}
                                             >
                                                 <MaterialCommunityIcons
-                                                name="delete"
-                                                color={'black'}
-                                                size={30}
+                                                    name="delete"
+                                                    color={'black'}
+                                                    size={30}
                                                 />
-                                                 <Text style={styles.backTextWhite}>Eliminar</Text>
-                                               
+                                                <Text style={styles.backTextWhite}>Eliminar</Text>
                                             </TouchableOpacity>
                                         </View>
                                     )
@@ -99,13 +97,9 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
                                 previewRowKey={'0'}
-                                
                                 previewOpenDelay={1000}
                             />
-
-                                 
                         <FloatingAction
-                            
                             buttonSize={50}
                             color='black'
                             overrideWithAction={true}
@@ -123,7 +117,8 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
             <Modal
                 transparent={true}
                 animationType={'none'}
-                visible={isAdding || isEditing}>
+                visible={isAdding || isEditing}
+            >
                 <View style={styles.modalBackground}>
                 <View style={styles.activityIndicatorWrapper}>
                     <ActivityIndicator size="large" animating={isAdding || isEditing} color={colors.primary} />
@@ -134,23 +129,24 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
     )
 }
 
+
 const styles = StyleSheet.create({
-  modalBackground: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    backgroundColor: '#00000040'
-  },
-  activityIndicatorWrapper: {
-    backgroundColor: '#FFFFFF',
-    height: 150,
-    width: 150,
-    borderRadius: 10,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around'
-  },
+    modalBackground: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        backgroundColor: '#00000040'
+    },
+    activityIndicatorWrapper: {
+        backgroundColor: '#FFFFFF',
+        height: 150,
+        width: 150,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
     rowBack: {
         alignItems: 'center',
         backgroundColor: '#ffff',
@@ -158,11 +154,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingLeft: 15,
-      
     },
     rowFront: {        
         backgroundColor: '#ffffff',
- 
     },
     backRightBtn: {
         alignItems: 'center',
@@ -174,16 +168,15 @@ const styles = StyleSheet.create({
     },
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
-        right: 75,
-        
+        right: 75,      
     },
     backRightBtnRight: {
         backgroundColor: '#FF0D0D',
         
         right: 0,
-    },
-    
+    },  
 })
+
 
 export default connect(
     state => ({

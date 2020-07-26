@@ -1,13 +1,12 @@
 import * as React from 'react';
-import  { useState } from 'react';
-import {  Image, View } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { View } from 'react-native';
+import * as firebase from "firebase";
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import { Avatar, Button} from 'react-native-paper';
 import { ActionPicker } from 'react-native-action-picker';
-import * as firebase from "firebase";
 
-import {Avatar,Button,TextInput} from 'react-native-paper';
 
 export const uriToBlob = (uri) => {
   return new Promise((resolve, reject) => {

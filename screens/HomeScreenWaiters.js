@@ -1,15 +1,19 @@
 import * as React from 'react';
-import { Text, View, StyleSheet,Image } from 'react-native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import {withTheme} from 'react-native-paper';
+import { connect } from 'react-redux';
+import { withTheme } from 'react-native-paper';
+import { Text, View, StyleSheet, Image } from 'react-native';
+import { Avatar, Title, Caption, Drawer } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {connect} from 'react-redux';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@react-navigation/drawer';
-import {useTheme,Avatar,Title,Caption,Paragraph,Drawer } from 'react-native-paper';
+
 import * as selectors from '../src/reducers';
+import OrderStackScreen from './orders/OrderStackScreen';
+
+import default_pic from '../src/resources/default.png';
+
 const DrawerR = createDrawerNavigator();
 const Tab = createMaterialBottomTabNavigator();
-import default_pic from '../src/resources/default.png';
 
 import * as actionsLoggedUser from '../src/actions/loggedUser';
 
@@ -79,9 +83,7 @@ function DrawerContent(props) {
 
 function HomeScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-     <Text>Nuevo Pedido!</Text>
-    </View>
+    <OrderStackScreen />
   );
 }
 
@@ -93,9 +95,9 @@ function SettingsScreen() {
   );
 }
 
-function RootNavigator({theme,navigation,userm,logOff}) {
+function RootNavigator({theme,navigation,user,logOff}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} loggOff={logOff}/>}>
+    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} logOff={logOff}/>}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
