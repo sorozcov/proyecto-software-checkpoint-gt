@@ -1,5 +1,5 @@
 import * as types from '../types/loggedUser';
-
+import { AsyncStorage } from 'react-native';
 
 const loggedUser = (state = {}, action) => {
   switch (action.type) {
@@ -7,9 +7,11 @@ const loggedUser = (state = {}, action) => {
       let newState = action.payload;
       return newState;
     }
+
     case types.USER_LOGGED_OFF: {
-      let newState = {};
-      return newState;
+      // let newState = {};
+      // return newState;
+      return state;
     }
     default: {
       return state;
