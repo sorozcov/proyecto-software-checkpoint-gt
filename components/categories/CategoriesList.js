@@ -6,15 +6,12 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dimensions, Modal, View, StyleSheet,Text, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import { SwipeListView } from 'react-native-swipe-list-view';
-
-import * as actions from '../../src/actions/categories';
-import * as selectors from '../../src/reducers';
 
 import CategoryListItem from './CategoryListItem';
 
-import * as selectors from '../src/reducers';
-import * as actions from '../src/actions/categories';
+import * as selectors from '../../src/reducers';
+import * as actions from '../../src/actions/categories';
+
 
 const width = Dimensions.get('window').width; // full width
 
