@@ -31,48 +31,46 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
         total = total + (product.quantity * parseInt(product.price))
     });
     return(
-        <ScrollView style={styles.container}>
-            <View style={styles.container}>
-                <SwipeListView
-                    style={{marginTop:8}}
-                    useSectionList
-                    sections={orderProductsByCategory}
-                    
-                    renderSectionHeader={renderSectionHeader}
-                    renderItem={ (category, rowMap) => (
-                        <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onlyView={true}/>
-                    )}
-                    disableRightSwipe={true}
-                    closeOnRowPress={true}
-                    keyExtractor={product => product.productId}
-                    leftOpenValue={0}
-                    rightOpenValue={-150}
-                    previewRowKey={'0'}
-                    
-                    previewOpenDelay={1000}
-                />
-                <View style={styles.totalContainer}>
-                    <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + total}</Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                        theme={roundness}
-                        color={'#000000'}
-                        icon={"arrow-right-bold"}
-                        height={50}
-                        mode="contained"
-                        labelStyle={{
-                            fontFamily: "dosis-bold",
-                            fontSize: 15,
-                        }}
-                        style={styles.button}
-                        onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}
-                    >
-                        {'FINALIZAR'}
-                    </Button>
-                </View>
+        <View style={styles.container}>
+            <SwipeListView
+                style={{marginTop:8}}
+                useSectionList
+                sections={orderProductsByCategory}
+                
+                renderSectionHeader={renderSectionHeader}
+                renderItem={ (category, rowMap) => (
+                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onlyView={true}/>
+                )}
+                disableRightSwipe={true}
+                closeOnRowPress={true}
+                keyExtractor={product => product.productId}
+                leftOpenValue={0}
+                rightOpenValue={-150}
+                previewRowKey={'0'}
+                
+                previewOpenDelay={1000}
+            />
+            <View style={styles.totalContainer}>
+                <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + total}</Text>
             </View>
-        </ScrollView>
+            <View style={styles.buttonContainer}>
+                <Button
+                    theme={roundness}
+                    color={'#000000'}
+                    icon={"arrow-right-bold"}
+                    height={50}
+                    mode="contained"
+                    labelStyle={{
+                        fontFamily: "dosis-bold",
+                        fontSize: 15,
+                    }}
+                    style={styles.button}
+                    onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}
+                >
+                    {'FINALIZAR'}
+                </Button>
+            </View>
+        </View>
     );
 };
 
@@ -85,12 +83,10 @@ const styles = StyleSheet.create({
         marginTop: 16
     },
     totalContainer: {
-        flex: 1,
         marginTop: 10,
         alignItems: 'center'
     },
     buttonContainer: {
-        flex: 1,
         justifyContent: 'center'
     },
     container: {

@@ -15,7 +15,7 @@ import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, isLoading, navigation, next, productsByCategories, user, productsOfOrder}) {
+function ProductsList ({ theme,onLoad, isLoading, navigation, next, productsByCategories, user, productsOfOrder}) {
     const { colors, roundness } = theme;
 
     const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
@@ -59,7 +59,7 @@ function ProductsList ({ theme, onRefresh,onLoad, isLoading, navigation, next, p
                         disableRightSwipe={true}
                         closeOnRowPress={true}
                         refreshing={isLoading}
-                        onRefresh={()=>onRefresh()}
+                        onRefresh={()=>onLoad()}
                         keyExtractor={product => product.productId}
                         leftOpenValue={0}
                         rightOpenValue={-150}
@@ -81,6 +81,7 @@ function ProductsList ({ theme, onRefresh,onLoad, isLoading, navigation, next, p
                     }}
                     style={styles.button}
                     onPress={proceed}
+                    disabled={productsOfOrder.length===0}
                 >
                     {'CONTINUAR'}
                 </Button>
@@ -133,10 +134,6 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actionsCategories.startFetchingCategories());
-            dispatch(actionsProducts.startFetchingProducts());
-        },
-         onRefresh() {
             dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
         },
