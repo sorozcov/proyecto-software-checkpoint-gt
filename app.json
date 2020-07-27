@@ -9,10 +9,10 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./src/assets/images/icon.png",
     "scheme": "myapp",
     "splash": {
-      "image": "./assets/images/checkpointLogo.jpg",
+      "image": "./src/assets/images/checkpointLogo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
