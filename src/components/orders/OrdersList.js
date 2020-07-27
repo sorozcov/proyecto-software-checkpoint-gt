@@ -116,7 +116,7 @@ function OrdersList ({
                     </Container>
                 )
             }
-            <FloatingAction
+            {/* <FloatingAction
                 buttonSize={50}
                 color='black'
                 overrideWithAction={true}
@@ -127,7 +127,7 @@ function OrdersList ({
                       ),
                     name:'addOrder'
                   }]}
-            />
+            /> */}
             <Modal
                 transparent={true}
                 animationType={'none'}
