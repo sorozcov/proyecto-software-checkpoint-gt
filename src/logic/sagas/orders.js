@@ -10,12 +10,12 @@ function* makeOrder(action) {
         const { order, data } = action.payload;
         const response = yield updateOrder({...data, products: order });
 
-        console.log(response)
-            // if (response.error == null) {
-            //     yield put(actions.completeAddingOrder(response.order));
-            // } else {
-            //     yield put(actions.failAddingOrder(response.error));
-            // }
+        if (response.error == null) {
+            console.log(response.order)
+            yield put(actions.completeAddingOrder(response.order));
+        } else {
+            yield put(actions.failAddingOrder(response.error));
+        }
     } catch (error) {
         console.log(error)
         yield put(actions.failAddingOrder('Falló la creación del pedido'));

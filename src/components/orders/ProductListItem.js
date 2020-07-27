@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { ListItem, Left, Body, Text, Button } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import * as actionsProducts from '../../src/actions/products';
+import * as actionsProducts from '../../logic/actions/products';
 
 
 
@@ -23,7 +23,7 @@ class CategoryListItem extends Component{
                 </Left>
                 <Body>
                     <View style={{flexDirection:'row'}}>
-                        <Text  style={{fontFamily:'dosis-light',fontSize:17}}>{this.props.name}</Text>
+                        <Text  style={{fontFamily:'dosis-light',fontSize:17}}>{this.props.name + ' (Q. ' + this.props.product.price + ')'}</Text>
                         <View style={styles.row}>
                             <View style={this.props.onlyView !== true ? styles.infoTxt : styles.infoTxtView}>
                                 <Text  style={{fontFamily:'dosis-light',fontSize:15}}>{this.props.product.quantity == null ? 0 : this.props.product.quantity}</Text>

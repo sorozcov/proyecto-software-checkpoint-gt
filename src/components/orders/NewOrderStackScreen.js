@@ -2,9 +2,9 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
-import NewOrder from '../../components/orders/NewOrder';
-import ProductsList from '../../components/orders/ProductsList';
-import FinishOrder from '../../components/orders/FinishOrder';
+import NewOrder from './NewOrder';
+import ProductsList from './ProductsList';
+import FinishOrder from './FinishOrder';
 
 const OrderStack = createStackNavigator();
 

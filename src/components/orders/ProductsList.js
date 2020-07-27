@@ -1,21 +1,17 @@
 import { Body, Container, Icon, Left, ListItem } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, withTheme } from 'react-native-paper';
+import { ActivityIndicator, withTheme, Button } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
+
 import * as actionsCategories from '../../logic/actions/categories';
 import * as actionsProducts from '../../logic/actions/products';
+import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from './ProductListItem';
 
-
-import * as actionsCategories from '../../src/actions/categories';
-import * as actionsProducts from '../../src/actions/products';
-import * as actionsOrders from '../../src/actions/orders';
-import * as selectors from '../../src/reducers';
-import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
@@ -41,7 +37,7 @@ function ProductsList ({ theme, onRefresh,onLoad, isLoading, navigation, next, p
     }
 
     return(
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white'}}>
             <Container width={width}>
                     {
                         productsByCategories.length <= 0 && !isLoading && (
@@ -52,7 +48,7 @@ function ProductsList ({ theme, onRefresh,onLoad, isLoading, navigation, next, p
                         )
                     }
                     <SwipeListView
-                        style={{marginTop:8}}
+                        style={{marginTop:8,marginBottom:8}}
                         useSectionList
                         sections={productsByCategories}
                         
@@ -118,6 +114,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around'
+  },
+  button: {
+      margin:10
   },
     rowFront: {        
         backgroundColor: '#ffffff',

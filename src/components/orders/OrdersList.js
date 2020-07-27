@@ -25,10 +25,9 @@ function OrdersList ({
     isEditing,
     selectOrder,
     viewOrder,}) {
-  
+    console.log(orders)
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
-
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
             {
@@ -49,7 +48,7 @@ function OrdersList ({
                             renderItem={ (order, rowMap) => (
                                 <OrderItem 
                                 // onPress={() => viewOrder(navigation, order.item)} 
-                                style={styles.rowFront} key={order.item.orderId} name={`${order.item.orderName}`} date={order.item.date.toDate().toString()} total={100} image={order.item.image} order={order.item} navigation={navigation} />
+                                style={styles.rowFront} key={order.item.orderId} name={`${order.item.orderName}`} date={order.item.date.toDate().toString()} total={order.item.total} image={order.item.image} order={order.item} navigation={navigation} />
                             )}
                             refreshing={isLoading}
                             onRefresh={()=>onRefresh()}

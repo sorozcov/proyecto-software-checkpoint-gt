@@ -6,7 +6,7 @@ const collection = "orders";
 
 // Funcion para crear o hacer update de un pedido
 // Si es nuevo enviar orderId = null o no enviar
-export const updateOrder = async({ orderId, name, fecha, products }) => {
+export const updateOrder = async({ orderId, name, fecha, total, products }) => {
     try {
         let orderDoc = null;
         let isNew = orderId == null;
@@ -26,6 +26,7 @@ export const updateOrder = async({ orderId, name, fecha, products }) => {
             orderId: orderId,
             orderName: name,
             date: fecha,
+            total: total,
             products: products,
             dateModified: dateModified,
         };
@@ -35,9 +36,9 @@ export const updateOrder = async({ orderId, name, fecha, products }) => {
         } else {
             await orderDoc.update(orderInfo);
         }
-
+        const order = await (await db.collection(collection).doc(orderId).get()).data()
         return {
-            order: orderInfo,
+            order: order,
             error: null,
             errorMessage: null
         }

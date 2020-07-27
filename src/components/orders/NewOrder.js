@@ -15,7 +15,9 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
 
     const proceed = values => {
         if (values.name && values.table) {
-            next(navigation, values)
+            next(navigation, values);
+            values.name = null;
+            values.table = null;
         }
         else{
             changeError(true)

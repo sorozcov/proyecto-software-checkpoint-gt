@@ -6,14 +6,12 @@ import { Avatar, Caption, Drawer, Title, withTheme } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
 import default_pic from '../../assets/resources/default.png';
-import NewOrderScreen from '../../components/orders/NewOrderScreen';
-import OrdersStackScreen from '../../components/orders/OrdersStackScreen';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 import * as selectors from '../../logic/reducers';
 
 
-import NewOrdersStackScreen from './orders/NewOrderStackScreen';
-import OrderStackScreen from './orders/OrderStackScreen';
+import NewOrdersStackScreen from '../orders/NewOrderStackScreen';
+import OrderStackScreen from '../orders/OrdersStackScreen';
 
 
 

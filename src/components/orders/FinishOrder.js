@@ -24,7 +24,12 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
     <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
-
+    
+    //Se calcula el total
+    var total = 0
+    orderProducts.forEach(product => {
+        total = total + (product.quantity * parseInt(product.price))
+    });
     return(
         <ScrollView style={styles.container}>
             <View style={styles.container}>
@@ -46,6 +51,9 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
                     
                     previewOpenDelay={1000}
                 />
+                <View style={styles.totalContainer}>
+                    <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + total}</Text>
+                </View>
                 <View style={styles.buttonContainer}>
                     <Button
                         theme={roundness}
@@ -58,7 +66,7 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
                             fontSize: 15,
                         }}
                         style={styles.button}
-                        onPress={() => sendOrder(navigation, orderProducts, activeOrder)}
+                        onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}
                     >
                         {'FINALIZAR'}
                     </Button>
@@ -75,6 +83,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         margin: 4,
         marginTop: 16
+    },
+    totalContainer: {
+        flex: 1,
+        marginTop: 10,
+        alignItems: 'center'
     },
     buttonContainer: {
         flex: 1,
@@ -116,8 +129,8 @@ export default connect(
         addingError: selectors.getOrdersError(state),
     }),
     dispatch => ({
-        sendOrder(navigation, orderProducts, activeOrder) {
-            dispatch(actions.startAddingOrder(orderProducts, activeOrder));
+        sendOrder(navigation, orderProducts, activeOrder, total) {
+            dispatch(actions.startAddingOrder(orderProducts, {...activeOrder, total}));
             dispatch(actions.deactivateOrder());
             navigation.navigate('NewOrder');
         },
