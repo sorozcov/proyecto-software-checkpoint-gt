@@ -5,14 +5,11 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import AuthScreen from './screens/AuthScreen';
+import AuthScreen from './src/components/login/AuthScreen';
 
 
 
-import configureStore from './store';
-import HomeScreen from './screens/HomeScreenAdmin';
-//Importamos firebaseApp para que este de forma global
-import { firebaseApp } from './firebase';
+import configureStore from './src/logic/store';
 
 
 //Mute warnings
@@ -50,13 +47,13 @@ export default function App(props) {
         // Load fonts
         await Font.loadAsync({
           ...Ionicons.font,
-          'dosis-regular': require('./assets/fonts/Dosis-Regular.ttf'),
-          'dosis-medium': require('./assets/fonts/Dosis-Medium.ttf'),
-          'dosis-light': require('./assets/fonts/Dosis-Light.ttf'),
-          'dosis-extra-light': require('./assets/fonts/Dosis-ExtraLight.ttf'),
-          'dosis-semi-bold': require('./assets/fonts/Dosis-SemiBold.ttf'),
-          'dosis-bold': require('./assets/fonts/Dosis-Bold.ttf'),
-          'dosis-extra-bold': require('./assets/fonts/Dosis-ExtraBold.ttf'),
+          'dosis-regular': require('./src/assets/fonts/Dosis-Regular.ttf'),
+          'dosis-medium': require('./src/assets/fonts/Dosis-Medium.ttf'),
+          'dosis-light': require('./src/assets/fonts/Dosis-Light.ttf'),
+          'dosis-extra-light': require('./src/assets/fonts/Dosis-ExtraLight.ttf'),
+          'dosis-semi-bold': require('./src/assets/fonts/Dosis-SemiBold.ttf'),
+          'dosis-bold': require('./src/assets/fonts/Dosis-Bold.ttf'),
+          'dosis-extra-bold': require('./src/assets/fonts/Dosis-ExtraBold.ttf'),
           'Roboto': require('native-base/Fonts/Roboto.ttf'),
           'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
         });
@@ -80,8 +77,8 @@ export default function App(props) {
         <PaperProvider theme={theme}>
           <View style={styles.container}>
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-            { true ? <AuthScreen />
-            : <HomeScreen/>}
+             <AuthScreen />
+            
           </View>
         </PaperProvider>
       </Provider>
