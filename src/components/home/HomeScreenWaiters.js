@@ -12,6 +12,9 @@ import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 import * as selectors from '../../logic/reducers';
 
 
+import NewOrdersStackScreen from './orders/NewOrderStackScreen';
+import OrderStackScreen from './orders/OrderStackScreen';
+
 
 
 const DrawerR = createDrawerNavigator();
@@ -80,20 +83,6 @@ function DrawerContent(props) {
   );
 }
 
-function HomeScreen() {
-  // return (
-  //   <OrderStackScreen />
-  // );
-  return (
-    <NewOrderScreen />
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <OrdersStackScreen />
-  );
-}
 
 function RootNavigator({theme,navigation,user,logOff}) {
   return (
@@ -117,7 +106,7 @@ function Main({theme, navigation}) {
         barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
       >
        
-        <Tab.Screen name="NewOrder"  component={HomeScreen}
+        <Tab.Screen name="NewOrder"  component={NewOrdersStackScreen}
                 options={{
                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> NUEVO PEDIDO </Text>,
                   
@@ -127,7 +116,7 @@ function Main({theme, navigation}) {
                     style={{ marginTop: 0,paddingBottom:8 }} />
                   ),
                 }} />
-        <Tab.Screen name="Orders" component={SettingsScreen} options={{
+        <Tab.Screen name="Orders" component={OrderStackScreen} options={{
                    tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> PEDIDOS </Text>,
                   tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="format-list-numbered" color={color} size={25}

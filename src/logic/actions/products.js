@@ -76,3 +76,12 @@ export const selectProduct = product => ({
 export const deselectProduct = () => ({
   type: types.PRODUCT_DESELECTED,
 });
+
+export const addProductToOrder = productId => ({
+  type: types.PRODUCT_ADD_TO_ORDER,
+  payload: productId,
+});
+export const deleteProductToOrder = productId => ({
+  type: types.PRODUCT_DELETE_TO_ORDER,
+  payload: productId,
+});

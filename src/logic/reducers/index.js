@@ -64,7 +64,18 @@ export const getUsersError = state => usersSelectors.getUsersError(state.users);
 export const getOrder = (state, id) => ordersSelectors.getOrder(state.orders, id);
 export const getOrders = state => ordersSelectors.getOrders(state.orders);
 export const getSelectedOrder = state => ordersSelectors.getSelectedOrder(state.orders);
+
 export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrderProducts(state.orders);
+
+export const getSelectedOrderProductsByCategory = state =>  {
+  let products = ordersSelectors.getSelectedOrderProducts(state.orders)
+  let categories = getCategories(state)
+  return categories.map(category=>{
+    return {title:category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)}
+  }).filter(categoty => categoty.data.length !== 0)
+};
+
 export const isFetchingOrders = state => ordersSelectors.isFetchingOrders(state.orders);
 export const isAddingOrders = state => ordersSelectors.isAddingOrders(state.orders);
 export const isEditingOrders = state => ordersSelectors.isEditingOrders(state.orders);
@@ -89,3 +100,5 @@ export const getProductsByCategory = state => {
             data: products.filter(product => product.categoryId === category.categoryId)}
   })
 };
+
+export const getProductsOfOrder = state => getProducts(state).filter(product => product.quantity != null && product.quantity !== 0);

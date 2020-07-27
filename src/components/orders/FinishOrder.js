@@ -1,27 +1,51 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
+import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { ListItem,Left,Icon,Body } from 'native-base';
+import { SwipeListView } from 'react-native-swipe-list-view';
+
+import ProductListItem from './ProductListItem';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
-import ProductItem from './ProductItem';
 
 
 
 
-function FinishOrder({ theme, navigation, orderProducts, activeOrder, sendOrder, finish, isAdding, addingError }){
+function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts, activeOrder, sendOrder, finish, isAdding, addingError }){
     const { roundness } = theme
+    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
+    <Left>
+             
+                <Icon active name="restaurant" />
+             
+    </Left>
+    <Body>
+    <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+    </Body>
+     </ListItem>  ;
 
     return(
         <ScrollView style={styles.container}>
             <View style={styles.container}>
-                <View style={styles.linesContainer}>
-                    {
-                        orderProducts.map(product => 
-                            <ProductItem style={styles.rowFront} key={product.name} name={product.name} description={'Sin especificaciones'} cantidad={product.cantidad} image={null} />
-                        )
-                    }
-                </View>
+                <SwipeListView
+                    style={{marginTop:8}}
+                    useSectionList
+                    sections={orderProductsByCategory}
+                    
+                    renderSectionHeader={renderSectionHeader}
+                    renderItem={ (category, rowMap) => (
+                        <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onlyView={true}/>
+                    )}
+                    disableRightSwipe={true}
+                    closeOnRowPress={true}
+                    keyExtractor={product => product.productId}
+                    leftOpenValue={0}
+                    rightOpenValue={-150}
+                    previewRowKey={'0'}
+                    
+                    previewOpenDelay={1000}
+                />
                 <View style={styles.buttonContainer}>
                     <Button
                         theme={roundness}
@@ -85,6 +109,7 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
+        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
         orderProducts: selectors.getSelectedOrderProducts(state),
         activeOrder: selectors.getSelectedOrder(state),
         isAdding: selectors.isAddingOrders(state),
