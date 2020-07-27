@@ -6,7 +6,11 @@ import { SplashScreen } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import AuthScreen from './src/components/login/AuthScreen';
-
+//SettingsTimeAgo and Dates on app
+let TimeAgo = require('react-native-timeago');
+let moment = require('moment'); //load moment module to set local language
+require('moment/locale/es'); //for import moment local language file during the application build
+moment.locale('es');//set moment local language to zh-cn
 
 
 import configureStore from './src/logic/store';
