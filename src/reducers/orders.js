@@ -84,13 +84,7 @@ const orderSelected = (state = null, action) => {
 const selectedOrderProducts = (state = [], action) => {
     switch(action.type) {
         case types.ORDER_PRODUCTS_ADDED: {
-            const newState = []
-            action.payload.map(product => {
-                const obj = {}
-                obj['name'] = product[0]
-                obj['cantidad'] = product[1]
-                newState.push(obj)
-            })
+            const newState = action.payload
             return newState;
         }
         default: {

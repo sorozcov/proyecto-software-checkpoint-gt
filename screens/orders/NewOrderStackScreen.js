@@ -2,7 +2,9 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withTheme } from 'react-native-paper';
 
-import OrdersList from '../../components/orders/OrdersList';
+import NewOrder from '../../components/orders/NewOrder';
+import ProductsList from '../../components/orders/ProductsList';
+import FinishOrder from '../../components/orders/FinishOrder';
 
 const OrderStack = createStackNavigator();
 
@@ -18,7 +20,9 @@ function OrderStackScreen({ theme }) {
             },
             headerMode: 'screen'
         })} initialRouteName="NewOrder">
-            <OrderStack.Screen name="NewOrder" options={{ title: 'PEDIDOS', headerTitleAlign: 'center'}} component={OrdersList} />
+            <OrderStack.Screen name="NewOrder" options={{ title: 'NUEVO PEDIDO', headerTitleAlign: 'center'}} component={NewOrder} />
+            <OrderStack.Screen name="ProductSelect"   options={{ title: 'PEDIDO', headerTitleAlign:'center'}} component={ProductsList} />
+            <OrderStack.Screen name="FinishOrder"   options={{ title: 'OVERVIEW', headerTitleAlign:'center'}} component={FinishOrder} />
         </OrderStack.Navigator>
     );
 };

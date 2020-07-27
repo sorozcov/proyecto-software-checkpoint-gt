@@ -9,8 +9,9 @@ import { createDrawerNavigator,  DrawerItem,DrawerContentScrollView, } from '@re
 
 import * as selectors from '../src/reducers';
 
+import NewOrdersStackScreen from './orders/NewOrderStackScreen';
 import OrderStackScreen from './orders/OrderStackScreen';
-import NewOrderScreen from './NewOrderScreen';
+
 
 import default_pic from '../src/resources/default.png';
 
@@ -80,20 +81,6 @@ function DrawerContent(props) {
   );
 }
 
-function HomeScreen() {
-  // return (
-  //   <OrderStackScreen />
-  // );
-  return (
-    <NewOrderScreen />
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <OrdersStackScreen />
-  );
-}
 
 function RootNavigator({theme,navigation,user,logOff}) {
   return (
@@ -117,7 +104,7 @@ function Main({theme, navigation}) {
         barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
       >
        
-        <Tab.Screen name="NewOrder"  component={HomeScreen}
+        <Tab.Screen name="NewOrder"  component={NewOrdersStackScreen}
                 options={{
                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> NUEVO PEDIDO </Text>,
                   
@@ -127,7 +114,7 @@ function Main({theme, navigation}) {
                     style={{ marginTop: 0,paddingBottom:8 }} />
                   ),
                 }} />
-        <Tab.Screen name="Orders" component={SettingsScreen} options={{
+        <Tab.Screen name="Orders" component={OrderStackScreen} options={{
                    tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> PEDIDOS </Text>,
                   tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="format-list-numbered" color={color} size={25}

@@ -33,6 +33,24 @@ const byId = (state = {}, action) => {
         },
       };
     }
+    case types.PRODUCT_ADD_TO_ORDER: {
+      return {
+        ...state,
+        [action.payload]: {
+          ...state[action.payload],
+          quantity: state[action.payload].quantity == null ? 1 : state[action.payload].quantity + 1,
+        },
+      };
+    }
+    case types.PRODUCT_DELETE_TO_ORDER: {
+      return {
+        ...state,
+        [action.payload]: {
+          ...state[action.payload],
+          quantity: (state[action.payload].quantity == null || state[action.payload].quantity === 0) ? 0 : state[action.payload].quantity - 1,
+        },
+      };
+    }
     case types.PRODUCT_REMOVE_COMPLETED: {
       return omit(state, action.payload.productId);
     }
