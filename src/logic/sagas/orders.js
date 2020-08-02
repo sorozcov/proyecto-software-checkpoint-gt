@@ -1,5 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { getOrders, updateOrder } from '../../database/firebase/orders';
+import { getOrders, updateOrder, deleteOrder } from '../../database/firebase/orders';
 import * as actions from '../../logic/actions/orders';
 import * as types from '../types/orders';
 
@@ -43,5 +43,24 @@ export function* watchOrdersFetch() {
     yield takeEvery(
         types.ORDERS_FETCH_STARTED,
         fetchOrders,
+    );
+}
+
+function* removeOrder(action) {
+    try {
+        const order = action.payload
+        console.log("Borrala compaa" + order)
+        const response = yield deleteOrder(order);
+
+        yield put(actions.completeRemovingOrder(response.orderId));
+    } catch(error) {
+        yield put(actions.failRemovingOrder(action.payload.orderId, "Falló el remove de órden"))
+    }
+}
+
+export function* watchRemoveOrder() {
+    yield takeEvery(
+        types.ORDER_REMOVE_STARTED,
+        removeOrder,
     );
 }
