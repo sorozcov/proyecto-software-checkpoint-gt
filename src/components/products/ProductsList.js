@@ -119,7 +119,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
-                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} category={category.item} navigation={navigation} />
+                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} />
                                 )}
                                 disableRightSwipe={true}
                                 closeOnRowPress={true}
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
     },
     rowFront: {        
         backgroundColor: '#ffffff',
+        height:70,
  
     },
     backRightBtn: {

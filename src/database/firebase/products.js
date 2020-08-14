@@ -41,18 +41,10 @@ export const updateProduct = async ({productId=null,productName,description,cate
         let productDoc = null;
         let isNew = productId==null;
         if(isNew){
-          //Vemos si necesita subir una imagen
-            image = image !== undefined ? image : null;
-            if (image !== null){
-              let uploadImg = await uploadImageToFirebase(image,productId,"¨ProductImages");
-              if(!uploadImg.uploaded){
-                //Error subiendo imagen
-                console.log(uploadImg.error);
-              }
-              image = productId;
-            }
+          
           productDoc = await firebaseFirestore.collection(collection).doc();
           productId = productDoc.id;
+          
         } else {
           productDoc = await firebase.firestore().collection(collection).doc(productId);
           productId = productDoc.id;
@@ -63,7 +55,7 @@ export const updateProduct = async ({productId=null,productName,description,cate
         image = image !== undefined ? image : null;
         if (image !== null){
           if(!image.includes(productId)){
-            let uploadImg = await uploadImageToFirebase(image,productId,"¨ProductImages");
+            let uploadImg = await uploadImageToFirebase(image,productId,"ProductImages");
             if(!uploadImg.uploaded){
               //Error subiendo imagen
               console.log(uploadImg.error);
@@ -82,7 +74,7 @@ export const updateProduct = async ({productId=null,productName,description,cate
             description:description,
             category:category,
             categoryId:categoryId,
-            price:price,
+            price:parseFloat(price).toFixed(2),
             image:image,
             status:status,
             dateModified:dateModified

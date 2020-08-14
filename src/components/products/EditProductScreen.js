@@ -26,7 +26,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
     var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
     values.category = selectedCategory;
     values.categoryId = selectedCategory.categoryId;
-    console.log('Submitting form', values)
+   
 
     if(isNew){
       createProduct(navigation,values)
