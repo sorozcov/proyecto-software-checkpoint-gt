@@ -55,9 +55,8 @@ export default class ImagePickerProduct extends React.Component {
   input = this.props.input;
   constructor(props){
     super(props)
-    
-    
-    
+    if(props.image != null)
+      this.state.image = `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/ProductImages%2F${props.image}_400x400.jpg?alt=media`;
   }
   render() {
     this.props.input.onChange(this.state.image)
@@ -67,9 +66,9 @@ export default class ImagePickerProduct extends React.Component {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         
-        {!image &&  <Avatar size={200} overlayContainerStyle={{backgroundColor: '#00C331'}} icon={{name: 'image', color: 'white',type: 'material'}}  />}
+        {!image &&  <Avatar rounded size={175} overlayContainerStyle={{backgroundColor: '#E50000'}} icon={{name: 'food', color: 'white',type: 'material-community'}}  />}
         
-        {image &&  <Avatar  size={200} source={{ uri: image }}  />}
+        {image &&  <Avatar rounded size={175} source={{ uri: image }}  />}
         <Button labelStyle={{fontFamily:"dosis-bold"}} onPress={()=>this.setState({ actionPickerVisible: true })} >Cambiar Imagen</Button>
         <ActionPicker
             style={{fontFamily:"dosis-medium"}}
@@ -89,13 +88,13 @@ export default class ImagePickerProduct extends React.Component {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+        alert('Lo sentimos. Necesitamos permisos para la Cámara para funcionar correctamente.');
       }
     }
     if (Constants.platform.ios) {
         const { status } = await Permissions.askAsync(Permissions.CAMERA);
         if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
+          alert('Lo sentimos. Necesitamos permisos para la Cámara para funcionar correctamente.');
         }
       }
     
@@ -107,7 +106,7 @@ export default class ImagePickerProduct extends React.Component {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.3,
       }).then(result=>{
         if (!result.cancelled) {
             this.setState({ image: result.uri });
@@ -126,7 +125,7 @@ export default class ImagePickerProduct extends React.Component {
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: false,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0.3,
       }).then(result=>{
             if (!result.cancelled) {
                 this.setState({ image: result.uri });

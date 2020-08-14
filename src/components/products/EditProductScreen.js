@@ -5,10 +5,12 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
+import ImagePicker from '../../components/general/ImagePickerProduct';
 import PickerInput from '../../components/general/PickerInput';
 import MyTextInput from '../../components/general/textInput';
 import * as actionsProducts from '../../logic/actions/products';
 import * as selectors from '../../logic/reducers';
+import MyCheckbox from '../general/checkbox';
 
 
 
@@ -20,7 +22,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
   if(!isNew)
     navigation.setOptions({ title: 'EDITAR PRODUCTO' });
 
-  const signUp = values => {
+  const editProductForm = values => {
     var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
     values.category = selectedCategory;
     values.categoryId = selectedCategory.categoryId;
@@ -31,6 +33,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
     } else {
       editProduct(navigation,values)
     }
+    
   }
 
   return (
@@ -41,12 +44,15 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
     <View style={styles.container}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.formContainer}>
+          <Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image}/>
           <Field name={'productName'} component={MyTextInput} label='Nombre' placeholder='Ingresa el nombre del producto'/>
           <Field name={'description'} component={MyTextInput} label='Descripción' placeholder='Ingresa la descripción del producto'  multiline={true}/>
           <Field name={'price'} component={MyTextInput} label='Precio' placeholder='Ingresa el precio que tendrá el producto' keyboardType='numeric'/>
           <Field name={'category'} component={PickerInput} title='Categoría' single={true} selectedText="Categoría" placeholderText="Seleccionar una categoría" 
             options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
             selectedItems={!isNew?[initialValues.categoryId]:[]}/>
+          <Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>
+          
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
               disabled={!(dirty && valid)}
@@ -65,7 +71,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
                 marginRight: '5%',
                 justifyContent: 'center',
               }}
-              onPress={handleSubmit(signUp)}>
+              onPress={handleSubmit(editProductForm)}>
               {isNew ? 'CREAR PRODUCTO' : 'EDITAR PRODUCTO'}
             </Button>
           </View>
@@ -126,7 +132,7 @@ export default connect(
     },
   }),
 )(reduxForm({
-  form: 'signUp',
+  form: 'editProductForm',
   enableReinitialize : true,
   validate: (values) => {
     const errors = {};
