@@ -15,7 +15,7 @@ import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,productsByCategories, deleteProduct, user}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,selectProductInformation,productsByCategories, deleteProduct, user}) {
     const { colors, roundness } = theme;
     const [listData, setListData] = useState(
                 Array(5)
@@ -119,7 +119,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
-                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} />
+                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onPress={()=>selectProductInformation(navigation, category.item)} />
                                 )}
                                 disableRightSwipe={true}
                                 closeOnRowPress={true}
@@ -327,6 +327,10 @@ export default connect(
         selectProduct(navigation, product) {
               dispatch(actionsProducts.selectProduct(product));
               navigation.navigate('EditProductScreen');
+        },
+        selectProductInformation(navigation, product) {
+            dispatch(actionsProducts.selectProduct(product));
+            navigation.navigate('ProductInformationScreen',{isAdmin:false});
         },
         deleteProduct(productId) {
             dispatch(actionsProducts.startRemovingProduct(productId))

@@ -10,11 +10,12 @@ class ProductListItemAdmin extends Component{
         this.style = props.style;
         this.props=props;
         this.product = this.props.product
+        
     }
     render(){
      
         return(
-            <ListItem thumbnail style={{...this.style}}>
+            <ListItem thumbnail style={{...this.style}} onPress={this.props.onPress}>
                 <Left>
                 {this.props.product.image==null &&  <Avatar rounded size={55} overlayContainerStyle={{backgroundColor: 'white'}} icon={{name: 'food', color: 'black',type: 'material-community'}}  />}
                 {this.props.product.image!=null &&  <Avatar rounded size={55} source={{ uri: `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/ProductImages%2F${this.props.product.image}_400x400.jpg?alt=media` }}  />}
