@@ -84,3 +84,25 @@ export const getOrders = async() => {
         };
     }
 }
+
+//  Funcion para eliminar órdenes de Firebase
+export const deleteOrder = async({ orderId }) => {
+    try {
+        let orderDoc = await db.collection(collection).doc(orderId);
+        orderDoc = await orderDoc.delete();
+        return {
+            orderId: orderId,
+            error: null,
+            errorMessage: null,
+        };
+
+    } catch(error) {
+        console.log("ERROR" + error.toString());
+        let errorMessage = "No se pudo eliminar esta órden";
+        return{ 
+            errorMessage: errorMessage, 
+            error, 
+            orderId: null 
+        };
+    };
+}

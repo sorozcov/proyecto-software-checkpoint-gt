@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
     rowFront: {        
         backgroundColor: '#ffffff',
- 
+        height:70,
     },    
 })
 

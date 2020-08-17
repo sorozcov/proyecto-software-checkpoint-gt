@@ -4,6 +4,7 @@ import { withTheme } from 'react-native-paper';
 import CategoriesList from '../categories/CategoriesList';
 import EditCategoryScreen from '../categories/EditCategoryScreen';
 import EditProductScreen from '../products/EditProductScreen';
+import ProductInformationScreen from '../products/ProductInformationScreen';
 import ProductListScreen from '../products/ProductsList';
 
 
@@ -25,6 +26,7 @@ function MenuStackScreen({ theme }) {
       <MenuStack.Screen name="CategoriesList" options={{ title: 'CATEGORÍAS', headerTitleAlign:'center'}} component={CategoriesList} />
       <MenuStack.Screen name="EditProductScreen"   options={{ title: 'NUEVO PRODUCTO', headerTitleAlign:'center'}} component={EditProductScreen} />
       <MenuStack.Screen name="EditCategoryScreen"   options={{ title: 'NUEVA CATEGORÍA', headerTitleAlign:'center'}} component={EditCategoryScreen} />
+      <MenuStack.Screen name="ProductInformationScreen"   options={{ title: 'PRODUCTO', headerTitleAlign:'center'}} component={ProductInformationScreen} />
     </MenuStack.Navigator>
   );
 }

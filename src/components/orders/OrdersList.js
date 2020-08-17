@@ -1,6 +1,6 @@
 import { Container } from 'native-base';
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
 import { withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -13,7 +13,7 @@ import OrderItem from './OrderItem';
 const width = Dimensions.get('window').width; // full width
 
 function OrdersList ({
-    // deleteOrder,
+    deleteOrder,
     theme,
     onLoad,
     onRefresh,
@@ -66,7 +66,7 @@ function OrdersList ({
                             onRefresh={()=>onRefresh()}
                             disableRightSwipe={true}
                             closeOnRowPress={true}
-                            keyExtractor={(order, index) => (order.id)}
+                            keyExtractor={(order, index) => (order.orderId)}
                             renderHiddenItem={
                                 (order, rowMap) => (
                                     <View style={styles.rowBack}>
@@ -82,11 +82,11 @@ function OrdersList ({
                                             <Text style={styles.backTextWhite}>Editar</Text>  
                                         </TouchableOpacity>
 
-                                        {/* <TouchableOpacity
+                                        <TouchableOpacity
                                             style={[styles.backRightBtn, styles.backRightBtnRight]}
                                             
                                             onPress={ () => {
-                                                rowMap[order.item.id].closeRow();
+                                                rowMap[order.item.orderId].closeRow();
                                                 Alert.alert(
                                                     '¿Eliminar orden?',
                                                     'Esta acción no puede ser revertida',
@@ -97,7 +97,7 @@ function OrdersList ({
                                                         },
                                                         {
                                                             text: 'Eliminar',
-                                                            onPress: () => deleteOrder(order.item.id),
+                                                            onPress: () => deleteOrder(order.item.orderId),
                                                             style: 'destructive'
                                                         }
                                                     ],
@@ -114,7 +114,7 @@ function OrdersList ({
                                             />
                                             <Text style={styles.backTextWhite}>Eliminar</Text>
                                             
-                                        </TouchableOpacity> */}
+                                        </TouchableOpacity>
                                     </View>
                                 )
                             }
@@ -127,7 +127,7 @@ function OrdersList ({
                     </Container>
                 )
             }
-            <FloatingAction
+            {/* <FloatingAction
                 buttonSize={50}
                 color='black'
                 overrideWithAction={true}
@@ -138,8 +138,12 @@ function OrdersList ({
                       ),
                     name:'addOrder'
                   }]}
+<<<<<<< HEAD
             />
 
+=======
+            /> */}
+>>>>>>> ea605b7cd9ed61b5ad01db9f582e81a0c025bd9f
             <Modal
                 transparent={true}
                 animationType={'none'}
@@ -229,8 +233,8 @@ export default connect(
             dispatch(actions.activateOrder(order));
             navigation.navigate('FinishOrder');
         },
-        // deleteOrder(id){
-        //     dispatch(actions.startRemovingOrder(id));
-        // }
+        deleteOrder(orderId){
+            dispatch(actions.startRemovingOrder(orderId));
+        }
     }),
 )(withTheme(OrdersList));

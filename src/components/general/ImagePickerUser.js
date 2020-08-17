@@ -66,9 +66,9 @@ export default class ImagePickerUser extends React.Component {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         
-        {!image &&  <Avatar.Icon size={100} icon="account" color="white"  />}
+        {!image &&  <Avatar.Icon size={150} icon="account" color="white"  />}
 
-        {image &&  <Avatar.Image style={{alignSelf:'center'}} size={100} source={{ uri: image }}  />}
+        {image &&  <Avatar.Image style={{alignSelf:'center'}} size={150} source={{ uri: image }}  />}
         <Button labelStyle={{fontFamily:"dosis-bold"}} onPress={()=>this.setState({ actionPickerVisible: true })} >Cambiar Imagen</Button>
         <ActionPicker
             style={{fontFamily:"dosis-medium"}}
@@ -88,13 +88,13 @@ export default class ImagePickerUser extends React.Component {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
-        alert('Lo siento, necesitamos permisos de la cámara para funcionar.!');
+        alert('Lo sentimos. Necesitamos permisos para la Cámara para funcionar correctamente.');
       }
     }
     if (Constants.platform.ios) {
         const { status } = await Permissions.askAsync(Permissions.CAMERA);
         if (status !== 'granted') {
-          alert('Lo siento, necesitamos permisos de la cámara para funcionar.!');
+          alert('Lo sentimos. Necesitamos permisos para la Cámara para funcionar correctamente.');
         }
       }
     
@@ -103,10 +103,10 @@ export default class ImagePickerUser extends React.Component {
   _takeImage = async () => {
     try {
       let result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: false,
         aspect: [4, 3],
-        quality: 0.4,
+        quality: 0.3,
       }).then(result=>{
         if (!result.cancelled) {
             this.setState({ image: result.uri });
@@ -122,10 +122,10 @@ export default class ImagePickerUser extends React.Component {
   _pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: false,
         aspect: [4, 3],
-        quality: 0.4,
+        quality: 0.3,
       }).then(result=>{
             if (!result.cancelled) {
                 this.setState({ image: result.uri });
