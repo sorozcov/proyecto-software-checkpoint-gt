@@ -4,7 +4,7 @@
 
 
 import { firebase, firebaseFirestore } from '.';
-
+import { uploadImageToFirebase } from './images';
 
 const db = firebaseFirestore;
 const collection = "products";
@@ -35,19 +35,36 @@ export const getProducts= async () =>{
 
 //Funcion para crear o hacer update de un Product
 //Si es nuevo enviar productId=null o no enviar
-export const updateProduct = async ({productId,productName,description,category,categoryId,price})=>{
+export const updateProduct = async ({productId=null,productName,description,category,categoryId,price,image,status=1})=>{
     try {
 
         let productDoc = null;
         let isNew = productId==null;
         if(isNew){
+          
           productDoc = await firebaseFirestore.collection(collection).doc();
           productId = productDoc.id;
+          
         } else {
           productDoc = await firebase.firestore().collection(collection).doc(productId);
           productId = productDoc.id;
         }
-  
+        
+        //Vemos si necesita hacer update de la imagen
+        //Vemos si necesita subir una imagen
+        image = image !== undefined ? image : null;
+        if (image !== null){
+          if(!image.includes(productId)){
+            let uploadImg = await uploadImageToFirebase(image,productId,"ProductImages");
+            if(!uploadImg.uploaded){
+              //Error subiendo imagen
+              console.log(uploadImg.error);
+            }
+            
+          }
+          image = productId;
+          
+        }
  
         let dateModified = new Date();
         dateModified = dateModified.getTime();
@@ -57,7 +74,9 @@ export const updateProduct = async ({productId,productName,description,category,
             description:description,
             category:category,
             categoryId:categoryId,
-            price:price,
+            price:parseFloat(price).toFixed(2),
+            image:image,
+            status:status,
             dateModified:dateModified
           };
         if(isNew){

@@ -51,7 +51,7 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
                 previewOpenDelay={1000}
             />
             <View style={styles.totalContainer}>
-                <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + total}</Text>
+                <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
             </View>
             <View style={styles.buttonContainer}>
                 <Button
@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
         height: 100
     },
     rowFront: {
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        height:70,
     },
     textContainer: {
         flex: 3,
