@@ -1,6 +1,6 @@
 import 'firebase/firestore';
 import { Text } from 'native-base';
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, View ,FlatList} from 'react-native';
 import { Card, Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -16,10 +16,17 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createProduct, editProduct, route ,deleteProduct,addProduct}) {
   const { colors, roundness } = theme;
   const{isAdmin}=route.params;
+  const [quantity, setQuantity] = useState(0);
   const isNew = initialValues==null;
   if(!isNew)
     navigation.setOptions({ title: 'PRODUCTO' });
-  initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null? 0:initialValues.quantity
+    useEffect(() => {
+      initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null? 0:initialValues.quantity
+      setQuantity(initialValues.quantity)
+      
+    },[]);
+ 
+  
   const editProductForm = values => {
     // var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
     // values.category = selectedCategory;
@@ -82,7 +89,7 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
                             <>            
                                 <Button
                                     style={[styles.btn, styles.btnLeft]}
-                                    onPress={() => {deleteProduct(initialValues.productId)}}
+                                    onPress={() => {quantity>0?setQuantity(quantity-1):setQuantity(0)}}
                                 >
                                     <MaterialCommunityIcons
                                     name="minus"
@@ -92,11 +99,11 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
                                     
                                 </Button>
                                 <View style={styles.infoTxt} >
-                                  <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{initialValues.quantity == null ? 0 : initialValues.quantity}</Text>
+                                  <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{quantity}</Text>
                                </View> 
                                 <Button
                                     style={[styles.btn, styles.btnRight]}
-                                    onPress={() => {addProduct(initialValues.productId)}}
+                                    onPress={() => {setQuantity(quantity+1)}}
                                 >
                                     <MaterialCommunityIcons
                                     name="plus"
@@ -115,7 +122,7 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
           
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
-              disabled={!isAdmin && (initialValues.quantity==0 || initialValues.quantity==undefined)}
+              disabled={!isAdmin && (quantity==0 || quantity==undefined)}
               theme={roundness}
               color={'#000000'}
               icon={!isAdmin ? "plus" : "pencil"}
@@ -133,7 +140,7 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
               }}
               
               onPress={handleSubmit(editProductForm)}>
-              {isAdmin ? 'EDITAR PRODUCTO' : `AGREGAR ${initialValues.quantity} POR ${parseFloat(initialValues.quantity*initialValues.price).toFixed(2)}`}
+              {isAdmin ? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
             </Button>
           </View>
         </View>
