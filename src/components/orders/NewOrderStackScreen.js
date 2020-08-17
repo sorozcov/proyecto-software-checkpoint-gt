@@ -9,6 +9,8 @@ import FinishOrder from './FinishOrder';
 const OrderStack = createStackNavigator();
 
 function OrderStackScreen({ theme }) {
+    console.log("ORDER STACK SCREEN");
+
     const { colors } = theme;
 
     return (

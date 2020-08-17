@@ -36,10 +36,10 @@ class OrderItem extends Component{
 export default connect(
     undefined,
     dispatch => ({
-    //   selectOrder(navigation, order) {
-    //     dispatch(actions.selectOrder(order));
-    //     navigation.navigate('EditOrderScreen');
-    //   },
+      selectOrder(navigation, order) {
+        dispatch(actions.selectOrder(order));
+        navigation.navigate('FinishOrder');
+      },
     }),
   )(OrderItem);
   

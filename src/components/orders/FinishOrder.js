@@ -12,25 +12,37 @@ import * as selectors from '../../logic/reducers';
 
 
 
-function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts, activeOrder, sendOrder, finish, isAdding, addingError }){
+function FinishOrder({
+    theme,
+    navigation,
+    orderProductsByCategory,
+    orderProducts,
+    activeOrder,
+    sendOrder,
+    finish,
+    isAdding,
+    addingError
+}) {
     const { roundness } = theme
-    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
-    <Left>
-             
-                <Icon active name="restaurant" />
-             
-    </Left>
-    <Body>
-    <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
-    </Body>
-     </ListItem>  ;
+    const renderSectionHeader = ({ section }) => (
+        <ListItem style={{backgroundColor:'red'}} itemDivider icon>  
+            <Left> 
+                <Icon active name="restaurant" />        
+            </Left>
+
+            <Body>
+                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+            </Body>
+        </ListItem>
+    );
     
     //Se calcula el total
     var total = 0
     orderProducts.forEach(product => {
         total = total + (product.quantity * parseInt(product.price))
     });
-    return(
+
+    return (
         <View style={styles.container}>
             <SwipeListView
                 style={{marginTop:8}}
@@ -39,7 +51,14 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
                 
                 renderSectionHeader={renderSectionHeader}
                 renderItem={ (category, rowMap) => (
-                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onlyView={true}/>
+                    <ProductListItem
+                        style={styles.rowFront}
+                        key={category.item.productId}
+                        name={`${category.item.productName}`}
+                        product={category.item}
+                        navigation={navigation}
+                        onlyView={true}
+                    />
                 )}
                 disableRightSwipe={true}
                 closeOnRowPress={true}
@@ -51,7 +70,7 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
                 previewOpenDelay={1000}
             />
             <View style={styles.totalContainer}>
-                <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + total}</Text>
+                <Text style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + total}</Text>
             </View>
             <View style={styles.buttonContainer}>
                 <Button

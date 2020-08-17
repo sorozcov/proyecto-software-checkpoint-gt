@@ -75,6 +75,7 @@ const orderSelected = (state = null, action) => {
         case types.ORDER_DEACTIVATED: {
             return null;
         }
+        
         default: {
             return state;
         }
@@ -84,7 +85,11 @@ const orderSelected = (state = null, action) => {
 const selectedOrderProducts = (state = [], action) => {
     switch(action.type) {
         case types.ORDER_PRODUCTS_ADDED: {
-            const newState = action.payload
+            const newState = action.payload;
+            return newState;
+        }
+        case types.ORDER_ACTIVATED: {
+            const newState = action.payload.products;
             return newState;
         }
         default: {

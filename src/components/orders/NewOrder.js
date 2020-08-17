@@ -11,6 +11,8 @@ import MyTextInput from '../general/textInput';
 
 function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
 
+    console.log("NEW ORDER SCREEN");
+
     const { roundness } = theme
 
     const proceed = values => {
@@ -92,7 +94,7 @@ export default connect(
     dispatch => ({
         next(navigation, values) {
             navigation.navigate('ProductSelect');
-            dispatch(actions.activateOrder(values))
+            dispatch(actions.activateOrder(values));
         },
     }),
 )(reduxForm({
