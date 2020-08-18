@@ -1,6 +1,8 @@
 import 'firebase/firestore';
 import React from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { Text } from 'native-base';
+import { KeyboardAvoidingView, StyleSheet, View, FlatList } from 'react-native';
+import { Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
@@ -52,7 +54,21 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
             options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
             selectedItems={!isNew?[initialValues.categoryId]:[]}/>
           <Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>
-          
+          <Divider style={{ backgroundColor: 'red',marginTop:10,marginBottom:10 }} />
+          <Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
+            {'Ingredientes'}  
+          </Text>
+          <FlatList
+            data={[
+              {key: 'Ingrediente 1'},
+              {key: 'Ingrediente 2'},
+              {key: 'Ingrediente 3'},
+              {key: 'Ingrediente 4'},
+    
+            ]}
+            numColumns={2}
+            renderItem={({item}) => <Field name={'ingredient1'} component={MyCheckbox} label={item.key} containerStyle={{backgroundColor:null,width:'90%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>}
+          />
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
             <Button
               disabled={!(dirty && valid)}
