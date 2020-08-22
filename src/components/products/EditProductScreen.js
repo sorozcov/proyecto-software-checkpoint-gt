@@ -14,7 +14,7 @@ import MyCheckbox from '../general/checkbox';
 
 
 
-const restaurantsArray = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
+
 
 function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createProduct, editProduct, categories }) {
   const { colors, roundness } = theme;

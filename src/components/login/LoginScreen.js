@@ -12,7 +12,7 @@ const resetAction = StackActions.reset({
     actions: [
       NavigationActions.navigate({ routeName: 'HomeAdmin'})
     ] })
-
+            
 
 
 function LoginScreen({ theme, navigation, saveLoggedUser }) {
