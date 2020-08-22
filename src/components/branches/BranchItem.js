@@ -9,7 +9,7 @@ import * as actions from '../../logic/actions/branches';
 class BranchItem extends Component{
     constructor(props){
         super();
-        // this.image = (props.image != null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/BranchImages%2F${props.image}_400x400.jpg?alt=media` : null);
+      
         this.image = null;
         this.style = props.style;
         this.onPress = props.onPress;
