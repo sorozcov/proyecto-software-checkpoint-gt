@@ -91,6 +91,7 @@ export const isAddingProducts = state => productsSelectors.isAddingProducts(stat
 export const isEditingProducts = state => productsSelectors.isEditingProducts(state.products);
 export const isRemovingProducts = state => productsSelectors.isRemovingProducts(state.products);
 export const getProductsError = state => productsSelectors.getProductsError(state.products);
+export const getSavedIngredients = state => productsSelectors.getSavedIngredients(state.products);
 
 export const getProductsByCategory = state => {
   let categories = getCategories(state)

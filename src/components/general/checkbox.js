@@ -55,9 +55,8 @@ export default function MyCheckbox(props) {
 
 const styles = StyleSheet.create({
   inputContainerStyle: {
-    backgroundColor:null,
-    width:'50%',
-    alignSelf:'center'
+    backgroundColor: null,
+    alignSelf: 'center',
   },
   textError: {
     color: 'red',

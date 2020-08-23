@@ -1,4 +1,5 @@
 import * as types from '../types/products';
+import products from '../reducers/products';
 
 
 export const startFetchingProducts = () => ({
@@ -85,3 +86,30 @@ export const deleteProductToOrder = productId => ({
   type: types.PRODUCT_DELETE_TO_ORDER,
   payload: productId,
 });
+
+export const startAddingIngredient = (product) => ({
+  type: types.PRODUCT_INGREDIENT_ADD_STARTED,
+  payload: product
+});
+
+export const completeAddingIngredient = product => ({
+  type: types.PRODUCT_INGREDIENT_ADD_COMPLETED,
+  payload: product,
+});
+
+export const failAddingIngredient = (id, error) => ({
+  type: types.PRODUCT_INGREDIENT_ADD_FAILED,
+  payload: {
+    id,
+    error,
+  },
+});
+
+export const saveAdditionalIngredient = ingredient => ({
+  type: types.PRODUCT_INGREDIENT_SAVED,
+  payload: ingredient
+})
+
+export const clearAdditionalIngredients = () => ({
+  type: types.PRODUCT_INGREDIENTS_CLEARED
+})

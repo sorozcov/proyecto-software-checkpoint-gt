@@ -83,3 +83,25 @@ export function* watchDeleteProductStarted() {
         deleteProductStarted,
     )
 }
+
+function* addIngredient(action) {
+    try {
+        let product = action.payload;
+        const response = yield updateProduct(product);
+        
+        if (response.error == null) {
+            yield put(actions.completeAddingIngredient(response.product));
+        } else {
+            yield put(actions.failAddingIngredient(response.error));
+        }
+    } catch (error) {
+        yield put(actions.failAddingIngredient('Falló al agregar ingrediente'));
+    }
+}
+
+export function* watchAddIngredientStarted() {
+    yield takeEvery(
+        types.PRODUCT_INGREDIENT_ADD_STARTED,
+        addIngredient,
+    );
+}

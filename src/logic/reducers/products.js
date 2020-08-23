@@ -208,6 +208,19 @@ const error = (state = null, action) => {
   }
 };
 
+const savedIngredients = (state = [], action) => {
+  switch (action.type) {
+    case types.PRODUCT_INGREDIENT_SAVED: {
+      return [...state, action.payload];
+    }
+    case types.PRODUCT_INGREDIENTS_CLEARED: {
+      return []
+    }
+    default: {
+      return state;
+    }
+  }
+}
 
 const products = combineReducers({
   byId,
@@ -218,6 +231,7 @@ const products = combineReducers({
   isEditing,
   isRemoving,
   error,
+  savedIngredients,
 });
 
 export default products;
@@ -230,3 +244,4 @@ export const isAddingProducts = state => state.isAdding;
 export const isEditingProducts = state => state.isEditing;
 export const isRemovingProducts = state => state.isRemoving;
 export const getProductsError = state => state.error;
+export const getSavedIngredients = state => state.savedIngredients;
