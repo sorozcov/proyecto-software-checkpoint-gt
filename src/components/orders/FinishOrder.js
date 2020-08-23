@@ -23,11 +23,11 @@ function FinishOrder({
     isAdding,
     addingError
 }) {
-    const { roundness } = theme
+    const { roundness } = theme;
     const renderSectionHeader = ({ section }) => (
-        <ListItem style={{backgroundColor:'red'}} itemDivider icon>  
+        <ListItem style={{backgroundColor:'red'}} itemDivider icon>
             <Left> 
-                <Icon active name="restaurant" />        
+                <Icon active name="restaurant" />   
             </Left>
 
             <Body>
@@ -39,7 +39,7 @@ function FinishOrder({
     //Se calcula el total
     var total = 0
     orderProducts.forEach(product => {
-        total = total + (product.quantity * parseInt(product.price))
+        total = total + (product.quantity * parseInt(product.price));
     });
 
     return (
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
-        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
         orderProducts: selectors.getSelectedOrderProducts(state),
+        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
         activeOrder: selectors.getSelectedOrder(state),
         isAdding: selectors.isAddingOrders(state),
         addingError: selectors.getOrdersError(state),
@@ -148,7 +148,7 @@ export default connect(
         sendOrder(navigation, orderProducts, activeOrder, total) {
             dispatch(actions.startAddingOrder(orderProducts, {...activeOrder, total}));
             dispatch(actions.deactivateOrder());
-            navigation.navigate('NewOrder');
+            navigation.navigate('OrdersList');
         },
         // finish(navigation) {
         //     dispatch(actions.deactivateOrder());

@@ -24,7 +24,6 @@ class OrderItem extends Component{
                 <Body>
                     <Text style={{fontFamily:'dosis-semi-bold',fontSize:18}}>{this.props.name}</Text>
                     <Text style={{fontFamily:'dosis-light',fontSize:15}} note numberOfLines={1}><TimeAgo time={this.props.date} hideAgo={false} /></Text>
-                    {/* <Text style={{fontFamily:'dosis-light',fontSize:15}} note numberOfLines={1}>{moment(this.props.date).format("DD/MM/YY hh:mm")}</Text> */}
                     <Text style={{fontFamily:'dosis-semi-bold',fontSize:15}} note numberOfLines={1}>Total: Q. {this.props.total}</Text>
                 </Body>
                

@@ -11,8 +11,6 @@ import MyTextInput from '../general/textInput';
 
 function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
 
-    console.log("NEW ORDER SCREEN");
-
     const { roundness } = theme
 
     const proceed = values => {
@@ -36,7 +34,7 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
                     <View style={{alignSelf:"center"}}>
                         <MaterialCommunityIcons name="food" color={'black'} size={125}
                         style={{ marginTop: 0,paddingBottom:0,marginBottom:0 }} title="Hola"/>
-                        <Text style={{ fontSize: 22,fontFamily:'dosis-bold',paddingBottom:10,paddingTop:0  }}>NUEVO PEDIDO </Text>
+                        <Text style={{ fontSize: 22,fontFamily:'dosis-bold',paddingBottom:10,paddingTop:0  }}>NUEVO PEDIDO</Text>
                     </View>
                     <Field name={'table'} component={MyTextInput} label='Mesa' placeholder='No. de Mesa' keyboardType='numeric'/>
                     <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa un nombre' returnKeyType='done'/>

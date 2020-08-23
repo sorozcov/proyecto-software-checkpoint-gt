@@ -10,14 +10,15 @@ function OrdersStackScreen({ theme }) {
 	const { colors } = theme;
 	
 	return (
-		<OrdersStack.Navigator screenOptions={({ route }) =>
-            ({
+        <OrdersStack.Navigator
+            screenOptions={ ({ route }) => ({
                 headerBackTitleVisible:false,
                 headerTitleStyle: {
                 fontFamily: 'dosis-bold',  
                 },
                 headerMode: 'screen'
-            })} initialRouteName="OrdersList"
+            })}
+            initialRouteName="OrdersList"
         >
 
             <OrdersStack.Screen

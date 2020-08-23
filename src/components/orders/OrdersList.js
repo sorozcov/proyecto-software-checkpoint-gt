@@ -6,6 +6,8 @@ import { withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
+
+import * as actionsCategories from '../../logic/actions/categories';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import OrderItem from './OrderItem';
@@ -127,23 +129,6 @@ function OrdersList ({
                     </Container>
                 )
             }
-            {/* <FloatingAction
-                buttonSize={50}
-                color='black'
-                overrideWithAction={true}
-                onPressItem={() => newOrder(navigation)}
-                actions={[{
-                    icon: (
-                        <MaterialCommunityIcons name="plus" color='white' size={26}/>
-                      ),
-                    name:'addOrder'
-                  }]}
-<<<<<<< HEAD
-            />
-
-=======
-            /> */}
->>>>>>> ea605b7cd9ed61b5ad01db9f582e81a0c025bd9f
             <Modal
                 transparent={true}
                 animationType={'none'}
@@ -230,6 +215,7 @@ export default connect(
             navigation.navigate('NewOrder');
         },
         viewOrder(navigation, order) {
+            dispatch(actionsCategories.startFetchingCategories());
             dispatch(actions.activateOrder(order));
             navigation.navigate('FinishOrder');
         },
