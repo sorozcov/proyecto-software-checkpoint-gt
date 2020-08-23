@@ -11,13 +11,13 @@ import users, * as usersSelectors from './users';
 
 const reducer = combineReducers({
 
-  loggedUser,
-  categories,
-  users,
-  products,
-  branches,
-  orders,
-  form: formReducer,
+    loggedUser,
+    categories,
+    users,
+    products,
+    branches,
+    orders,
+    form: formReducer,
 
 });
 
@@ -48,7 +48,7 @@ export const isAddingBranches = state => branchSelectors.isAddingBranches(state.
 export const isEditingBranches = state => branchSelectors.isEditingBranches(state.branches);
 export const isRemovingBranches = state => branchSelectors.isRemovingBranches(state.branches);
 export const getViewedBranch = state => branchSelectors.getViewedBranch(state.branches);
-export const branchHasUsers = (branchId,state) => usersSelectors.getUsers(state.users).some(user => user.restaurantId==branchId);
+export const branchHasUsers = (branchId, state) => usersSelectors.getUsers(state.users).some(user => user.restaurantId == branchId);
 
 //Users
 export const getUser = (state, id) => usersSelectors.getUser(state.users, id);
@@ -67,13 +67,15 @@ export const getSelectedOrder = state => ordersSelectors.getSelectedOrder(state.
 
 export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrderProducts(state.orders);
 
-export const getSelectedOrderProductsByCategory = state =>  {
-  let products = ordersSelectors.getSelectedOrderProducts(state.orders)
-  let categories = getCategories(state)
-  return categories.map(category=>{
-    return {title:category.categoryName,
-            data: products.filter(product => product.categoryId === category.categoryId)}
-  }).filter(categoty => categoty.data.length !== 0)
+export const getSelectedOrderProductsByCategory = state => {
+    let products = ordersSelectors.getSelectedOrderProducts(state.orders);
+    let categories = getCategories(state);
+    return categories.map(category => {
+        return {
+            title: category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)
+        }
+    }).filter(category => category.data.length !== 0)
 };
 
 export const isFetchingOrders = state => ordersSelectors.isFetchingOrders(state.orders);
@@ -93,12 +95,14 @@ export const isRemovingProducts = state => productsSelectors.isRemovingProducts(
 export const getProductsError = state => productsSelectors.getProductsError(state.products);
 
 export const getProductsByCategory = state => {
-  let categories = getCategories(state)
-  let products = getProducts(state)
-  return categories.map(category=>{
-    return {title:category.categoryName,
-            data: products.filter(product => product.categoryId === category.categoryId)}
-  })
+    let categories = getCategories(state);
+    let products = getProducts(state);
+    return categories.map(category => {
+        return {
+            title: category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)
+        }
+    })
 };
 
 export const getProductsOfOrder = state => getProducts(state).filter(product => product.quantity != null && product.quantity !== 0);

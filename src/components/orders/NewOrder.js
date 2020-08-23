@@ -34,7 +34,7 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
                     <View style={{alignSelf:"center"}}>
                         <MaterialCommunityIcons name="food" color={'black'} size={125}
                         style={{ marginTop: 0,paddingBottom:0,marginBottom:0 }} title="Hola"/>
-                        <Text style={{ fontSize: 22,fontFamily:'dosis-bold',paddingBottom:10,paddingTop:0  }}>NUEVO PEDIDO </Text>
+                        <Text style={{ fontSize: 22,fontFamily:'dosis-bold',paddingBottom:10,paddingTop:0  }}>NUEVO PEDIDO</Text>
                     </View>
                     <Field name={'table'} component={MyTextInput} label='Mesa' placeholder='No. de Mesa' keyboardType='numeric'/>
                     <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa un nombre' returnKeyType='done'/>
@@ -92,7 +92,7 @@ export default connect(
     dispatch => ({
         next(navigation, values) {
             navigation.navigate('ProductSelect');
-            dispatch(actions.activateOrder(values))
+            dispatch(actions.activateOrder(values));
         },
     }),
 )(reduxForm({

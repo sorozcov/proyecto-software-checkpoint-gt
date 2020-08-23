@@ -6,220 +6,274 @@ import * as types from '../types/orders';
 
 
 const byId = (state = {}, action) => {
-    switch(action.type) {
-        case types.ORDERS_FETCH_COMPLETED: {
-            const { entities, order } = action.payload;
-            const newState = { ...state };
-            order.forEach(id => {
-                newState[id] = {
-                    ...entities[id],
+    switch (action.type) {
+        case types.ORDERS_FETCH_COMPLETED:
+            {
+                const { entities, order } = action.payload;
+                const newState = {...state };
+                order.forEach(id => {
+                    newState[id] = {
+                        ...entities[id],
+                    };
+                });
+
+                return newState;
+            }
+
+        case types.ORDER_ADD_COMPLETED:
+            {
+                const order = action.payload;
+                state[order.orderId] = {
+                    ...order,
                 };
-            });
 
-            return newState;
-        }
-        
-        case types.ORDER_ADD_COMPLETED: {
-            const order = action.payload;
-            state[order.orderId] = {
-                ...order,
-            };
+                return state;
+            }
 
-            return state;
-        }
+        case types.ORDER_EDIT_COMPLETED:
+            {
+                return {
+                    ...state,
+                    [action.payload.orderId]: {
+                        ...state[action.payload.orderId],
+                        ...action.payload,
+                    },
+                };
+            }
 
-        case types.ORDER_EDIT_COMPLETED: {
-            return {
-                ...state,
-                [action.payload.orderId]: {
-                    ...state[action.payload.orderId],
-                    ...action.payload,
-                },
-            };
-        }
+        case types.ORDER_REMOVE_COMPLETED:
+            {
+                return omit(state, action.payload.orderId);
+            }
 
-        case types.ORDER_REMOVE_COMPLETED: {
-            return omit(state, action.payload.orderId);
-        }
-
-        default: {
-            return state;
-        }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 const order = (state = [], action) => {
-    switch(action.type) {
-        case types.ORDERS_FETCH_COMPLETED: {
-            return union(action.payload.order);
-        }
-        case types.ORDER_ADD_COMPLETED: {
-            return [...state, action.payload.orderId];
-        }
-        case types.ORDER_REMOVE_COMPLETED: {
-            return state.filter(id => id !== action.payload.orderId);
-        }
-        default: {
-            return state;
-        }
+    switch (action.type) {
+        case types.ORDERS_FETCH_COMPLETED:
+            {
+                return union(action.payload.order);
+            }
+        case types.ORDER_ADD_COMPLETED:
+            {
+                return [...state, action.payload.orderId];
+            }
+        case types.ORDER_REMOVE_COMPLETED:
+            {
+                return state.filter(id => id !== action.payload.orderId);
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 const orderSelected = (state = null, action) => {
     switch (action.type) {
-        case types.ORDER_ACTIVATED: {
-            const date = new Date();
-            return {...action.payload, fecha: date};
-        }
+        case types.ORDER_ACTIVATED:
+            {
+                const date = new Date();
+                return {
+                    ...action.payload,
+                    fecha: date
+                };
+            }
 
-        case types.ORDER_DEACTIVATED: {
+        case types.ORDER_DEACTIVATED:
             return null;
-        }
-        default: {
+
+        default:
             return state;
-        }
     }
 };
 
 const selectedOrderProducts = (state = [], action) => {
-    switch(action.type) {
-        case types.ORDER_PRODUCTS_ADDED: {
-            const newState = action.payload
-            return newState;
-        }
-        default: {
+    switch (action.type) {
+        case types.ORDER_PRODUCTS_ADDED:
+            {
+                const newState = action.payload;
+                return newState;
+            }
+        case types.ORDER_ACTIVATED:
+            {
+                if (action.payload.products != null) {
+                    const newState = action.payload.products;
+                    return newState;
+                }
+
+                return state;
+            }
+
+        case types.ORDER_DEACTIVATED:
+            return [];
+
+        default:
             return state;
-        }
     }
-}
+};
 
 const isFetching = (state = false, action) => {
-    switch(action.type) {
-        case types.ORDERS_FETCH_STARTED: {
-            return true;
-        }
-        case types.ORDERS_FETCH_COMPLETED: {
-            return false;
-        }
-        case types.ORDERS_FETCH_FAILED: {
-            return false;
-        }
-        default: {
-            return state;
-        }
+    switch (action.type) {
+        case types.ORDERS_FETCH_STARTED:
+            {
+                return true;
+            }
+        case types.ORDERS_FETCH_COMPLETED:
+            {
+                return false;
+            }
+        case types.ORDERS_FETCH_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 const isAdding = (state = false, action) => {
-    switch(action.type) {
-        case types.ORDER_ADD_STARTED: {
-            return true;
-        }
-        case types.ORDER_ADD_COMPLETED: {
-            return false;
-        }
-        case types.ORDER_ADD_FAILED: {
-            return false;
-        }
-        default: {
-            return state;
-        }
+    switch (action.type) {
+        case types.ORDER_ADD_STARTED:
+            {
+                return true;
+            }
+        case types.ORDER_ADD_COMPLETED:
+            {
+                return false;
+            }
+        case types.ORDER_ADD_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 const isEditing = (state = false, action) => {
-    switch(action.type) {
-        case types.ORDER_EDIT_STARTED: {
-            return true;
-        }
-        case types.ORDER_EDIT_COMPLETED: {
-            return false;
-        }
-        case types.ORDER_EDIT_FAILED: {
-            return false;
-        }
-        default: {
-            return state;
-        }
+    switch (action.type) {
+        case types.ORDER_EDIT_STARTED:
+            {
+                return true;
+            }
+        case types.ORDER_EDIT_COMPLETED:
+            {
+                return false;
+            }
+        case types.ORDER_EDIT_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 const isRemoving = (state = false, action) => {
-    switch(action.type) {
-        case types.ORDER_REMOVE_STARTED: {
-            return true;
-        }
-        case types.ORDER_REMOVE_COMPLETED: {
-            return false;
-        }
-        case types.ORDER_REMOVE_FAILED: {
-            return false;
-        }
-        default: {
-            return state;
-        }
+    switch (action.type) {
+        case types.ORDER_REMOVE_STARTED:
+            {
+                return true;
+            }
+        case types.ORDER_REMOVE_COMPLETED:
+            {
+                return false;
+            }
+        case types.ORDER_REMOVE_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 const error = (state = null, action) => {
-    switch(action.type) {
+    switch (action.type) {
         //fetch
-        case types.ORDER_FETCH_FAILED: {
-            return action.payload.error;
-        }
-        case types.ORDER_FETCH_STARTED: {
-            return null;
-        }
-        case types.ORDER_FETCH_COMPLETED: {
-            return null;
-        }
-        //add
-        case types.ORDER_ADD_FAILED: {
-            return action.payload.error;
-        }
-        case types.ORDER_ADD_STARTED: {
-            return null;
-        }
-        case types.ORDER_ADD_COMPLETED: {
-            return null;
-        }
-        //edit
-        case types.ORDER_EDIT_FAILED: {
-            return action.payload.error;
-        }
-        case types.ORDER_EDIT_STARTED: {
-            return null;
-        }
-        case types.ORDER_EDIT_COMPLETED: {
-            return null;
-        }
-        //remove
-        case types.ORDER_REMOVE_FAILED: {
-            return action.payload.error;
-        }
-        case types.ORDER_REMOVE_STARTED: {
-            return null;
-        }
-        case types.ORDER_REMOVE_COMPLETED: {
-            return null;
-        }
-        default: {
-            return state;
-        }
+        case types.ORDER_FETCH_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.ORDER_FETCH_STARTED:
+            {
+                return null;
+            }
+        case types.ORDER_FETCH_COMPLETED:
+            {
+                return null;
+            }
+            //add
+        case types.ORDER_ADD_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.ORDER_ADD_STARTED:
+            {
+                return null;
+            }
+        case types.ORDER_ADD_COMPLETED:
+            {
+                return null;
+            }
+            //edit
+        case types.ORDER_EDIT_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.ORDER_EDIT_STARTED:
+            {
+                return null;
+            }
+        case types.ORDER_EDIT_COMPLETED:
+            {
+                return null;
+            }
+            //remove
+        case types.ORDER_REMOVE_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.ORDER_REMOVE_STARTED:
+            {
+                return null;
+            }
+        case types.ORDER_REMOVE_COMPLETED:
+            {
+                return null;
+            }
+        default:
+            {
+                return state;
+            }
     }
 };
 
 
 const orders = combineReducers({
-  byId,
-  order,
-  orderSelected,
-  selectedOrderProducts,
-  isFetching,
-  isAdding,
-  isEditing,
-  isRemoving,
-  error,
+    byId,
+    order,
+    orderSelected,
+    selectedOrderProducts,
+    isFetching,
+    isAdding,
+    isEditing,
+    isRemoving,
+    error,
 });
 
 export default orders;
