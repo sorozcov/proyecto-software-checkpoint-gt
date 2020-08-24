@@ -62,27 +62,10 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 						options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
 						selectedItems={!isNew?[initialValues.categoryId]:[]}/>
 					<Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
-						{'Ingredientes'}  
-					</Text>
-					<FlatList
-						data={isNew ? savedIngredients.map((ingredient, i) => ({...ingredient, id: i})) : ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
-						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
-					/>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
-						{'Adicionales'}  
-					</Text>
-					<FlatList
-						data={isNew ? savedAdditionals.map((ingredient, i) => ({ ...ingredient, id: i })) : additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
-						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} />}
-					/>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 					<View style={{ marginTop: 8, marginBottom: 8 }}>
 						<Button
 							theme={roundness}
-							color={'#000000'}
+							color={colors.accent }
 							icon={"plus"}
 							height={50}
 							mode="contained"
@@ -103,6 +86,24 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 						{'Nuevo Ingrediente'}
 						</Button>
 					</View>
+					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
+					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
+						{'Ingredientes'}  
+					</Text>
+					<FlatList
+						data={isNew ? savedIngredients.map((ingredient, i) => ({...ingredient, id: i})) : ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
+						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
+					/>
+					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
+					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
+						{'Adicionales'}  
+					</Text>
+					<FlatList
+						data={isNew ? savedAdditionals.map((ingredient, i) => ({ ...ingredient, id: i })) : additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
+						renderItem={({item}) => <View style={{width:'100%'}}><Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} /></View>}
+					/>
+					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
+					
 					<View style={{marginTop:'4%',marginBottom:'10%'}}>
 					<Button
 						disabled={!(dirty && valid)}

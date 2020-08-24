@@ -119,7 +119,7 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
          
           
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
-            <Button
+            {isAdmin && false && <Button
               disabled={!isAdmin && (quantity==0 || quantity==undefined)}
               theme={roundness}
               color={'#000000'}
@@ -138,8 +138,8 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
               }}
               
               onPress={handleSubmit(editProductForm)}>
-              {isAdmin ? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
-            </Button>
+              {isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
+            </Button>}
           </View>
         </View>
       </ScrollView>
