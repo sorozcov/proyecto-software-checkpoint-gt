@@ -22,8 +22,16 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+
     "ios": {
+      "bundleIdentifier": "com.checkpoint.checkpointgt",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
-    }
+    },
+    "android": {
+      "package": "com.checkpoint.checkpointgt",
+      "versionCode": 1
+    },
+    "description": ""
   }
 }
