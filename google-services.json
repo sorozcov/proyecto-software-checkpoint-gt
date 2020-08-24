@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "960829337971",
+    "firebase_url": "https://software-checkpoint-gt.firebaseio.com",
+    "project_id": "software-checkpoint-gt",
+    "storage_bucket": "software-checkpoint-gt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960829337971:android:335dd8743a60aeafca9506",
+        "android_client_info": {
+          "package_name": "com.checkpoint.checkpointgt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960829337971-sqvhb5lci3adm6210pnc399f0s6f5ohk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu_FVUhypfOO0O51ciu03MN_tf1ul9HYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960829337971-sqvhb5lci3adm6210pnc399f0s6f5ohk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
