@@ -87,9 +87,9 @@ export const deleteProductToOrder = productId => ({
   payload: productId,
 });
 
-export const startAddingIngredient = (product) => ({
+export const startAddingIngredient = ingredient => ({
   type: types.PRODUCT_INGREDIENT_ADD_STARTED,
-  payload: product
+  payload: ingredient
 });
 
 export const completeAddingIngredient = product => ({
@@ -105,11 +105,48 @@ export const failAddingIngredient = (id, error) => ({
   },
 });
 
-export const saveAdditionalIngredient = ingredient => ({
+export const startEditingIngredient = ingredient => ({
+  type: types.PRODUCT_INGREDIENT_EDIT_STARTED,
+  payload: ingredient
+});
+
+export const completeEditingIngredient = product => ({
+  type: types.PRODUCT_INGREDIENT_EDIT_COMPLETED,
+  payload: product,
+});
+
+export const failEditingIngredient = (id, error) => ({
+  type: types.PRODUCT_INGREDIENT_EDIT_FAILED,
+  payload: {
+    id,
+    error,
+  },
+});
+
+export const saveNewIngredient = ingredient => ({
   type: types.PRODUCT_INGREDIENT_SAVED,
   payload: ingredient
+});
+
+export const editNewIngredient = ingredientId => ({
+  type: types.PRODUCT_INGREDIENT_EDITED,
+  payload: ingredientId
+});
+
+export const clearNewIngredients = () => ({
+  type: types.PRODUCT_INGREDIENTS_CLEARED
+});
+
+export const saveNewAdditional = additional => ({
+  type: types.PRODUCT_ADDITIONAL_SAVED,
+  payload: additional
 })
 
-export const clearAdditionalIngredients = () => ({
-  type: types.PRODUCT_INGREDIENTS_CLEARED
+export const editNewAdditional = additionalId => ({
+  type: types.PRODUCT_ADDITIONAL_EDITED,
+  payload: additionalId
+})
+
+export const clearNewAdditionals = () => ({
+  type: types.PRODUCT_ADDITIONALS_CLEARED
 })

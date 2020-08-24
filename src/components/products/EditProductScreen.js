@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'firebase/firestore';
 import { Text } from 'native-base';
 import { connect } from 'react-redux';
@@ -6,10 +6,11 @@ import { Field, reduxForm } from 'redux-form';
 import { Divider } from 'react-native-elements';
 import { Button, withTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { KeyboardAvoidingView, StyleSheet, View, FlatList } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View, FlatList, Modal } from 'react-native';
 import omit from 'lodash/omit';
 
 import MyCheckbox from '../general/checkbox';
+import ModalIngrediens from './ModalIngrediens';
 import * as selectors from '../../logic/reducers';
 import MyTextInput from '../../components/general/textInput';
 import PickerInput from '../../components/general/PickerInput';
@@ -17,10 +18,14 @@ import * as actionsProducts from '../../logic/actions/products';
 import ImagePicker from '../../components/general/ImagePickerProduct';
 
 
-function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createProduct, editProduct, addIngredient, categories, savedIngredients }) {
+function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, clearProduct, createProduct, editProduct, addIngredient, addIngredientNewProduct, categories, savedIngredients, savedAdditionals, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault }) {
 	const { colors, roundness } = theme;
+	
 	const isNew = initialValues == null;
-	const addValues = isNew ? [] : initialValues.additional === undefined ? [] : initialValues.additional
+
+	useEffect(clearProduct, []);
+	
+	const [modal, setModal] = useState(false);
 	
 	if(!isNew)
 	navigation.setOptions({ title: 'EDITAR PRODUCTO' });
@@ -29,18 +34,15 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 		var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
 		values.category = selectedCategory;
 		values.categoryId = selectedCategory.categoryId;
-		
-		
 		if(isNew){
-			createProduct(navigation, values, savedIngredients)
+			createProduct(navigation, values)
 		} else {
 			editProduct(navigation,values)
 		}
-		
 	}
 	
 	const addAdditionalIngredient = values => {
-		isNew ? addIngredient(values) : addIngredient(values, initialValues)
+		isNew ? addIngredientNewProduct(values) : addIngredient(values)
 	}
 	
 	return (
@@ -64,29 +66,19 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 						{'Ingredientes'}  
 					</Text>
 					<FlatList
-						data={[
-							{key: 'Ingrediente 1'},
-							{key: 'Ingrediente 2'},
-							{key: 'Ingrediente 3'},
-							{key: 'Ingrediente 4'},
-						]}
-						numColumns={2}
-						renderItem={({item}) => <Field name={'ingredient1'} component={MyCheckbox} label={item.key} containerStyle={{backgroundColor: null, width: '90%', alignSelf: 'center'}} center={true} checked={!isNew ? initialValues.status: true}/>}
+						data={isNew ? savedIngredients.map((ingredient, i) => ({...ingredient, id: i})) : ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
+						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
 					/>
 					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
 						{'Adicionales'}  
 					</Text>
 					<FlatList
-						data={isNew ? savedIngredients.map(ingredient => ({key: `${ingredient.name} (Q${ingredient.cost})`})) : addValues.map(ingredient => ({key: `${ingredient.name} (Q${ingredient.cost})`}))}
-						numColumns={2}
-						renderItem={({item}) => <Field name={'ingredient2'} component={MyCheckbox} label={item.key} containerStyle={{backgroundColor: null, width: '90%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={!isNew ? initialValues.status : true} />}
+						data={isNew ? savedAdditionals.map((ingredient, i) => ({ ...ingredient, id: i })) : additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
+						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} />}
 					/>
+					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 					<View style={{ marginTop: 8, marginBottom: 8 }}>
-						<View style={{justifyContent: 'center'}}>
-							<Field name={'additional'} component={MyTextInput} label='Ingrediente' placeholder='Ingrediente'></Field>
-							<Field name={'additionalCost'} component={MyTextInput} label='Precio Unitario' placeholder='Precio' keyboardType='numeric'></Field>
-						</View>
 						<Button
 							theme={roundness}
 							color={'#000000'}
@@ -105,12 +97,11 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 								justifyContent: 'center',
 								flex: 1
 							}}
-							onPress={handleSubmit(addAdditionalIngredient)}
+							onPress={()=>setModal(true)}
 						>
-						{'Agregar'}
+						{'Nuevo Ingrediente'}
 						</Button>
 					</View>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 					<View style={{marginTop:'4%',marginBottom:'10%'}}>
 					<Button
 						disabled={!(dirty && valid)}
@@ -136,6 +127,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 				</View>
 			</ScrollView>
 		</View>
+		<ModalIngrediens modal={modal} closeModal={()=>setModal(false)} submitFunction={(values)=>addAdditionalIngredient(values)} />
 		</KeyboardAvoidingView>
 	);
 }
@@ -171,23 +163,25 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		paddingTop: 20,
 		paddingBottom: 20,
-	}
+	},
 });
 
 export default connect(
 	state => ({
 		initialValues: selectors.getSelectedProduct(state),
+		ingredients: selectors.getSelectedProductIngredients(state),
+		additionals: selectors.getSelectedProductAdditionals(state),
 		savedIngredients: selectors.getSavedIngredients(state),
+		savedAdditionals: selectors.getSavedAdditionals(state),
 		categories: selectors.getCategories(state),
 	}),
 	dispatch => ({
-		createProduct(navigation, values, savedIngredients) {
-			const temp = omit(values, ['additional', 'additionalCost'])
-			const product = ({
-				...temp,
-				additional: savedIngredients,
-			})
-
+		clearProduct() {
+            dispatch(actionsProducts.clearNewIngredients());
+            dispatch(actionsProducts.clearNewAdditionals());
+		},
+		createProduct(navigation, values) {
+			const product = omit(values, ['additional', 'additionalCost'])
 			dispatch(actionsProducts.startAddingProduct(product));
 			navigation.navigate('Menu');
 		},
@@ -195,23 +189,51 @@ export default connect(
 			dispatch(actionsProducts.startEditingProduct(product));
 			navigation.navigate('Menu');
 		},
-		addIngredient(values, initialValues = null) {
-			const additionalInfo = {
-				name: values.additional,
-				cost: parseFloat(values.additionalCost).toFixed(2),
-			}
-
-			if( initialValues != null) {
-				const product = {
-					...initialValues,
-					additional: initialValues['additional'] === undefined ? [additionalInfo] : [...initialValues['additional'], additionalInfo]
+		addIngredient(values) {
+			if (!isNaN(parseInt(values.additionalCost)) && values.additionalCost>0) {
+				const additionalInfo = {
+					name: values.additional,
+					default: false,
+					cost: parseFloat(values.additionalCost).toFixed(2),
 				}
-				dispatch(actionsProducts.startAddingIngredient(product))
-				dispatch(actionsProducts.selectProduct(product))
-			}
-			else {
-				dispatch(actionsProducts.saveAdditionalIngredient(additionalInfo))
-			}
+				dispatch(actionsProducts.startAddingIngredient({additionalInfo}))
+			}else{
+				const ingredientInfo = {
+					name: values.additional,
+					default: true
+				}
+				dispatch(actionsProducts.startAddingIngredient({ingredientInfo}))
+			};
+		},
+		addIngredientNewProduct(values) {
+			if (!isNaN(parseInt(values.additionalCost)) && values.additionalCost>0) {
+				const additionalInfo = {
+					name: values.additional,
+					default: false,
+					cost: parseFloat(values.additionalCost).toFixed(2),
+				}
+				dispatch(actionsProducts.saveNewAdditional(additionalInfo))
+			}else{
+				const ingredientInfo = {
+					name: values.additional,
+					default: true,
+				}
+				dispatch(actionsProducts.saveNewIngredient(ingredientInfo))
+			};
+		},
+		changeIngredientDefault(isNew, ingredientId) {
+			if (isNew) {
+				dispatch(actionsProducts.editNewIngredient(ingredientId))
+			}else{
+				dispatch(actionsProducts.startEditingIngredient({ingredientId}))
+			};
+		},
+		changeAdditionalDefault(isNew, additionalId) {
+			if (isNew) {
+				dispatch(actionsProducts.editNewAdditional(additionalId))
+			}else{
+				dispatch(actionsProducts.startEditingIngredient({additionalId}))
+			};
 		},
 	}),
 )(reduxForm({
@@ -223,8 +245,6 @@ export default connect(
 		errors.description = !values.description ? 'Este campo es obligatorio' : undefined;
 		errors.category = values.category && values.category.length === 0 ? 'Este campo es obligatorio' : undefined;
 		errors.price = !values.price ? 'Este campo es obligatorio' : isNaN(parseInt(values.price)) ? 'Ingresa un número correcto' : undefined;
-		errors.additional = values.additionalCost ? !values.additional ? 'Ingrese el nombre del ingrediente' : undefined : undefined
-		errors.additionalCost = values.additional ? !values.additionalCost ? 'Ingrese el precio del ingrediente' : undefined : undefined
 		return errors;
 	}
 })(withTheme(EditProductScreen)));

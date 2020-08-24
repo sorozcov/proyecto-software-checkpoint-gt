@@ -1,6 +1,7 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery, select } from 'redux-saga/effects';
 import { deleteProduct, getProducts, updateProduct } from '../../database/firebase/products';
 import * as actions from '../../logic/actions/products';
+import * as selectors from '../../logic/reducers';
 import * as types from '../types/products';
 
 
@@ -26,8 +27,16 @@ export function* watchProductsFetchStarted(){
 
 function* addProduct(action) {
     try {
-        var product = action.payload;
-        const response = yield updateProduct(product);
+        const product = action.payload;
+        const productIngredients = yield select(selectors.getSavedIngredients);
+        const productAdditionals = yield select(selectors.getSavedAdditionals);
+        const newProduct = {
+            ...product,
+            ingredients: productIngredients, 
+            additionals: productAdditionals, 
+        }
+        
+        const response = yield updateProduct(newProduct);
         if (response.error == null) {
             yield put(actions.completeAddingProduct(response.product));
         } else {
@@ -86,7 +95,20 @@ export function* watchDeleteProductStarted() {
 
 function* addIngredient(action) {
     try {
-        let product = action.payload;
+        let ingredient = action.payload;
+        const selectedProduct = yield select(selectors.getSelectedProduct)
+        var product = {}
+        if(ingredient.additionalInfo){
+            product = {
+                ...selectedProduct,
+                additionals: selectedProduct['additionals'] === undefined ? [ingredient.additionalInfo] : [...selectedProduct['additionals'], ingredient.additionalInfo]
+            }
+        }else {
+            product = {
+                ...selectedProduct,
+                ingredients: selectedProduct['ingredients'] === undefined ? [ingredient.ingredientInfo] : [...selectedProduct['ingredients'], ingredient.ingredientInfo]
+            }
+        }
         const response = yield updateProduct(product);
         
         if (response.error == null) {
@@ -103,5 +125,39 @@ export function* watchAddIngredientStarted() {
     yield takeEvery(
         types.PRODUCT_INGREDIENT_ADD_STARTED,
         addIngredient,
+    );
+}
+
+function* editIngredient(action) {
+    try {
+        let ingredient = action.payload;
+        var selectedProduct = yield select(selectors.getSelectedProduct)
+        if(ingredient.additionalId != null){
+            selectedProduct['additionals'][ingredient.additionalId] = {
+                ...selectedProduct['additionals'][ingredient.additionalId], 
+                default: !selectedProduct['additionals'][ingredient.additionalId].default 
+            };
+        }else {
+            selectedProduct['ingredients'][ingredient.ingredientId] = {
+                ...selectedProduct['ingredients'][ingredient.ingredientId], 
+                default: !selectedProduct['ingredients'][ingredient.ingredientId].default 
+            };
+        }
+        const response = yield updateProduct(selectedProduct);
+        
+        if (response.error == null) {
+            yield put(actions.completeEditingIngredient(response.product));
+        } else {
+            yield put(actions.failEditingIngredient(response.error));
+        }
+    } catch (error) {
+        yield put(actions.failEditingIngredient('Falló al agregar ingrediente'));
+    }
+}
+
+export function* watchEditIngredientStarted() {
+    yield takeEvery(
+        types.PRODUCT_INGREDIENT_EDIT_STARTED,
+        editIngredient,
     );
 }

@@ -33,6 +33,24 @@ const byId = (state = {}, action) => {
         },
       };
     }
+    case types.PRODUCT_INGREDIENT_ADD_COMPLETED: {
+      return {
+        ...state,
+        [action.payload.productId]: {
+          ...state[action.payload.productId],
+          ...action.payload,
+        },
+      };
+    }
+    case types.PRODUCT_INGREDIENT_EDIT_COMPLETED: {
+      return {
+        ...state,
+        [action.payload.productId]: {
+          ...state[action.payload.productId],
+          ...action.payload,
+        },
+      };
+    }
     case types.PRODUCT_ADD_TO_ORDER: {
       return {
         ...state,
@@ -85,6 +103,12 @@ const productSelected = (state = null, action) => {
     case types.PRODUCT_DESELECTED: {
       var newState = null;
       return newState;
+    }
+    case types.PRODUCT_INGREDIENT_ADD_COMPLETED: {
+      return action.payload;
+    }
+    case types.PRODUCT_INGREDIENT_EDIT_COMPLETED: {
+      return action.payload;
     }
     default: {
       return state;
@@ -213,7 +237,31 @@ const savedIngredients = (state = [], action) => {
     case types.PRODUCT_INGREDIENT_SAVED: {
       return [...state, action.payload];
     }
+    case types.PRODUCT_INGREDIENT_EDITED: {
+      var newState = state; 
+      newState[action.payload] = {...newState[action.payload], default: !newState[action.payload].default };
+      return newState;
+    }
     case types.PRODUCT_INGREDIENTS_CLEARED: {
+      return []
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
+const savedAdditionals = (state = [], action) => {
+  switch (action.type) {
+    case types.PRODUCT_ADDITIONAL_SAVED: {
+      return [...state, action.payload];
+    }
+    case types.PRODUCT_ADDITIONAL_EDITED: {
+      var newState = state; 
+      newState[action.payload] = {...newState[action.payload], default: !newState[action.payload].default };
+      return newState;
+    }
+    case types.PRODUCT_ADDITIONALS_CLEARED: {
       return []
     }
     default: {
@@ -232,6 +280,7 @@ const products = combineReducers({
   isRemoving,
   error,
   savedIngredients,
+  savedAdditionals,
 });
 
 export default products;
@@ -239,9 +288,12 @@ export default products;
 export const getProduct = (state, id) => state.byId[id];
 export const getProducts = state => state.order.map(id => getProduct(state, id));
 export const getSelectedProduct = (state) => state.productSelected;
+export const getSelectedProductIngredients = (state) => state.productSelected != null && state.productSelected.ingredients != null ? state.productSelected.ingredients : [];
+export const getSelectedProductAdditionals = (state) => state.productSelected != null && state.productSelected.additionals != null ? state.productSelected.additionals : [];
 export const isFetchingProducts = state => state.isFetching;
 export const isAddingProducts = state => state.isAdding;
 export const isEditingProducts = state => state.isEditing;
 export const isRemovingProducts = state => state.isRemoving;
 export const getProductsError = state => state.error;
 export const getSavedIngredients = state => state.savedIngredients;
+export const getSavedAdditionals = state => state.savedAdditionals;

@@ -313,7 +313,6 @@ export default connect(
         onLoad() {
             dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
-            dispatch(actionsProducts.clearAdditionalIngredients());
         },
          onRefresh() {
             dispatch(actionsCategories.startFetchingCategories());
