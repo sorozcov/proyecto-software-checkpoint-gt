@@ -15,6 +15,7 @@ export default function MyCheckbox(props) {
     textStyle:{fontFamily:'dosis-semi-bold',fontSize:14},
     containerStyle:styles.inputContainerStyle,
     label:'CHECKBOX',
+    functionCheckbox:undefined,
     disabled:false,
     buttonPress:true,
     center:true,
@@ -37,8 +38,20 @@ export default function MyCheckbox(props) {
       <CheckBox
             center={inputOptions.center}
             title={inputOptions.label}
-            onIconPress={!inputOptions.disabled ? !checked?()=>setChecked(true):()=>setChecked(false):null}
-            onPress={inputOptions.buttonPress && !inputOptions.disabled ? !checked?()=>setChecked(true):()=>setChecked(false):null}
+            onIconPress={!inputOptions.disabled ? ()=>{
+              if(inputOptions.functionCheckbox == undefined)
+                !checked ? setChecked(true) : setChecked(false);
+              else
+                inputOptions.functionCheckbox();
+                !checked ? setChecked(true) : setChecked(false);
+            }:null}
+            onPress={inputOptions.buttonPress && !inputOptions.disabled ? ()=>{
+              if(inputOptions.functionCheckbox == undefined)
+                !checked ? setChecked(true) : setChecked(false);
+              else
+                inputOptions.functionCheckbox();
+                !checked ? setChecked(true) : setChecked(false);
+            }:null}
             textStyle={inputOptions.textStyle}
             checked={checked}
             iconRight={inputOptions.iconRight}
@@ -55,9 +68,8 @@ export default function MyCheckbox(props) {
 
 const styles = StyleSheet.create({
   inputContainerStyle: {
-    backgroundColor:null,
-    width:'50%',
-    alignSelf:'center'
+    backgroundColor: null,
+    alignSelf: 'center',
   },
   textError: {
     color: 'red',

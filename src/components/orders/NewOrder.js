@@ -1,12 +1,12 @@
 import React from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
-import { Button, withTheme } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import * as actions from '../../logic/actions/orders';
-import MyTextInput from '../general/textInput';
+import { Button, withTheme } from 'react-native-paper';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import MyTextInput from '../general/textInput';
+import * as actions from '../../logic/actions/orders';
 
 
 function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
@@ -19,7 +19,7 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
             values.name = null;
             values.table = null;
         }
-        else{
+        else {
             changeError(true)
         }
     }
@@ -33,8 +33,8 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
                 <View style={styles.formContainer}>
                     <View style={{alignSelf:"center"}}>
                         <MaterialCommunityIcons name="food" color={'black'} size={125}
-                        style={{ marginTop: 0,paddingBottom:0,marginBottom:0 }} title="Hola"/>
-                        <Text style={{ fontSize: 22,fontFamily:'dosis-bold',paddingBottom:10,paddingTop:0  }}>NUEVO PEDIDO</Text>
+                            style={{ marginTop: 0, paddingBottom: 0,marginBottom: 0 }} title="Food"/>
+                        <Text style={{ fontSize: 22, fontFamily: 'dosis-bold', paddingBottom: 10, paddingTop: 0  }}>NUEVO PEDIDO </Text>
                     </View>
                     <Field name={'table'} component={MyTextInput} label='Mesa' placeholder='No. de Mesa' keyboardType='numeric'/>
                     <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa un nombre' returnKeyType='done'/>

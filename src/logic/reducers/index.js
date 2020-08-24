@@ -88,11 +88,15 @@ export const getOrdersError = state => ordersSelectors.getOrdersError(state.orde
 export const getProduct = (state, id) => productsSelectors.getProduct(state.products, id);
 export const getProducts = state => productsSelectors.getProducts(state.products);
 export const getSelectedProduct = state => productsSelectors.getSelectedProduct(state.products);
+export const getSelectedProductIngredients = state => productsSelectors.getSelectedProductIngredients(state.products);
+export const getSelectedProductAdditionals = state => productsSelectors.getSelectedProductAdditionals(state.products);
 export const isFetchingProducts = state => productsSelectors.isFetchingProducts(state.products);
 export const isAddingProducts = state => productsSelectors.isAddingProducts(state.products);
 export const isEditingProducts = state => productsSelectors.isEditingProducts(state.products);
 export const isRemovingProducts = state => productsSelectors.isRemovingProducts(state.products);
 export const getProductsError = state => productsSelectors.getProductsError(state.products);
+export const getSavedIngredients = state => productsSelectors.getSavedIngredients(state.products);
+export const getSavedAdditionals = state => productsSelectors.getSavedAdditionals(state.products);
 
 export const getProductsByCategory = state => {
     let categories = getCategories(state);

@@ -24,6 +24,11 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "android": {
+      "package": "com.proyectosoftwarecheckpointgt.proyectosoftwarecheckpointgt",
+      "versionCode": 1
+    },
+    "description": ""
   }
 }

@@ -13,7 +13,7 @@ import * as selectors from '../../logic/reducers';
 import MyCheckbox from '../general/checkbox';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createProduct, editProduct, route ,deleteProduct,addProduct}) {
+function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault }) {
   const { colors, roundness } = theme;
   const{isAdmin}=route.params;
   const [quantity, setQuantity] = useState(0);
@@ -65,20 +65,18 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
             {'Ingredientes'}  
           </Text>
           <FlatList
-            data={[
-              {key: 'Ingrediente 1'},
-              {key: 'Ingrediente 2'},
-              {key: 'Ingrediente 3'},
-              {key: 'Ingrediente 4'},
-    
-            ]}
-            numColumns={2}
-            renderItem={({item}) => <Field name={'ingredient1'} component={MyCheckbox} label={item.key} containerStyle={{backgroundColor:null,width:'90%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>}
-          />
-          
-          
-            
-       
+						data={ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
+						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
+					/>
+					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
+					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
+						{'Adicionales'}  
+					</Text>
+					<FlatList
+						data={additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
+						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} />}
+					/>
+
         </Card>
         <View style={{flexDirection:'row',alignItems:'center',flex:1,justifyContent:'center',marginTop:15}}>
                         
@@ -225,6 +223,8 @@ const styles = StyleSheet.create({
 export default connect(
   state => ({
     initialValues: selectors.getProduct(state,selectors.getSelectedProduct(state).productId),
+    ingredients: selectors.getSelectedProductIngredients(state),
+		additionals: selectors.getSelectedProductAdditionals(state),
     categories: selectors.getCategories(state),
   }),
   dispatch => ({
@@ -242,6 +242,12 @@ export default connect(
     deleteProduct(productId) {
         dispatch(actionsProducts.deleteProductToOrder(productId));
     },
+		changeIngredientDefault(ingredientId) {
+			dispatch(actionsProducts.startEditingIngredient({ingredientId}))
+		},
+		changeAdditionalDefault(additionalId) {
+			dispatch(actionsProducts.startEditingIngredient({additionalId}))
+		},
   }),
 )(reduxForm({
   form: 'editProductForm',

@@ -35,7 +35,7 @@ export const getProducts= async () =>{
 
 //Funcion para crear o hacer update de un Product
 //Si es nuevo enviar productId=null o no enviar
-export const updateProduct = async ({productId=null,productName,description,category,categoryId,price,image,status=1})=>{
+export const updateProduct = async ({productId=null,productName,description,category,categoryId,price,image, additionals = [], ingredients = [], status=1})=>{
     try {
 
         let productDoc = null;
@@ -71,18 +71,19 @@ export const updateProduct = async ({productId=null,productName,description,cate
         let productInfo = {
             productId: productId, 
             productName: productName,
-            description:description,
-            category:category,
-            categoryId:categoryId,
-            price:parseFloat(price).toFixed(2),
-            image:image,
-            status:status,
-            dateModified:dateModified
+            description: description,
+            category: category,
+            categoryId: categoryId,
+            price: parseFloat(price).toFixed(2),
+            image: image,
+            status: status,
+            dateModified: dateModified,
+            additionals,
+            ingredients,
           };
         if(isNew){
           await productDoc.set(productInfo);
         } else {
-
           await productDoc.update(productInfo);
         }
         return { product:productInfo,error:null,errorMessage:null}
