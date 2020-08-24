@@ -8,15 +8,15 @@ import * as actionsProducts from '../../logic/actions/products';
 
 
 
-class ProductListItem extends Component{
-    constructor(props){
+class ProductListItem extends Component {
+    constructor(props) {
         super();
         this.style = props.style;
         this.props = props;
     }
-    render(){
+    render() {
      
-        return(
+        return (
             <ListItem thumbnail style={{...this.style}}>
                 <Left>
                 {this.props.product.image==null &&  <Avatar rounded size={55} overlayContainerStyle={{backgroundColor: 'white'}} icon={{name: 'food', color: 'black',type: 'material-community'}}  />}
@@ -33,15 +33,15 @@ class ProductListItem extends Component{
                             </View> 
                             
                             {(this.props.onlyView !== true) &&    
-                            <>            
+                            <>           
                                 <Button
                                     style={[styles.btn, styles.btnLeft]}
                                     onPress={() => {this.props.deleteProduct(this.props.product.productId)}}
                                 >
                                     <MaterialCommunityIcons
-                                    name="minus"
-                                    color={'black'}
-                                    size={15}
+                                        name="minus"
+                                        color={'black'}
+                                        size={15}
                                     />
                                     
                                 </Button>
@@ -50,9 +50,9 @@ class ProductListItem extends Component{
                                     onPress={() => {this.props.addProduct(this.props.product.productId)}}
                                 >
                                     <MaterialCommunityIcons
-                                    name="plus"
-                                    color={'black'}
-                                    size={15}
+                                        name="plus"
+                                        color={'black'}
+                                        size={15}
                                     />
                                     
                                 </Button>

@@ -6,6 +6,8 @@ import { withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
+
+import * as actionsCategories from '../../logic/actions/categories';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import OrderItem from './OrderItem';
@@ -24,20 +26,25 @@ function OrdersList ({
     isAdding,
     isEditing,
     selectOrder,
-    viewOrder,}) {
-    // console.log(orders)
+    viewOrder,
+}) {
     const { colors, roundness } = theme;
     useEffect(onLoad, []);
+
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>  
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             {
                (
                     <Container width={width}>
                         {
                             orders.length <= 0 && !isLoading && (
-                                <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
-                                        <MaterialCommunityIcons name="information" color='black' size={50} />
-                                        <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>Aún no hay ordenes</Text>
+                                <View style={{flex:0.1, alignItems:'center', paddingTop:10}}>
+                                        <MaterialCommunityIcons
+                                            name="information"
+                                            color='black'
+                                            size={50}
+                                        />
+                                        <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Aún no hay ordenes</Text>
                                 </View>
                             )
                         }
@@ -46,9 +53,16 @@ function OrdersList ({
                             style={{marginTop:8}}
                             data={orders}
                             renderItem={ (order, rowMap) => (
-                                <OrderItem 
-                                // onPress={() => viewOrder(navigation, order.item)} 
-                                style={styles.rowFront} key={order.item.orderId} name={`${order.item.orderName}`} date={order.item.date.toDate().toString()} total={order.item.total} image={order.item.image} order={order.item} navigation={navigation} />
+                                <OrderItem
+                                    onPress={() => viewOrder(navigation, order.item)}
+                                    style={styles.rowFront}
+                                    key={order.item.orderId}
+                                    name={`${order.item.orderName}`}
+                                    date={order.item.date.toDate().toString()}
+                                    total={order.item.total} image={order.item.image}
+                                    order={order.item}
+                                    navigation={navigation}
+                                />
                             )}
                             refreshing={isLoading}
                             onRefresh={()=>onRefresh()}
@@ -58,7 +72,6 @@ function OrdersList ({
                             renderHiddenItem={
                                 (order, rowMap) => (
                                     <View style={styles.rowBack}>
-                                        
                                         <TouchableOpacity
                                             style={[styles.backRightBtn, styles.backRightBtnLeft]}
                                             // onPress={() => {selectOrder(navigation, order.item);rowMap[order.item.id].closeRow();}}
@@ -116,18 +129,6 @@ function OrdersList ({
                     </Container>
                 )
             }
-            {/* <FloatingAction
-                buttonSize={50}
-                color='black'
-                overrideWithAction={true}
-                onPressItem={() => newOrder(navigation)}
-                actions={[{
-                    icon: (
-                        <MaterialCommunityIcons name="plus" color='white' size={26}/>
-                      ),
-                    name:'addOrder'
-                  }]}
-            /> */}
             <Modal
                 transparent={true}
                 animationType={'none'}
@@ -201,7 +202,7 @@ export default connect(
         isLoading: selectors.isFetchingOrders(state),
         isAdding: selectors.isAddingOrders(state),
         isEditing: selectors.isEditingOrders(state),
-        orderHasUsers: (orderId)=>selectors.orderHasUsers(orderId,state)
+        orderHasUsers: (orderId)=>selectors.orderHasUsers(orderId, state)
     }),
     dispatch => ({
         onLoad() {
@@ -211,13 +212,13 @@ export default connect(
             dispatch(actions.startFetchingOrders());
         },
         newOrder(navigation) {
-            dispatch(actions.deselectOrder());
             navigation.navigate('NewOrder');
         },
-        // viewOrder(navigation, order) {
-        //     navigation.navigate('UserList');
-        //     dispatch(actions.viewOrder(order));
-        // },
+        viewOrder(navigation, order) {
+            dispatch(actionsCategories.startFetchingCategories());
+            dispatch(actions.activateOrder(order));
+            navigation.navigate('FinishOrder');
+        },
         deleteOrder(orderId){
             dispatch(actions.startRemovingOrder(orderId));
         }

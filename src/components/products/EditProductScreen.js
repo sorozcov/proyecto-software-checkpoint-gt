@@ -18,6 +18,7 @@ import * as actionsProducts from '../../logic/actions/products';
 import ImagePicker from '../../components/general/ImagePickerProduct';
 
 
+
 function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, clearProduct, createProduct, editProduct, addIngredient, addIngredientNewProduct, categories, savedIngredients, savedAdditionals, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault }) {
 	const { colors, roundness } = theme;
 	

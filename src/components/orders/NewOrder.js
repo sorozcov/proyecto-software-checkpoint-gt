@@ -92,7 +92,7 @@ export default connect(
     dispatch => ({
         next(navigation, values) {
             navigation.navigate('ProductSelect');
-            dispatch(actions.activateOrder(values))
+            dispatch(actions.activateOrder(values));
         },
     }),
 )(reduxForm({

@@ -12,25 +12,37 @@ import * as selectors from '../../logic/reducers';
 
 
 
-function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts, activeOrder, sendOrder, finish, isAdding, addingError }){
-    const { roundness } = theme
-    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
-    <Left>
-             
-                <Icon active name="restaurant" />
-             
-    </Left>
-    <Body>
-    <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
-    </Body>
-     </ListItem>  ;
+function FinishOrder({
+    theme,
+    navigation,
+    orderProductsByCategory,
+    orderProducts,
+    activeOrder,
+    sendOrder,
+    finish,
+    isAdding,
+    addingError
+}) {
+    const { roundness } = theme;
+    const renderSectionHeader = ({ section }) => (
+        <ListItem style={{backgroundColor:'red'}} itemDivider icon>
+            <Left> 
+                <Icon active name="restaurant" />   
+            </Left>
+
+            <Body>
+                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+            </Body>
+        </ListItem>
+    );
     
     //Se calcula el total
     var total = 0
     orderProducts.forEach(product => {
-        total = total + (product.quantity * parseInt(product.price))
+        total = total + (product.quantity * parseInt(product.price));
     });
-    return(
+
+    return (
         <View style={styles.container}>
             <SwipeListView
                 style={{marginTop:8}}
@@ -39,7 +51,14 @@ function FinishOrder({ theme, navigation, orderProductsByCategory, orderProducts
                 
                 renderSectionHeader={renderSectionHeader}
                 renderItem={ (category, rowMap) => (
-                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onlyView={true}/>
+                    <ProductListItem
+                        style={styles.rowFront}
+                        key={category.item.productId}
+                        name={`${category.item.productName}`}
+                        product={category.item}
+                        navigation={navigation}
+                        onlyView={true}
+                    />
                 )}
                 disableRightSwipe={true}
                 closeOnRowPress={true}
@@ -119,8 +138,8 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
-        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
         orderProducts: selectors.getSelectedOrderProducts(state),
+        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
         activeOrder: selectors.getSelectedOrder(state),
         isAdding: selectors.isAddingOrders(state),
         addingError: selectors.getOrdersError(state),
@@ -129,7 +148,7 @@ export default connect(
         sendOrder(navigation, orderProducts, activeOrder, total) {
             dispatch(actions.startAddingOrder(orderProducts, {...activeOrder, total}));
             dispatch(actions.deactivateOrder());
-            navigation.navigate('NewOrder');
+            navigation.navigate('OrdersList');
         },
         // finish(navigation) {
         //     dispatch(actions.deactivateOrder());
