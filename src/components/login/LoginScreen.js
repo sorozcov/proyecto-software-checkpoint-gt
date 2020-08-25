@@ -153,6 +153,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
           placeholder="Ingresa tu correo"
           value={mailInput}
           onChangeText={changeMailInput}
+          testID='user'
         />
         <TextInput
           style={styles.inputContainerStyle}
@@ -162,6 +163,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
           value={password}
           onChangeText={changePassword}
           secureTextEntry={true}
+          testID='password'
         />
         <Button
           theme={roundness}
@@ -181,12 +183,13 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
             justifyContent: 'center',            
             
           }}
+          testID='loginButton'
           onPress={() => login(mailInput,password)}>
           INICIAR SESIÓN
         
         </Button>
       <Text style={styles.textStyle}>¿Olvidaste tu contraseña?
-        <Text style={{...styles.textStyle, color: colors.accent }} onPress={() => resetPassword(mailInput)}> Recuperar contraseña.</Text>
+        <Text style={{...styles.textStyle, color: colors.accent }} onPress={() => resetPassword(mailInput)}  testID='forgotPassword'> Recuperar contraseña.</Text>
       </Text>
       </View>      
       <Modal

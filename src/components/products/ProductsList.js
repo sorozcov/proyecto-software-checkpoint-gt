@@ -131,7 +131,9 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
+                                                testID={'selectProductButton'}
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                                                
                                                 onPress={() => {selectProduct(navigation, product.item);rowMap[product.item.productId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
