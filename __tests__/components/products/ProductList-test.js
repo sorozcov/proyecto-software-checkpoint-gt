@@ -4,9 +4,8 @@ import configureStore from 'redux-mock-store';
 import ProductsList from '../../../src/components/products/ProductsList';
 import {Provider} from 'react-redux';
 import {render, cleanup, fireEvent} from 'react-native-testing-library';
-import ProductListItem from '../../../src/components/products/ProductListItem';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import * as selectors from '../../../src/logic/reducers';
+
 
 
 afterEach(cleanup);

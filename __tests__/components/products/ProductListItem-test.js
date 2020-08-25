@@ -3,10 +3,10 @@ import React from 'react';
 import configureStore from 'redux-mock-store';
 
 import {Provider} from 'react-redux';
-import {render, cleanup, beforeEach} from 'react-native-testing-library';
+import {render, cleanup} from 'react-native-testing-library';
 import ProductListItem from '../../../src/components/products/ProductListItem';
 
-import * as selectors from '../../../src/logic/reducers';
+
 
 
 afterEach(cleanup);
