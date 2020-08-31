@@ -36,7 +36,7 @@ export const updateOrder = async({ orderId, name, fecha, total, products }) => {
         } else {
             await orderDoc.update(orderInfo);
         }
-        const order = await (await db.collection(collection).doc(orderId).get()).data()
+        const order = (await db.collection(collection).doc(orderId).get()).data()
         return {
             order: order,
             error: null,
@@ -61,7 +61,6 @@ export const getOrders = async() => {
         let ordersArray = [];
         orders.docs.forEach(order => {
             order.data().date = order.data().date.toDate();
-            // console.log(order.data().date.toDate());
             ordersArray.push(order.data());
         });
         let ordersNormalizer = {};
@@ -88,7 +87,7 @@ export const getOrders = async() => {
 //  Funcion para eliminar órdenes de Firebase
 export const deleteOrder = async({ orderId }) => {
     try {
-        let orderDoc = await db.collection(collection).doc(orderId);
+        let orderDoc = db.collection(collection).doc(orderId);
         orderDoc = await orderDoc.delete();
         return {
             orderId: orderId,
@@ -96,13 +95,13 @@ export const deleteOrder = async({ orderId }) => {
             errorMessage: null,
         };
 
-    } catch(error) {
+    } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar esta órden";
-        return{ 
-            errorMessage: errorMessage, 
-            error, 
-            orderId: null 
+        return {
+            errorMessage: errorMessage,
+            error,
+            orderId: null
         };
     };
 }

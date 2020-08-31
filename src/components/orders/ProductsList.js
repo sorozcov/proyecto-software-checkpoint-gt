@@ -15,26 +15,33 @@ import ProductListItem from './ProductListItem';
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme,onLoad, isLoading, navigation, next, productsByCategories, user, productsOfOrder}) {
+function ProductsList ({
+    theme,
+    onLoad,
+    isLoading,
+    navigation,
+    next,
+    productsByCategories,
+    user,
+    productsOfOrder
+}) {
     const { colors, roundness } = theme;
 
-    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
-    <Left>
-             
-                <Icon active name="restaurant" />
-             
-    </Left>
-    <Body>
-    <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
-    </Body>
-     </ListItem>  ;
+    const renderSectionHeader = ({ section }) => (
+    <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
+        <Left>
+            <Icon active name="restaurant" />
+        </Left>
 
-   useEffect(onLoad, []);
+        <Body>
+            <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+        </Body>
+     </ListItem>
+     );
 
-    
-    const proceed = () => {
-        next(navigation, productsOfOrder)
-    }
+    useEffect(onLoad, []);
+
+    const proceed = () => next(navigation, productsOfOrder);
 
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white'}}>
@@ -42,7 +49,11 @@ function ProductsList ({ theme,onLoad, isLoading, navigation, next, productsByCa
                     {
                         productsByCategories.length <= 0 && !isLoading && (
                             <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
-                                    <MaterialCommunityIcons name="information" color='black' size={50} />
+                                    <MaterialCommunityIcons
+                                        name="information"
+                                        color='black'
+                                        size={50}
+                                    />
                                     <Text style={{paddingTop:10,fontSize:20,fontFamily:'dosis-bold',alignSelf:'center'}}>No hay productos registrados</Text>
                             </View>
                         )
@@ -54,7 +65,13 @@ function ProductsList ({ theme,onLoad, isLoading, navigation, next, productsByCa
                         
                         renderSectionHeader={renderSectionHeader}
                         renderItem={ (category, rowMap) => (
-                            <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} />
+                            <ProductListItem
+                                style={styles.rowFront}
+                                key={category.item.productId}
+                                name={`${category.item.productName}`}
+                                product={category.item}
+                                navigation={navigation}
+                            />
                         )}
                         disableRightSwipe={true}
                         closeOnRowPress={true}
@@ -70,21 +87,21 @@ function ProductsList ({ theme,onLoad, isLoading, navigation, next, productsByCa
                 
             </Container>
             <Button
-                    theme={roundness}
-                    color={'#000000'}
-                    icon={"arrow-right-bold"}
-                    height={50}
-                    mode="contained"
-                    labelStyle={{
-                        fontFamily: "dosis-bold",
-                        fontSize: 15,
-                    }}
-                    style={styles.button}
-                    onPress={proceed}
-                    disabled={productsOfOrder.length===0}
-                >
-                    {'CONTINUAR'}
-                </Button>
+                theme={roundness}
+                color={'#000000'}
+                icon={"arrow-right-bold"}
+                height={50}
+                mode="contained"
+                labelStyle={{
+                    fontFamily: "dosis-bold",
+                    fontSize: 15,
+                }}
+                style={styles.button}
+                onPress={proceed}
+                disabled={productsOfOrder.length===0}
+            >
+                {'CONTINUAR'}
+            </Button>
             <Modal
                 transparent={true}
                 animationType={'none'}

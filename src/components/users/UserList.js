@@ -1,16 +1,17 @@
+import { connect } from 'react-redux';
 import { Container } from 'native-base';
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { FloatingAction } from "react-native-floating-action";
 import { withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { connect } from 'react-redux';
-import * as actionBranches from '../../logic/actions/branches';
+import { ActivityIndicator, Alert, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import UserListItem from './UserListItem';
+import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/users';
 import * as actionsUsers from '../../logic/actions/users';
-import * as selectors from '../../logic/reducers';
-import UserListItem from './UserListItem';
+import * as actionBranches from '../../logic/actions/branches';
 
 
 const width = Dimensions.get('window').width; // full width
@@ -24,7 +25,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             {
-                 (
+                (
                     <Container  width={width}>
                              {
                                 users.length <= 0 && !isLoading && (

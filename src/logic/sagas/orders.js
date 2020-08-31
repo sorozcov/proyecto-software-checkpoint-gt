@@ -17,7 +17,7 @@ function* makeOrder(action) {
             yield put(actions.failAddingOrder(response.error));
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
         yield put(actions.failAddingOrder('Falló la creación del pedido'));
     }
 }
@@ -48,13 +48,13 @@ export function* watchOrdersFetch() {
 
 function* removeOrder(action) {
     try {
-        const order = action.payload
-        console.log("Borrala compaa" + order)
+        const order = action.payload;
+        console.log("Borrala compaa" + order);
         const response = yield deleteOrder(order);
 
         yield put(actions.completeRemovingOrder(response.orderId));
-    } catch(error) {
-        yield put(actions.failRemovingOrder(action.payload.orderId, "Falló el remove de órden"))
+    } catch (error) {
+        yield put(actions.failRemovingOrder(action.payload.orderId, "Falló el remove de órden"));
     }
 }
 

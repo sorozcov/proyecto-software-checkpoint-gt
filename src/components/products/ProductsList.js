@@ -332,7 +332,7 @@ export default connect(
         },
         selectProductInformation(navigation, product) {
             dispatch(actionsProducts.selectProduct(product));
-            navigation.navigate('ProductInformationScreen',{isAdmin:false});
+            navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
         deleteProduct(productId) {
             dispatch(actionsProducts.startRemovingProduct(productId))

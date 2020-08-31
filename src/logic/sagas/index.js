@@ -5,7 +5,7 @@ import { watchBranchesAdd, watchBranchesFetch, watchBranchesRemove, watchBranche
 import { watchAddCategory, watchEditCategory, watchFetchCategories, watchRemoveCategory } from './categories';
 import { watchLoginStarted, watchLogoffStarted } from './login';
 import { watchAddOrderStarted, watchOrdersFetch, watchRemoveOrder } from './orders';
-import { watchAddProductsStarted, watchDeleteProductStarted, watchEditProductsStarted, watchProductsFetchStarted } from './products';
+import { watchAddProductsStarted, watchDeleteProductStarted, watchEditProductsStarted, watchProductsFetchStarted, watchAddIngredientStarted, watchEditIngredientStarted } from './products';
 import { watchAddUsersStarted, watchDeleteUserStarted, watchEditUsersStarted, watchUsersFetchStarted } from './users';
 
 
@@ -35,6 +35,8 @@ function* mainSaga() {
         fork(watchAddProductsStarted),
         fork(watchEditProductsStarted),
         fork(watchDeleteProductStarted),
+        fork(watchAddIngredientStarted),
+        fork(watchEditIngredientStarted),
 
         fork(watchAddOrderStarted),
         fork(watchOrdersFetch),
