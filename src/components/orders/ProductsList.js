@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 export default connect(
     state => ({
         user: selectors.getLoggedUser(state),
-        productsByCategories: selectors.getProductsByCategory(state),
+        productsByCategories: selectors.getProductsByCategoryActive(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
         productsOfOrder: selectors.getProductsOfOrder(state),
     }),

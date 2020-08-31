@@ -101,12 +101,25 @@ export const getSavedAdditionals = state => productsSelectors.getSavedAdditional
 export const getProductsByCategory = state => {
     let categories = getCategories(state);
     let products = getProducts(state);
-    return categories.map(category => {
+    let allCategories = categories.map(category => {
         return {
             title: category.categoryName,
             data: products.filter(product => product.categoryId === category.categoryId)
         }
     })
+    return allCategories.filter(cat=>cat.data.length>0)
+};
+
+export const getProductsByCategoryActive = state => {
+    let categories = getCategories(state);
+    let products = getProducts(state).filter(product=>product.status==true);
+    let allCategories = categories.map(category => {
+        return {
+            title: category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)
+        }
+    })
+    return allCategories.filter(cat=>cat.data.length>0)
 };
 
 export const getProductsOfOrder = state => getProducts(state).filter(product => product.quantity != null && product.quantity !== 0);

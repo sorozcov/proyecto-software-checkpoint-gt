@@ -2,7 +2,7 @@ import React from 'react';
 import 'firebase/firestore';
 import { Field, reduxForm, submit } from 'redux-form';
 import { Button, withTheme } from 'react-native-paper';
-import { StyleSheet, View, Modal } from 'react-native';
+import { StyleSheet, View, Modal, ScrollView } from 'react-native';
 
 import MyTextInput from '../../components/general/textInput';
 
@@ -21,7 +21,7 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 			animationType={'none'}
 			visible={modal}
 		>
-			<View style={styles.modalBackground}>
+			<View style={styles.modalBackground} >
 				<View style={styles.modal}>
 				<View style={{justifyContent: 'center'}}>
 						<Field name={'additional'} component={MyTextInput} label='Ingrediente' placeholder='Ingrediente'></Field>
@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		flexDirection: 'column',
 		justifyContent: 'space-around',
+		
 		backgroundColor: '#00000040'
 	  },
 	  modal: {
@@ -87,6 +88,7 @@ const styles = StyleSheet.create({
 		height: 350,
 		width: '80%',
 		borderRadius: 10,
+		marginBottom:200,
 		justifyContent: 'space-around'
 	  },
 });

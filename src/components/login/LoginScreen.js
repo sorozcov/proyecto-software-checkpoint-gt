@@ -1,6 +1,17 @@
 import * as firebase from "firebase";
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, AsyncStorage, Image, Keyboard, KeyboardAvoidingView, Modal, StyleSheet, View } from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    AsyncStorage,
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Modal,
+    StyleSheet,
+    View,
+    TouchableOpacity
+} from 'react-native';
 import { Button, Text, TextInput, withTheme } from 'react-native-paper';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -185,9 +196,11 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
           INICIAR SESIÓN
         
         </Button>
-      <Text style={styles.textStyle}>¿Olvidaste tu contraseña?
-        <Text style={{...styles.textStyle, color: colors.accent }} onPress={() => resetPassword(mailInput)}> Recuperar contraseña.</Text>
-      </Text>
+        <TouchableOpacity onPress={() => resetPassword(mailInput)}>
+           <Text style={styles.textStyle}>¿Olvidaste tu contraseña?
+        <Text  style={{...styles.textStyle, color: colors.accent }}> Recuperar contraseña.</Text>
+        </Text>
+      </TouchableOpacity>
       </View>      
       <Modal
         transparent={true}
