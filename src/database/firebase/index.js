@@ -1,6 +1,6 @@
 // Configuracion de Firebase
 import * as firebase from 'firebase';
-
+import "firebase/storage";
 //Firebase Config del Proyecto
 var firebaseConfig = {
   apiKey: "AIzaSyAKPue3cCi_HLt9uZE7RoZIN2alLC0HJi8",

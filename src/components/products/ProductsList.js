@@ -98,7 +98,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
      </ListItem>  ;
    useEffect(onLoad, []);
     return(
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}} testID={"productListTotal"}> 
 
            
             {
@@ -116,7 +116,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 style={{marginTop:8}}
                                 useSectionList
                                 sections={productsByCategories}
-                                
+                                testID={"productList"}
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
                                     <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onPress={()=>selectProductInformation(navigation, category.item)} />
@@ -131,7 +131,9 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                         <View style={styles.rowBack}>
                                             
                                             <TouchableOpacity
+                                                testID={'selectProductButton'}
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                                                
                                                 onPress={() => {selectProduct(navigation, product.item);rowMap[product.item.productId].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons

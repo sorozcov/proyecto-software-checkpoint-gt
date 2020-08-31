@@ -12,7 +12,7 @@
     "icon": "./src/assets/images/icon.png",
     "scheme": "myapp",
     "splash": {
-      "image": "./src/assets/images/checkpointLogo.jpg",
+      "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,12 +22,18 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+
     "ios": {
+      "bundleIdentifier": "com.checkpoint.checkpointgt",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
-      "package": "com.proyectosoftwarecheckpointgt.proyectosoftwarecheckpointgt",
-      "versionCode": 1
+      "package": "com.checkpoint.checkpointgt",
+      "googleServicesFile": "google-services.json",
+      "versionCode": 2
+
     },
     "description": ""
   }
