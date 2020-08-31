@@ -150,3 +150,8 @@ export const editNewAdditional = additionalId => ({
 export const clearNewAdditionals = () => ({
   type: types.PRODUCT_ADDITIONALS_CLEARED
 })
+
+export const productSearchStarted = searchText => ({
+  type: types.PRODUCT_SEARCH_STARTED,
+  payload: searchText,
+});

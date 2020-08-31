@@ -109,17 +109,33 @@ export const getProductsByCategory = state => {
     })
     return allCategories.filter(cat=>cat.data.length>0)
 };
+export const getSearchTextProduct = state => productsSelectors.getSearchTextProduct(state.products);
 
 export const getProductsByCategoryActive = state => {
+    
     let categories = getCategories(state);
     let products = getProducts(state).filter(product=>product.status==true);
+    // let products = getProducts(state).filter(product=>product.status==true && (product.productName.search(searchText)>-1 || searchText==""));
     let allCategories = categories.map(category => {
         return {
             title: category.categoryName,
             data: products.filter(product => product.categoryId === category.categoryId)
         }
     })
-    return allCategories.filter(cat=>cat.data.length>0)
+    
+    let filteredSearchProducts = allCategories
+    
+    let searchText = getSearchTextProduct(state)
+    allCategories.forEach((category,index) => {
+       if(category.title.toLowerCase().search(searchText.toLowerCase())==-1 && searchText!=""){
+        filteredSearchProducts[index].data = category.data.filter(prod=>prod.productName.toLowerCase().search(searchText.toLowerCase())>-1 || searchText=="")
+       }else{
+        filteredSearchProducts[index].data = category.data;
+       }
+    });
+    filteredSearchProducts = filteredSearchProducts.filter(cat=>cat.data.length>0)
+    return filteredSearchProducts   
 };
 
 export const getProductsOfOrder = state => getProducts(state).filter(product => product.quantity != null && product.quantity !== 0);
+

@@ -10,6 +10,8 @@ import * as actionsCategories from '../../logic/actions/categories';
 import * as actionsProducts from '../../logic/actions/products';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from './ProductListItem';
+import { SearchBar } from 'react-native-elements';
+
 
 
 const width = Dimensions.get('window').width; // full width
@@ -17,21 +19,7 @@ const width = Dimensions.get('window').width; // full width
 
 function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,selectProductInformation,productsByCategories, deleteProduct, user}) {
     const { colors, roundness } = theme;
-    const [listData, setListData] = useState(
-                Array(5)
-                    .fill('')
-                    .map((_, i) => ({
-                        title: `title${i + 1}`,
-                        data: [
-                            ...Array(5)
-                                .fill('')
-                                .map((_, j) => ({
-                                    key: `${i}.${j}`,
-                                    text: `item #${j}`,
-                                })),
-                        ],
-                    }))
-           );
+
     
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -52,39 +40,6 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
         setListData(newData);
     };
 
-    const onRowDidOpen = rowKey => {
-        console.log('This row opened', rowKey);
-    };
-
-    const renderItem = data => (
-        <TouchableHighlight
-            onPress={() => console.log('You touched me')}
-            style={styles.rowFront}
-            underlayColor={'#AAA'}
-        >
-            <View>
-                <Text>I am {data.item.text} in a SwipeListView</Text>
-            </View>
-        </TouchableHighlight>
-    );
-
-    const renderHiddenItem = (data, rowMap) => (
-        <View style={styles.rowBack}>
-            <Text>Left</Text>
-            <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                onPress={() => closeRow(rowMap, data.item.key)}
-            >
-                <Text style={styles.backTextWhite}>Close</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={[styles.backRightBtn, styles.backRightBtnRight]}
-                onPress={() => deleteRow(rowMap, data.item.key)}
-            >
-                <Text style={styles.backTextWhite}>Delete</Text>
-            </TouchableOpacity>
-        </View>
-    );
 
     const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
     <Left>
@@ -100,7 +55,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}} testID={"productListTotal"}> 
 
-           
+            
             {
                  (
                     <Container width={width}>

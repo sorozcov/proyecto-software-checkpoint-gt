@@ -11,6 +11,7 @@ import * as actionsProducts from '../../logic/actions/products';
 import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from './ProductListItem';
+import { SearchBar } from 'react-native-elements';
 
 const width = Dimensions.get('window').width; // full width
 
@@ -23,10 +24,13 @@ function ProductsList ({
     next,
     productsByCategories,
     user,
-    productsOfOrder
+    productsOfOrder,
+    searchProductText,
+    onSearchProduct
 }) {
     const { colors, roundness } = theme;
 
+    
     const renderSectionHeader = ({ section }) => (
     <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
         <Left>
@@ -45,6 +49,14 @@ function ProductsList ({
 
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white'}}>
+            <SearchBar
+                placeholder="Buscar producto..."
+                onChangeText={onSearchProduct}
+                value={searchProductText}
+                showCancel={true}
+                containerStyle={{width:'100%',backgroundColor:'black'}}
+                inputContainerStyle={{backgroundColor:'white'}}
+            />
             <Container width={width}>
                     {
                         productsByCategories.length <= 0 && !isLoading && (
@@ -76,7 +88,7 @@ function ProductsList ({
                         disableRightSwipe={true}
                         closeOnRowPress={true}
                         refreshing={isLoading}
-                        onRefresh={()=>onLoad()}
+                        // onRefresh={()=>onLoad()}
                         keyExtractor={product => product.productId}
                         leftOpenValue={0}
                         rightOpenValue={-150}
@@ -148,11 +160,16 @@ export default connect(
         productsByCategories: selectors.getProductsByCategoryActive(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
         productsOfOrder: selectors.getProductsOfOrder(state),
+        searchProductText:selectors.getSearchTextProduct(state)
     }),
     dispatch => ({
         onLoad() {
             dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
+        },
+        onSearchProduct(searchText) {
+            dispatch(actionsProducts.productSearchStarted(searchText));
+            
         },
         next(navigation, products) {
             dispatch(actionsOrders.addProducts(products));

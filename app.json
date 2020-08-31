@@ -12,7 +12,7 @@
     "icon": "./src/assets/images/icon.png",
     "scheme": "myapp",
     "splash": {
-      "image": "./src/assets/images/splash.png",
+      "image": "./src/assets/images/checkpointLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,7 +22,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-
     "ios": {
       "bundleIdentifier": "com.checkpoint.checkpointgt",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -33,7 +32,6 @@
       "package": "com.checkpoint.checkpointgt",
       "googleServicesFile": "google-services.json",
       "versionCode": 2
-
     },
     "description": ""
   }

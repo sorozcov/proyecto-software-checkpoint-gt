@@ -270,6 +270,19 @@ const savedAdditionals = (state = [], action) => {
   }
 }
 
+
+const searchProduct = (state = "", action) => {
+  switch (action.type) {
+    case types.PRODUCT_SEARCH_STARTED: {
+      return action.payload;
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
+
 const products = combineReducers({
   byId,
   order,
@@ -281,6 +294,7 @@ const products = combineReducers({
   error,
   savedIngredients,
   savedAdditionals,
+  searchProduct,
 });
 
 export default products;
@@ -297,3 +311,4 @@ export const isRemovingProducts = state => state.isRemoving;
 export const getProductsError = state => state.error;
 export const getSavedIngredients = state => state.savedIngredients;
 export const getSavedAdditionals = state => state.savedAdditionals;
+export const getSearchTextProduct = state => state.searchProduct;
