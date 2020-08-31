@@ -57,7 +57,7 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 					<Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image}/>
 					<Field name={'productName'} component={MyTextInput} label='Nombre' placeholder='Ingresa el nombre del producto'/>
 					<Field name={'description'} component={MyTextInput} label='Descripción' placeholder='Ingresa la descripción del producto'  multiline={true}/>
-					<Field name={'price'} component={MyTextInput} label='Precio' placeholder='Ingresa el precio que tendrá el producto' keyboardType='numeric'/>
+					<Field name={'price'} component={MyTextInput} label='Precio Q.' placeholder='Ingresa el precio que tendrá el producto' keyboardType='numeric'/>
 					<Field name={'category'} component={PickerInput} title='Categoría' single={true} selectedText="Categoría" placeholderText="Seleccionar una categoría" 
 						options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
 						selectedItems={!isNew?[initialValues.categoryId]:[]}/>
