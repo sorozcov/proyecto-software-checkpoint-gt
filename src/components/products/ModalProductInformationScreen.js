@@ -29,7 +29,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 		
 		},[]);
 	
-	console.log(ingredients)
+	
 	const editProductForm = values => {
 		// var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
 		// values.category = selectedCategory;
