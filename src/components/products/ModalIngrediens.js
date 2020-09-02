@@ -2,8 +2,8 @@ import React from 'react';
 import 'firebase/firestore';
 import { Field, reduxForm, submit } from 'redux-form';
 import { Button, withTheme } from 'react-native-paper';
-import { StyleSheet, View, Modal, ScrollView } from 'react-native';
-
+import { StyleSheet, View, Dimensions } from 'react-native';
+import Modal from 'react-native-modal';
 import MyTextInput from '../../components/general/textInput';
 
 
@@ -19,7 +19,13 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 		<Modal
 			transparent={true}
 			animationType={'none'}
-			visible={modal}
+			isVisible={modal}
+			avoidKeyboard={true}
+			coverScreen={true}
+			onBackButtonPress={()=>closeModal()}
+			style={styles.modalB}
+			deviceWidth={Dimensions.get("window").width}
+			deviceHeight={Dimensions.get("window").height}
 		>
 			<View style={styles.modalBackground} >
 				<View style={styles.modal}>
@@ -75,20 +81,26 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 }
 	
 const styles = StyleSheet.create({
+	modalB:{
+		flex:1,
+		
+		flexDirection: 'row',
+		
+		margin: 0
+	},
 	modalBackground: {
 		flex: 1,
 		alignItems: 'center',
 		flexDirection: 'column',
 		justifyContent: 'space-around',
-		
-		backgroundColor: '#00000040'
+	
 	  },
 	  modal: {
 		backgroundColor: '#FFFFFF',
 		height: 350,
 		width: '80%',
 		borderRadius: 10,
-		marginBottom:200,
+		
 		justifyContent: 'space-around'
 	  },
 });
