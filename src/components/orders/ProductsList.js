@@ -21,10 +21,7 @@ function ProductsList ({
     onLoad,
     isLoading,
     navigation,
-    next,
     productsByCategories,
-    user,
-    productsOfOrder,
     searchProductText,
     onSearchProduct
 }) {
@@ -45,7 +42,6 @@ function ProductsList ({
 
     useEffect(onLoad, []);
 
-    const proceed = () => next(navigation, productsOfOrder);
 
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white'}}>
@@ -109,8 +105,8 @@ function ProductsList ({
                     fontSize: 15,
                 }}
                 style={styles.button}
-                onPress={proceed}
-                disabled={productsOfOrder.length===0}
+                onPress={console.log('Press')}
+                disabled={true}
             >
                 {'CONTINUAR'}
             </Button>
@@ -159,7 +155,6 @@ export default connect(
         user: selectors.getLoggedUser(state),
         productsByCategories: selectors.getProductsByCategoryActive(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
-        productsOfOrder: selectors.getProductsOfOrder(state),
         searchProductText:selectors.getSearchTextProduct(state)
     }),
     dispatch => ({
@@ -170,10 +165,6 @@ export default connect(
         onSearchProduct(searchText) {
             dispatch(actionsProducts.productSearchStarted(searchText));
             
-        },
-        next(navigation, products) {
-            dispatch(actionsOrders.addProducts(products));
-            navigation.navigate('FinishOrder');
         },
     }),
 )(withTheme(ProductsList));

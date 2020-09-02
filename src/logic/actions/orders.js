@@ -89,7 +89,20 @@ export const deactivateOrder = () => ({
     type: types.ORDER_DEACTIVATED,
 });
 
-export const addProducts = products => ({
-    type: types.ORDER_PRODUCTS_ADDED,
-    payload: products
-})
+export const addProductToOrder = product => ({
+    type: types.ORDER_PRODUCT_ADDED,
+    payload: product
+});
+
+export const editProductOfOrder = (index, product) => ({
+    type: types.ORDER_PRODUCT_EDITED,
+    payload: {
+        index,
+        product,
+    }
+});
+
+export const deleteProductOfOrder = index => ({
+    type: types.ORDER_PRODUCT_DELETED,
+    payload: index
+});

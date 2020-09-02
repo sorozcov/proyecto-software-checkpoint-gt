@@ -137,5 +137,3 @@ export const getProductsByCategoryActive = state => {
     return filteredSearchProducts   
 };
 
-export const getProductsOfOrder = state => getProducts(state).filter(product => product.quantity != null && product.quantity !== 0);
-
