@@ -58,7 +58,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 			deviceWidth={Dimensions.get("window").width}
 			deviceHeight={Dimensions.get("window").height}
 			// onSwipeComplete={()=>closeModal()}
-        	// swipeDirection={['down']}
+        	// swipeDirection={['right']}
 		>
 			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
 				<Card
@@ -136,8 +136,8 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 						</>
 						}		
 				</View> 
-				<View style={{marginTop:'10%',marginBottom:'2%'}}>
-					{!isAdmin && <Button
+				{!isAdmin && <View style={{marginTop:'10%',marginBottom:'2%'}}>
+					<Button
 					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
 					color={'#000000'}
@@ -157,11 +157,11 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					
 					onPress={()=>closeModal()}>
 					{isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
-					</Button>}
+					</Button>
 					
-				</View>
+				</View>}
 				<View style={{marginTop:'1%',marginBottom:'10%'}}>
-					{!isAdmin && <Button
+					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
 					color={'#000000'}

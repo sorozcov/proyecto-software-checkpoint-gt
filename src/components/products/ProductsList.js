@@ -268,9 +268,7 @@ export default connect(
         isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
         isEditing: selectors.isEditingProducts(state),
         isRemoving: selectors.isRemovingProducts(state),
-        initialValuesProduct: selectors.getSelectedProduct(state) !=null ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId) : {},
-	     ingredients: selectors.getSelectedProductIngredients(state),
-		  additionals: selectors.getSelectedProductAdditionals(state),
+
 	
 
     }),

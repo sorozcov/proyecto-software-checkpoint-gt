@@ -14,7 +14,7 @@ import ProductListItem from './ProductListItem';
 import { SearchBar } from 'react-native-elements';
 
 const width = Dimensions.get('window').width; // full width
-
+import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
 
 function ProductsList ({
     theme,
@@ -23,10 +23,11 @@ function ProductsList ({
     navigation,
     productsByCategories,
     searchProductText,
-    onSearchProduct
+    onSearchProduct,
+    selectProductInformation
 }) {
     const { colors, roundness } = theme;
-
+    const [modalProduct, setModalProduct] = useState(false);
     
     const renderSectionHeader = ({ section }) => (
     <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
@@ -79,6 +80,7 @@ function ProductsList ({
                                 name={`${category.item.productName}`}
                                 product={category.item}
                                 navigation={navigation}
+                                onPress={()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} 
                             />
                         )}
                         disableRightSwipe={true}
@@ -120,6 +122,7 @@ function ProductsList ({
                 </View>
                 </View>
             </Modal>
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
         </View>
     )
 }
@@ -165,6 +168,10 @@ export default connect(
         onSearchProduct(searchText) {
             dispatch(actionsProducts.productSearchStarted(searchText));
             
+        },
+        selectProductInformation(navigation, product) {
+            dispatch(actionsProducts.selectProduct(product));
+            // navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
     }),
 )(withTheme(ProductsList));
