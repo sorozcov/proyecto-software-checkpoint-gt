@@ -17,7 +17,7 @@ import configureStore from './src/logic/store';
 
 
 //Mute warnings
-console.disableYellowBox = true;
+//console.disableYellowBox = true;
 
 
 

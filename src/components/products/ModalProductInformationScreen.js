@@ -5,7 +5,7 @@ import { Button, withTheme,IconButton } from 'react-native-paper';
 import Modal from 'react-native-modal';
 import { Text } from 'native-base';
 import React,{useState,useEffect} from 'react';
-import { KeyboardAvoidingView, StyleSheet, View ,FlatList, Dimensions} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View ,FlatList, Dimensions, Platform} from 'react-native';
 import { Card, Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
@@ -194,9 +194,8 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 const styles = StyleSheet.create({
 	modalB:{
 		flex:1,
-		
 		flexDirection: 'row',
-		paddingTop:20,
+		paddingTop: Platform.ios ? 20 : 0,
 		margin: 0
 	},
 	modalBackground: {

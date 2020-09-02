@@ -107,7 +107,7 @@ function ProductsList ({
                     fontSize: 15,
                 }}
                 style={styles.button}
-                onPress={console.log('Press')}
+                onPress={() => console.log('Press')}
                 disabled={true}
             >
                 {'CONTINUAR'}
