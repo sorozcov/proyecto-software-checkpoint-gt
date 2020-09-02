@@ -26,6 +26,8 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 			style={styles.modalB}
 			deviceWidth={Dimensions.get("window").width}
 			deviceHeight={Dimensions.get("window").height}
+			// onSwipeComplete={()=>closeModal()}
+        	// swipeDirection={['down']}
 		>
 			<View style={styles.modalBackground} >
 				<View style={styles.modal}>

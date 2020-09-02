@@ -11,15 +11,16 @@ import * as actionsProducts from '../../logic/actions/products';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from './ProductListItem';
 import { SearchBar } from 'react-native-elements';
-
+import ModalProductInformationScreen from './ModalProductInformationScreen'
+import ModalIngrediens from './ModalIngrediens'
 
 
 const width = Dimensions.get('window').width; // full width
 
 
-function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,selectProductInformation,productsByCategories, deleteProduct, user}) {
+function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,selectProductInformation,productsByCategories, deleteProduct, user,initialValuesProduct,ingredients,additionals}) {
     const { colors, roundness } = theme;
-
+    const [modalProduct, setModalProduct] = useState(false);
     
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -74,7 +75,8 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                                 testID={"productList"}
                                 renderSectionHeader={renderSectionHeader}
                                 renderItem={ (category, rowMap) => (
-                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} onPress={()=>selectProductInformation(navigation, category.item)} />
+                                    <ProductListItem style={styles.rowFront} key={category.item.productId} name={`${category.item.productName}`} product={category.item} navigation={navigation} 
+                                    onPress={()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} />
                                 )}
                                 disableRightSwipe={true}
                                 closeOnRowPress={true}
@@ -200,6 +202,7 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
                 </View>
                 </View>
             </Modal>
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={true}/>}
         </View>
     )
 }
@@ -265,6 +268,11 @@ export default connect(
         isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
         isEditing: selectors.isEditingProducts(state),
         isRemoving: selectors.isRemovingProducts(state),
+        initialValuesProduct: selectors.getSelectedProduct(state) !=null ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId) : {},
+	     ingredients: selectors.getSelectedProductIngredients(state),
+		  additionals: selectors.getSelectedProductAdditionals(state),
+	
+
     }),
     dispatch => ({
         onLoad() {
@@ -287,7 +295,7 @@ export default connect(
         },
         selectProductInformation(navigation, product) {
             dispatch(actionsProducts.selectProduct(product));
-            navigation.navigate('ProductInformationScreen',{isAdmin:false});
+            // navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
         deleteProduct(productId) {
             dispatch(actionsProducts.startRemovingProduct(productId))

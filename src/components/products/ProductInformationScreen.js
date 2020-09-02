@@ -59,14 +59,14 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
           <Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-semi-bold',fontSize:24}}>
             {`Q${parseFloat(initialValues.price).toFixed(2)}`}
           </Text>
-          <Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>
+          {isAdmin?<Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>:null}
           <Divider style={{ backgroundColor: 'red',marginTop:10,marginBottom:10 }} />
           <Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
             {'Ingredientes'}  
           </Text>
           <FlatList
 						data={ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
-						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
+						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
 					/>
 					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
@@ -119,7 +119,7 @@ function ProductInformationScreen({ theme, navigation, dirty, valid, handleSubmi
          
           
           <View style={{marginTop:'4%',marginBottom:'10%'}}>
-            {isAdmin && false && <Button
+            {!isAdmin && <Button
               disabled={!isAdmin && (quantity==0 || quantity==undefined)}
               theme={roundness}
               color={'#000000'}
