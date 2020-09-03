@@ -78,7 +78,6 @@ const selectedOrder = (state = null, action) => {
     switch (action.type) {
         case types.ORDER_ACTIVATED:
             {
-                const date = new Date();
                 return {
                     ...action.payload,
                     products:[]
