@@ -17,7 +17,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FinishOrder from './FinishOrder';
 import * as actions from '../../logic/actions/orders';
 
-function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,closeModal, modal, submitFunction,isAdding,finishOrderButton=true,sendOrder,orderProducts,activeOrder,orderProductsByCategory,onlyDetail=false }) {
+function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrderButton=true,sendOrder,orderProducts,activeOrder,onlyDetail=false }) {
 	const { colors, roundness } = theme;
 	const [quantity, setQuantity] = useState(0);
 	
@@ -99,7 +99,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 						closeModal();
 						sendOrder(navigation, activeOrder, total);
 						}}>
-					{`PROCESAR ORDEN POR Q${parseFloat(total).toFixed(2)}`}
+					{(activeOrder.orderId!= null ? 'Actualizar' : 'PROCESAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
 					</Button>
 				
 				}
@@ -211,9 +211,12 @@ export default connect(
 	dispatch => ({
 
 		sendOrder(navigation, activeOrder, total) {
-            dispatch(actions.startAddingOrder({...activeOrder, total}));
+			if(activeOrder.orderId!=null)
+            	dispatch(actions.startEditingOrder({...activeOrder, total}));
+			else
+            	dispatch(actions.startAddingOrder({...activeOrder, total}));
             dispatch(actions.deactivateOrder());
-            navigation.navigate('NewOrder');
+            navigation.navigate('OrdersList');
         },
 	}),
   )(reduxForm({

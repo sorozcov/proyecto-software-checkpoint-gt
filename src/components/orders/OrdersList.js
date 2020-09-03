@@ -24,7 +24,6 @@ function OrdersList ({
     orders,
     isLoading,
     navigation,
-    newOrder,
     isAdding,
     isEditing,
     selectOrder,
@@ -70,7 +69,7 @@ function OrdersList ({
                             renderSectionHeader={renderSectionHeader}
                             renderItem={ (order, rowMap) => (
                                 <OrderItem
-                                    onPress={() => {setModalOrder(true);viewOrder(navigation, order.item);}}
+                                    onPress={() => {setModalOrder(true);viewOrder(order.item);}}
                                     style={styles.rowFront}
                                     key={order.item.orderId}
                                     name={`${order.item.orderName}`}
@@ -91,7 +90,7 @@ function OrdersList ({
                                     <View style={styles.rowBack}>
                                         <TouchableOpacity
                                             style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                            // onPress={() => {selectOrder(navigation, order.item);rowMap[order.item.id].closeRow();}}
+                                            onPress={() => {selectOrder(navigation, order.item);rowMap[order.item.orderId].closeRow();}}
                                         >
                                             <MaterialCommunityIcons
                                                 name="pencil"
@@ -229,17 +228,16 @@ export default connect(
         onRefresh() {
             dispatch(actions.startFetchingOrders());
         },
-        newOrder(navigation) {
-            navigation.navigate('NewOrder');
-        },
-        viewOrder(navigation, order) {
+        viewOrder(order) {
             dispatch(actionsCategories.startFetchingCategories());
-           
             dispatch(actions.activateOrder(order));
-            // navigation.navigate('FinishOrder');
         },
         deleteOrder(orderId){
             dispatch(actions.startRemovingOrder(orderId));
+        },
+        selectOrder(navigation, orderId){
+            dispatch(actions.activateOrder(orderId));
+            navigation.navigate('ProductSelect');
         }
     }),
 )(withTheme(OrdersList));

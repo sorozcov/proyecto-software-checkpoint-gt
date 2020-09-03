@@ -39,7 +39,7 @@ export const failAddingOrder = error => ({
 
 export const startEditingOrder = order => ({
     type: types.ORDER_EDIT_STARTED,
-    payload: order,
+    payload: order
 });
 
 export const completeEditingOrder = order => ({
@@ -47,10 +47,9 @@ export const completeEditingOrder = order => ({
     payload: order,
 });
 
-export const failEditingOrder = (id, error) => ({
+export const failEditingOrder = error => ({
     type: types.ORDER_EDIT_FAILED,
     payload: {
-        id,
         error,
     },
 });

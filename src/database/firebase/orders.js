@@ -13,11 +13,13 @@ export const updateOrder = async(newOrder) => {
         let isNew = orderId == null;
 
         if (isNew) {
+            console.log('Nuevo')
             orderDoc = firebaseFirestore.collection(collection).doc();
             orderId = orderDoc.id;
             let dateCreated = new Date();
             newOrder.date = dateCreated;
         } else {
+            console.log('No-Nuevo')
             orderDoc = firebase.firestore().collection(collection).doc(orderId);
             orderId = orderDoc.id;
         }

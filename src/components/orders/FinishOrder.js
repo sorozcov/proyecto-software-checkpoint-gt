@@ -20,11 +20,6 @@ function FinishOrder({
     orderProductsByCategory,
     orderProducts,
     activeOrder,
-    sendOrder,
-    finish,
-    isAdding,
-    addingError,
-    finishOrderButton=false,
     onlyDetail,
     selectProductInformation,
     deleteProductOfOrder,
@@ -81,7 +76,7 @@ function FinishOrder({
                         product={category.item}
                         navigation={navigation}
                         onlyView={true}
-                        onPress={!onlyDetail?null:()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} 
+                        onPress={onlyDetail?null:()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} 
                         
                     />
                 )}
@@ -222,11 +217,6 @@ export default connect(
         addingError: selectors.getOrdersError(state),
     }),
     dispatch => ({
-        sendOrder(navigation, orderProducts, activeOrder, total) {
-            dispatch(actions.startAddingOrder(orderProducts, {...activeOrder, total}));
-            dispatch(actions.deactivateOrder());
-            navigation.navigate('OrdersList');
-        },
         selectProductInformation(navigation, product) {
             dispatch(actionsProducts.selectProduct(product));
             // navigation.navigate('ProductInformationScreen',{isAdmin:true});
@@ -234,9 +224,5 @@ export default connect(
 		deleteProductOfOrder(index) {
 			dispatch(actionsOrders.deleteProductOfOrder(index));
 		},
-        // finish(navigation) {
-        //     dispatch(actions.deactivateOrder());
-        //     navigation.navigate('NewOrder');
-        // }
     }),
 )(withTheme(FinishOrder));
