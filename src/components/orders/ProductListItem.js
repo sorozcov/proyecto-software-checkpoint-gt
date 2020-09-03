@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View } from "react-native";
-import { ListItem, Left, Body, Text } from 'native-base';
+import { ListItem, Left, Body, Text, Right } from 'native-base';
 import { Avatar } from 'react-native-elements';
 
 
@@ -22,7 +22,7 @@ class ProductListItem extends Component {
                 <Body>
                     <View style={{flexDirection:'row'}}>
                         <Text  style={{fontFamily:'dosis-light',fontSize:17}}>{this.props.name}</Text>
-                        <Text  style={{fontFamily:'dosis-light',fontSize:17,paddingLeft:0}}>{`(Q ${parseFloat(this.props.product.price).toFixed(2)})`}</Text>
+                        <Right><Text  style={{fontFamily:'dosis-light',fontSize:17,marginLeft:5}}>{`Q ${parseFloat(this.props.product.price).toFixed(2)}    `}</Text></Right>
                     </View>
                 </Body>
             </ListItem>

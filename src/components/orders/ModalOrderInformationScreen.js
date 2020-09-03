@@ -14,9 +14,10 @@ import * as actionsProducts from '../../logic/actions/products';
 import * as selectors from '../../logic/reducers';
 import MyCheckbox from '../general/checkbox';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FinishOrder from './FinishOrder';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction,initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault,isAdding,isEditing,isAdmin=false }) {
+function OrderInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction,initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault,isAdding,isEditing,isAdmin=false }) {
 	const { colors, roundness } = theme;
 	
 	const [quantity, setQuantity] = useState(0);
@@ -49,8 +50,8 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 			animationType={'none'}
 			isVisible={modal}
 			avoidKeyboard={true}
-			animationIn={"fadeInUp"}
-			animationOut={"zoomOutUp"}
+			animationIn={"slideInUp"}
+			animationOut={"slideOutDown"}
 			coverScreen={true}
 			onBackButtonPress={()=>closeModal()}
 			style={styles.modalB}
@@ -60,106 +61,8 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 			// onSwipeComplete={()=>closeModal()}
         	// swipeDirection={['right']}
 		>
-			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
-				<Card
-				title={initialValues.productName}
-				titleStyle={{fontFamily:'dosis-bold',fontSize:22}}
-				containerStyle={{marginTop:50}}>
-				<Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image} showImageOnly={true}/>
-				<Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-light',fontSize:19}}>
-					{initialValues.description}
-				</Text>
-				<Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-semi-bold',fontSize:24}}>
-					{`Q${parseFloat(initialValues.price).toFixed(2)}`}
-				</Text>
-				{isAdmin?<Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>:null}
-
-				<Divider style={{ backgroundColor: 'red',marginTop:10,marginBottom:10 }} />
-				{/* <Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
-					{'Ingredientes'}  
-				</Text>
-				<FlatList
-					data={ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
-					renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
-				/>
-				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
-					{'Adicionales'}  
-				</Text>
-				<FlatList
-					data={additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
-					renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} />}
-				/> */}
-				<Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
-					{'Ingredientes'}  
-				</Text>
-				{ingredients.map((item, i)=>
-					<Field name={item.name} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
-				)}
-				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
-					{'Adicionales'}  
-				</Text>
-				{additionals.map((item, i)=>
-					<Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
-				)}
-				</Card>
-				<View style={{flexDirection:'row',alignItems:'center',flex:1,justifyContent:'center',marginTop:15}}>
-												
-						{(isAdmin !== true) &&    
-						<>            
-							<Button
-								style={[styles.btn, styles.btnLeft]}
-								onPress={() => {quantity>0?setQuantity(quantity-1):setQuantity(0)}}
-							>
-								<MaterialCommunityIcons
-								name="minus"
-								color={'black'}
-								size={22}
-								/>
-								
-							</Button>
-							<View style={styles.infoTxt} >
-							<Text  style={{fontFamily:'dosis-light',fontSize:20}}>{quantity}</Text>
-						</View> 
-							<Button
-								style={[styles.btn, styles.btnRight]}
-								onPress={() => {setQuantity(quantity+1)}}
-							>
-								<MaterialCommunityIcons
-								name="plus"
-								color={'black'}
-								size={22}
-								/>
-								
-							</Button>
-						</>
-						}		
-				</View> 
-				{!isAdmin && <View style={{marginTop:'10%',marginBottom:'2%'}}>
-					<Button
-					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
-					theme={roundness}
-					color={'#000000'}
-					icon={!isAdmin ? "plus" : "pencil"}
-					height={50}
-					mode="contained"
-					labelStyle={{
-						fontFamily: "dosis-bold",
-						fontSize: 15,
-					}}
-					style={{
-						fontFamily: 'dosis',
-						marginLeft: '5%',
-						marginRight: '5%',
-						justifyContent: 'center',
-					}}
-					
-					onPress={()=>closeModal()}>
-					{isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
-					</Button>
-					
-				</View>}
+			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
+				<FinishOrder finishOrderButton={false}/>
 				<View style={{marginTop:'1%',marginBottom:'10%'}}>
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
@@ -185,8 +88,8 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					
 				</View>
 				<IconButton testID={'close-button'}  icon="close"  size={30} style={{top:5,left:3,position:'absolute'}} mode="contained" onPress={()=>closeModal()}  />
-      		</ScrollView>
-			
+      		</View>
+			 
 		</Modal>
 	);
 }
@@ -324,4 +227,4 @@ export default connect(
 	  errors.price = !values.price ? 'Este campo es obligatorio' : isNaN(parseFloat(values.price)) ? 'Ingresa un número correcto' : undefined;
 	  return errors;
 	}
-  })(withTheme(ProductInformationScreen)));
+  })(withTheme(OrderInformationScreen)));

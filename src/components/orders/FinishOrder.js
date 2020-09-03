@@ -1,15 +1,15 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { Button, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { StyleSheet, View, ScrollView, Text } from 'react-native';
 import { ListItem,Left,Icon,Body } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
-
+import { Card, Divider } from 'react-native-elements';
 import ProductListItem from './ProductListItem';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
-
-
+import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
+import * as actionsProducts from '../../logic/actions/products';
 
 
 function FinishOrder({
@@ -21,9 +21,12 @@ function FinishOrder({
     sendOrder,
     finish,
     isAdding,
-    addingError
+    addingError,
+    finishOrderButton=false,
+    selectProductInformation,
 }) {
-    const { roundness } = theme;
+    const { roundness,colors } = theme;
+    const [modalProduct, setModalProduct] = useState(false);
     const renderSectionHeader = ({ section }) => (
         <ListItem style={{backgroundColor:'red'}} itemDivider icon>
             <Left> 
@@ -44,8 +47,23 @@ function FinishOrder({
 
     return (
         <View style={styles.container}>
+            <View style={{flex:0.05,direction:'row',alignItems:'center',}}>
+                <Text style={{ fontFamily:'dosis-semi-bold',fontSize:19,}}>
+                     {'ORDEN'}  
+                </Text>
+            </View>
+            <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
+            <View style={{flex:0.04}}>
+                
+                <Text style={{paddingLeft: 18,fontFamily:'dosis-light',fontSize:18}}>
+                    {'Detalle'}  
+                </Text>
+               
+            </View>
+            <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
+           
             <SwipeListView
-                style={{marginTop:8}}
+                style={{flex:1}}
                 useSectionList
                 sections={orderProductsByCategory}
                 
@@ -58,6 +76,8 @@ function FinishOrder({
                         product={category.item}
                         navigation={navigation}
                         onlyView={true}
+                        onPress={()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} 
+                        
                     />
                 )}
                 disableRightSwipe={true}
@@ -72,7 +92,7 @@ function FinishOrder({
             <View style={styles.totalContainer}>
                 <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
             </View>
-            <View style={styles.buttonContainer}>
+            {finishOrderButton && <View style={styles.buttonContainer} >
                 <Button
                     theme={roundness}
                     color={'#000000'}
@@ -86,9 +106,10 @@ function FinishOrder({
                     style={styles.button}
                     onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}
                 >
-                    {'FINALIZAR'}
+                    {'PROCESAR ORDEN'}
                 </Button>
-            </View>
+            </View>}
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
         </View>
     );
 };
@@ -102,7 +123,7 @@ const styles = StyleSheet.create({
         marginTop: 16
     },
     totalContainer: {
-        marginTop: 10,
+        marginTop: 5,
         alignItems: 'center'
     },
     buttonContainer: {
@@ -112,6 +133,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         fontFamily: 'dosis-regular',
+        flexDirection:'column',
+        marginTop:22,
     },
     linesContainer: {
         flex: 2,
@@ -149,6 +172,10 @@ export default connect(
             dispatch(actions.startAddingOrder(orderProducts, {...activeOrder, total}));
             dispatch(actions.deactivateOrder());
             navigation.navigate('OrdersList');
+        },
+        selectProductInformation(navigation, product) {
+            dispatch(actionsProducts.selectProduct(product));
+            // navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
         // finish(navigation) {
         //     dispatch(actions.deactivateOrder());

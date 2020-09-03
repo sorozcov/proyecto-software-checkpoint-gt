@@ -272,7 +272,7 @@ export default orders;
 export const getOrder = (state, id) => state.byId[id];
 export const getOrders = state => state.order.map(id => getOrder(state, id));
 export const getSelectedOrder = state => state.selectedOrder;
-export const getSelectedOrderProducts = state => state.selectedOrder != null && state.selectedOrder.products != null ? state.selectedOrder.products : {};
+export const getSelectedOrderProducts = state => state.selectedOrder != null && state.selectedOrder.products != null ? state.selectedOrder.products : [];
 export const isFetchingOrders = state => state.isFetching;
 export const isAddingOrders = state => state.isAdding;
 export const isEditingOrders = state => state.isEditing;

@@ -15,6 +15,7 @@ import { SearchBar } from 'react-native-elements';
 
 const width = Dimensions.get('window').width; // full width
 import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
+import ModalOrderInformationScreen from './ModalOrderInformationScreen'
 
 function ProductsList ({
     theme,
@@ -28,6 +29,7 @@ function ProductsList ({
 }) {
     const { colors, roundness } = theme;
     const [modalProduct, setModalProduct] = useState(false);
+    const [modalOrder, setModalOrder] = useState(false);
     
     const renderSectionHeader = ({ section }) => (
     <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
@@ -51,8 +53,11 @@ function ProductsList ({
                 onChangeText={onSearchProduct}
                 value={searchProductText}
                 showCancel={true}
-                containerStyle={{width:'100%',backgroundColor:'black'}}
-                inputContainerStyle={{backgroundColor:'white'}}
+                showLoading={false}
+                containerStyle={{width:'100%',backgroundColor:'black',fontFamily:'dosis-semi-bold'}}
+                inputContainerStyle={{backgroundColor:'white',fontFamily:'dosis-light',fontSize:17}}
+                
+                inputStyle={{fontFamily:'dosis-light',fontSize:19}}
             />
             <Container width={width}>
                     {
@@ -97,20 +102,33 @@ function ProductsList ({
                 
             </Container>
             <Button
-                theme={roundness}
+                theme={{roundness:0}}
                 color={'#000000'}
-                icon={"arrow-right-bold"}
-                height={50}
+                icon={()=><MaterialCommunityIcons
+                    name="clipboard-text-outline"
+                    color='white'
+                    size={24}
+                    style={{paddingRight:30}}
+                />
+                    }
+                
+                height={55}
                 mode="contained"
                 labelStyle={{
                     fontFamily: "dosis-bold",
                     fontSize: 15,
+                    paddingLeft:5,
                 }}
-                style={styles.button}
-                onPress={() => console.log('Press')}
-                disabled={true}
+                contentStyle={{height:'100%',}}
+                style={{marginLeft: '0%',
+                marginRight: '0%',
+                width:'100%',
+                
+                justifyContent: 'center',}}
+                onPress={() => setModalOrder(true)}
+                
             >
-                {'CONTINUAR'}
+                {'VER ORDEN'}
             </Button>
             <Modal
                 transparent={true}
@@ -123,6 +141,7 @@ function ProductsList ({
                 </View>
             </Modal>
             { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  isAdmin={false}/>}
         </View>
     )
 }
@@ -145,7 +164,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   button: {
-      margin:10
+      margin:10,
+      width:'100%'
   },
     rowFront: {        
         backgroundColor: '#ffffff',
