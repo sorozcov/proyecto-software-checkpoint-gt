@@ -34,13 +34,13 @@ function OrdersList ({
     const [modalOrder, setModalOrder] = useState(false);
     useEffect(onLoad, []);
     const renderSectionHeader = ({ section }) => (
-        <ListItem   style={{backgroundColor:colors.accent}} itemDivider icon>
+        <ListItem   style={{backgroundColor:'black'}} itemDivider icon>
             <Left>
-                <Icon active name="receipt"  type="MaterialCommunityIcons"/>
+                <Icon active name="receipt"  style={{color:'white'}} type="MaterialCommunityIcons"/>
             </Left>
     
             <Body>
-                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0,color:'white'}}>{section.title}</Text>
             </Body>
          </ListItem>
          );

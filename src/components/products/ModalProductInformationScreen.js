@@ -20,7 +20,7 @@ import MyTextInput from '../general/textInput';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice,onlyDetail=false }) {
+function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice,onlyDetail=false,backButton=false }) {
 	const { colors, roundness } = theme;
 	const isNew = initialValues.price!=null;
 	const [quantity, setQuantity] = useState(1);
@@ -166,7 +166,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				</View> 
 				
 				<View style={{marginTop:'4%',marginBottom:'10%'}}>
-					{ <Button
+					{backButton && <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
 					color={colors.accent}
