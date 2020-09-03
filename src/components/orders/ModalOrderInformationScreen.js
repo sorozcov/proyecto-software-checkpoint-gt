@@ -61,7 +61,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
-					color={'#000000'}
+					color={colors.accent}
 					icon={"backburger"}
 					height={50}
 					mode="contained"
@@ -90,7 +90,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 					theme={{roundness:0}}
 					color={'#000000'}
 					icon={"arrow-right-bold"}
-					height={80}
+					height={Platform.OS=='ios' ? 80 : 65}
 					mode="contained"
 					labelStyle={{
 						fontFamily: "dosis-bold",

@@ -161,7 +161,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
-					color={'#000000'}
+					color={colors.accent}
 					icon={"backburger"}
 					height={50}
 					mode="contained"
@@ -184,14 +184,14 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				</View>
 				
       		</ScrollView>
-			  <IconButton testID={'close-button'}  icon="close"  size={30} style={{top:20,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
+			  <IconButton testID={'close-button'}  icon="close"  size={30} style={{top:Platform.OS=='ios' ? 20 : 0,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
 			  {!isAdmin && 
 					<Button
 					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={{roundness:0}}
 					color={'#000000'}
 					icon={isNew ? "plus" : "pencil"}
-					height={80}
+					height={Platform.OS=='ios' ? 80 : 65}
 					mode="contained"
 					labelStyle={{
 						fontFamily: "dosis-bold",
