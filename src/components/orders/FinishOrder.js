@@ -42,7 +42,7 @@ function FinishOrder({
     //Se calcula el total
     var total = 0
     orderProducts.forEach(product => {
-        total = total + (product.quantity * parseInt(product.price));
+        total = total + parseFloat(product.totalPrice);
     });
 
     return (

@@ -22,7 +22,7 @@ class ProductListItem extends Component {
                 <Body>
                     <View style={{flexDirection:'row'}}>
                         <Text  style={{fontFamily:'dosis-light',fontSize:17}}>{this.props.name}</Text>
-                        <Right><Text  style={{fontFamily:'dosis-light',fontSize:17,marginLeft:5}}>{`Q ${parseFloat(this.props.product.price).toFixed(2)}    `}</Text></Right>
+                        <Right><Text  style={{fontFamily:'dosis-light',fontSize:17,marginLeft:5}}>{`Q ${parseFloat(this.props.product.totalPrice).toFixed(2)}    `}</Text></Right>
                     </View>
                 </Body>
             </ListItem>

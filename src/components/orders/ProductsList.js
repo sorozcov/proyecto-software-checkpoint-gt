@@ -10,7 +10,7 @@ import * as actionsCategories from '../../logic/actions/categories';
 import * as actionsProducts from '../../logic/actions/products';
 import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
-import ProductListItem from './ProductListItem';
+import ProductListItem from '../products/ProductListItem';
 import { SearchBar } from 'react-native-elements';
 
 const width = Dimensions.get('window').width; // full width
@@ -55,7 +55,7 @@ function ProductsList ({
                 showCancel={true}
                 showLoading={false}
                 containerStyle={{width:'100%',backgroundColor:'black',fontFamily:'dosis-semi-bold'}}
-                inputContainerStyle={{backgroundColor:'white',fontFamily:'dosis-light',fontSize:17}}
+                //inputContainerStyle={{backgroundColor:'white',fontFamily:'dosis-light',fontSize:17}}
                 
                 inputStyle={{fontFamily:'dosis-light',fontSize:19}}
             />
@@ -141,7 +141,7 @@ function ProductsList ({
                 </View>
             </Modal>
             { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
-            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  isAdmin={false}/>}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false}/>}
         </View>
     )
 }

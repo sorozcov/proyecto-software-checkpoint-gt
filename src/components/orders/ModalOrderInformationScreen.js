@@ -17,7 +17,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FinishOrder from './FinishOrder';
 
 
-function OrderInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction,initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault,isAdding,isEditing,isAdmin=false }) {
+function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,closeModal, modal, submitFunction,initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault,isAdding,isEditing,isAdmin=false }) {
 	const { colors, roundness } = theme;
 	
 	const [quantity, setQuantity] = useState(0);
@@ -62,7 +62,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit, closeModal,
         	// swipeDirection={['right']}
 		>
 			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
-				<FinishOrder finishOrderButton={false}/>
+				<FinishOrder finishOrderButton={true} navigation={navigation}/>
 				<View style={{marginTop:'1%',marginBottom:'10%'}}>
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}

@@ -23,21 +23,21 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 	const { colors, roundness } = theme;
 	
 	const [quantity, setQuantity] = useState(0);
-	const isNew = initialValues==null;
-	if(!isNew)
-		// navigation.setOptions({ title: 'PRODUCTO' });
+	
 		useEffect(() => {
 		initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null? 0:initialValues.quantity
 		setQuantity(initialValues.quantity)
 		
-		},[]);
+		},[ modal ]);
+
+
+	
 	
 	
 	const addProduct = values => {
-
+		values={...initialValues,...values}
 		var valuesToDelete = [];
 		var additinalCost = 0;
-
 		values.ingredients = values.ingredients.map((ingredient,i)=>{
 			valuesToDelete.push('ingredients'+i);
 			return {
@@ -88,7 +88,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				title={initialValues.productName}
 				titleStyle={{fontFamily:'dosis-bold',fontSize:22}}
 				containerStyle={{marginTop:50}}>
-				<Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image} showImageOnly={true}/>
+				<Field name={'image'} component={ImagePicker} image={initialValues.image} showImageOnly={true}/>
 				<Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-light',fontSize:19}}>
 					{initialValues.description}
 				</Text>
