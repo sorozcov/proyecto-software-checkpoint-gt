@@ -36,6 +36,11 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 		// }
 		
 	}
+	//Se calcula el total
+    var total = 0
+    orderProducts.forEach(product => {
+        total = total + parseFloat(product.totalPrice);
+    });
 	return (
 		<Modal
 			transparent={true}
@@ -106,7 +111,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 					}}
 					
 					onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}>
-					{'PROCESAR ORDEN'}
+					{`PROCESAR ORDEN POR Q${total}`}
 					</Button>
 				
 				}
