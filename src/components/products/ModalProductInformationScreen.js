@@ -9,14 +9,17 @@ import { KeyboardAvoidingView, StyleSheet, View ,FlatList, Dimensions, Platform}
 import { Card, Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
+import omit from 'lodash/omit';
+
 import ImagePicker from '../../components/general/ImagePickerProduct';
 import * as actionsProducts from '../../logic/actions/products';
+import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import MyCheckbox from '../general/checkbox';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction,initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault,isAdding,isEditing,isAdmin=false }) {
+function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder }) {
 	const { colors, roundness } = theme;
 	
 	const [quantity, setQuantity] = useState(0);
@@ -30,18 +33,38 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 		},[]);
 	
 	
-	const editProductForm = values => {
-		// var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
-		// values.category = selectedCategory;
-		// values.categoryId = selectedCategory.categoryId;
-		values={...initialValues,...values}
+	const addProduct = values => {
 
-		// if(isNew){
-		//   createProduct(navigation,values)
-		// } else {
-		//   editProduct(navigation,values)
-		// }
+		var valuesToDelete = [];
+		var additinalCost = 0;
+
+		values.ingredients = values.ingredients.map((ingredient,i)=>{
+			valuesToDelete.push('ingredients'+i);
+			return {
+			...ingredient,
+			selected:values['ingredients'+i]
+			}
+		});
 		
+		values.additionals = values.additionals.map((additional,i)=>{
+			valuesToDelete.push('additionals'+i);
+			const cost = values['additionals'+i] === true ? parseFloat(additional.cost) : 0; 
+			additinalCost = cost + additinalCost; 
+			return {
+			...additional,
+			selected:values['additionals'+i]
+			}
+		});
+
+		values.image = initialImage;
+		values.unitPrice = values.price;
+		values.additinalCost = parseFloat(additinalCost).toFixed(2);
+		values.quantity = quantity;
+		values.totalPrice = parseFloat(values.quantity*(parseFloat(values.price) + additinalCost)).toFixed(2);
+
+		const product = omit(values, [...valuesToDelete, 'dateModified', 'price']);
+		addProductToOrder(product);
+		closeModal();
 	}
 	return (
 		<Modal
@@ -94,14 +117,14 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					{'Ingredientes'}  
 				</Text>
 				{ingredients.map((item, i)=>
-					<Field name={item.name} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
+					<Field name={'ingredients'+ i} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
 				)}
 				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
 					{'Adicionales'}  
 				</Text>
 				{additionals.map((item, i)=>
-					<Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
+					<Field name={'additionals'+ i} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
 				)}
 				</Card>
 				<View style={{flexDirection:'row',alignItems:'center',flex:1,justifyContent:'center',marginTop:15}}>
@@ -155,7 +178,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 						justifyContent: 'center',
 					}}
 					
-					onPress={()=>closeModal()}>
+					onPress={handleSubmit(addProduct)}>
 					{isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
 					</Button>
 					
@@ -287,31 +310,29 @@ const styles = StyleSheet.create({
 export default connect(
 	state => ({
 		initialValues: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId):{},
+		initialImage: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
 	  	ingredients: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductIngredients(state):[],
 		additionals: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductAdditionals(state):[],
 		categories: selectors.getCategories(state),
 	}),
 	dispatch => ({
-	  createProduct(navigation, product) {
-		dispatch(actionsProducts.startAddingProduct(product));
-		navigation.navigate('Menu');
-	  },
-	  editProduct(navigation, product) {
-		dispatch(actionsProducts.startEditingProduct(product));
-		navigation.navigate('Menu');
-	  },
-	  addProduct(productId) {
-		dispatch(actionsProducts.addProductToOrder(productId));
-	  },
-	  deleteProduct(productId) {
-		  dispatch(actionsProducts.deleteProductToOrder(productId));
-	  },
-		  changeIngredientDefault(ingredientId) {
-			  dispatch(actionsProducts.startEditingIngredient({ingredientId}))
-		  },
-		  changeAdditionalDefault(additionalId) {
-			  dispatch(actionsProducts.startEditingIngredient({additionalId}))
-		  },
+		createProduct(navigation, product) {
+			dispatch(actionsProducts.startAddingProduct(product));
+			navigation.navigate('Menu');
+		},
+		editProduct(navigation, product) {
+			dispatch(actionsProducts.startEditingProduct(product));
+			navigation.navigate('Menu');
+		},
+		addProduct(productId) {
+			dispatch(actionsProducts.addProductToOrder(productId));
+		},
+		deleteProduct(productId) {
+			dispatch(actionsProducts.deleteProductToOrder(productId));
+		},
+		addProductToOrder(product) {
+			dispatch(actionsOrders.addProductToOrder(product));
+		},
 	}),
   )(reduxForm({
 	form: 'editProductForm',

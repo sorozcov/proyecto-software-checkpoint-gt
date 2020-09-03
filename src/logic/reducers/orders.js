@@ -81,7 +81,7 @@ const selectedOrder = (state = null, action) => {
                 const date = new Date();
                 return {
                     ...action.payload,
-                    fecha: date
+                    products:[]
                 };
             }
         case types.ORDER_DEACTIVATED:
@@ -89,7 +89,13 @@ const selectedOrder = (state = null, action) => {
 
         case types.ORDER_PRODUCT_ADDED:
             {
-                return [ ...state.products, action.payload ];
+                state
+                return {...state, 
+                    products: [
+                        ...state.products,
+                        action.payload
+                    ] 
+                };
             }
 
         case types.ORDER_PRODUCT_EDITED:
