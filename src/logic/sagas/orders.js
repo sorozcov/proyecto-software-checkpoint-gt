@@ -7,8 +7,8 @@ import * as types from '../types/orders';
 
 function* makeOrder(action) {
     try {
-        const { order, data } = action.payload;
-        const response = yield updateOrder({...data, products: order });
+        const order = action.payload;
+        const response = yield updateOrder(order);
 
         if (response.error == null) {
             console.log(response.order)

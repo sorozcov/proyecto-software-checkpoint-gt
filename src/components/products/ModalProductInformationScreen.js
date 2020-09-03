@@ -347,7 +347,6 @@ export default connect(
 			dispatch(actionsOrders.addProductToOrder(product));
 		},
 		editProductToOrder(product) {
-			console.log(product)
 			dispatch(actionsOrders.editProductOfOrder(product));
 		},
 	}),

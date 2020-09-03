@@ -6,14 +6,17 @@ const collection = "orders";
 
 // Funcion para crear o hacer update de un pedido
 // Si es nuevo enviar orderId = null o no enviar
-export const updateOrder = async({ orderId, name, fecha, total, products }) => {
+export const updateOrder = async(newOrder) => {
     try {
+        let { orderId } = newOrder;
         let orderDoc = null;
         let isNew = orderId == null;
 
         if (isNew) {
             orderDoc = firebaseFirestore.collection(collection).doc();
             orderId = orderDoc.id;
+            let dateCreated = new Date();
+            newOrder.date = dateCreated;
         } else {
             orderDoc = firebase.firestore().collection(collection).doc(orderId);
             orderId = orderDoc.id;
@@ -23,12 +26,9 @@ export const updateOrder = async({ orderId, name, fecha, total, products }) => {
         dateModified = dateModified.getTime();
 
         let orderInfo = {
-            orderId: orderId,
-            orderName: name,
-            date: fecha,
-            total: total,
-            products: products,
-            dateModified: dateModified,
+            ...newOrder,
+            orderId,
+            dateModified,
         };
 
         if (isNew) {

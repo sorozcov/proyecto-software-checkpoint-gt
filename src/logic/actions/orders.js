@@ -20,12 +20,9 @@ export const failFetchingOrders = error => ({
     },
 });
 
-export const startAddingOrder = (order, data) => ({
+export const startAddingOrder = order => ({
     type: types.ORDER_ADD_STARTED,
-    payload: {
-        order,
-        data,
-    }
+    payload: order
 });
 
 export const completeAddingOrder = order => ({

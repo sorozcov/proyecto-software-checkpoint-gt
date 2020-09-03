@@ -10,7 +10,6 @@ class ProductListItem extends Component {
         super();
         this.style = props.style;
         this.props = props;
-        console.log(this.props)
     }
     render() {
      

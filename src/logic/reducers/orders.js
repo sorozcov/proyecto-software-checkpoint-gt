@@ -74,7 +74,7 @@ const order = (state = [], action) => {
     }
 };
 
-const selectedOrder = (state = null, action) => {
+const selectedOrder = (state = {}, action) => {
     switch (action.type) {
         case types.ORDER_ACTIVATED:
             {
@@ -84,7 +84,7 @@ const selectedOrder = (state = null, action) => {
                 };
             }
         case types.ORDER_DEACTIVATED:
-            return null;
+            return {};
 
         case types.ORDER_PRODUCT_ADDED:
             {
