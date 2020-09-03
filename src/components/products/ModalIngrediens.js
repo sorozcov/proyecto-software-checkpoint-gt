@@ -7,7 +7,15 @@ import { StyleSheet, View, Modal, ScrollView } from 'react-native';
 import MyTextInput from '../../components/general/textInput';
 
 
-function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction }) {
+function ModalIngredients({
+	theme,
+	dirty,
+	valid,
+	handleSubmit,
+	closeModal,
+	modal,
+	submitFunction
+}) {
     const { colors, roundness } = theme;
     const addIngredient = values => {
         closeModal();
