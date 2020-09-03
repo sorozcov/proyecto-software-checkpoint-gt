@@ -256,6 +256,9 @@ const styles = StyleSheet.create({
         
         right: 0,
     },
+    backTextWhite: {
+        fontFamily: 'dosis-regular',
+    },
     
 })
 

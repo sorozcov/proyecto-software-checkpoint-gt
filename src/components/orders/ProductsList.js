@@ -1,6 +1,6 @@
 import { Body, Container, Icon, Left, ListItem } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, Platform } from "react-native";
 import { ActivityIndicator, withTheme, Button } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -104,12 +104,12 @@ function ProductsList ({
             <Button
                 theme={{roundness:0}}
                 color={'#000000'}
-                icon={()=><MaterialCommunityIcons
+                icon={Platform.OS=='ios' ? ()=><MaterialCommunityIcons
                     name="clipboard-text-outline"
                     color='white'
                     size={24}
                     style={{paddingRight:30}}
-                />
+                /> : "clipboard-text-outline"
                     }
                 
                 height={55}

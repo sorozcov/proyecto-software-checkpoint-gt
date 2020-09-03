@@ -16,19 +16,19 @@ import * as actionsProducts from '../../logic/actions/products';
 import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import MyCheckbox from '../general/checkbox';
+import MyTextInput from '../general/textInput';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder,additionalsPrice }) {
+function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice }) {
 	const { colors, roundness } = theme;
-	console.log(additionalsPrice)
+	const isNew = initialValues.price!=null;
 	const [quantity, setQuantity] = useState(1);
 	
-		useEffect(() => {
+	useEffect(() => {
 		initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null || initialValues.quantity==0 ? 1:initialValues.quantity
 		setQuantity(initialValues.quantity)
-		
-		},[ modal ]);
+	},[ modal ]);
 
 
 	
@@ -38,6 +38,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 		values={...initialValues,...values}
 		var valuesToDelete = [];
 		var additinalCost = 0;
+
 		values.ingredients = values.ingredients.map((ingredient,i)=>{
 			valuesToDelete.push('ingredients'+i);
 			return {
@@ -57,13 +58,20 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 		});
 
 		values.image = initialImage;
-		values.unitPrice = values.price;
 		values.additinalCost = parseFloat(additinalCost).toFixed(2);
 		values.quantity = quantity;
-		values.totalPrice = parseFloat(values.quantity*(parseFloat(values.price) + additinalCost)).toFixed(2);
 
-		const product = omit(values, [...valuesToDelete, 'dateModified', 'price']);
-		addProductToOrder(product);
+		if(isNew) {
+			values.totalPrice = parseFloat(values.quantity*(parseFloat(values.price) + additinalCost)).toFixed(2);
+			values.unitPrice = values.price;
+			const product = omit(values, [...valuesToDelete, 'dateModified', 'price']);
+			addProductToOrder(product);
+		}else{
+			values.totalPrice = parseFloat(values.quantity*(parseFloat(values.unitPrice) + additinalCost)).toFixed(2);
+			const product = omit(values, [...valuesToDelete]);
+			editProductToOrder(product);
+		}
+
 		closeModal();
 	}
 	return (
@@ -95,39 +103,26 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					{initialValues.description}
 				</Text>
 				<Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-semi-bold',fontSize:24}}>
-					{`Q${parseFloat(initialValues.price).toFixed(2)}`}
+					{`Q${parseFloat(!isNew ? initialValues.unitPrice : initialValues.price).toFixed(2)}`}
 				</Text>
 				{isAdmin?<Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>:null}
 
 				<Divider style={{ backgroundColor: 'red',marginTop:10,marginBottom:10 }} />
-				{/* <Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
-					{'Ingredientes'}  
-				</Text>
-				<FlatList
-					data={ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
-					renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
-				/>
-				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
-					{'Adicionales'}  
-				</Text>
-				<FlatList
-					data={additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
-					renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} />}
-				/> */}
 				<Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
 					{'Ingredientes'}  
 				</Text>
 				{ingredients.map((item, i)=>
-					<Field name={'ingredients'+ i} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
+					<Field name={'ingredients'+ i} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
 				)}
 				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
 					{'Adicionales'}  
 				</Text>
 				{additionals.map((item, i)=>
-					<Field name={'additionals'+ i} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>
+					<Field name={'additionals'+ i} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
 				)}
+				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
+				<Field name={'additionalInstructions'} component={MyTextInput} label='Instrucciones Adicionales' placeholder='Ingresa instrucciones adicionales para el chef'  multiline={true}/>
 				</Card>
 				<View style={{flexDirection:'row',alignItems:'center',flex:1,justifyContent:'center',marginTop:15}}>
 												
@@ -166,7 +161,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
-					color={'#000000'}
+					color={colors.accent}
 					icon={"backburger"}
 					height={50}
 					mode="contained"
@@ -189,14 +184,14 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				</View>
 				
       		</ScrollView>
-			  <IconButton testID={'close-button'}  icon="close"  size={30} style={{top:20,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
+			  <IconButton testID={'close-button'}  icon="close"  size={30} style={{top:Platform.OS=='ios' ? 20 : 0,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
 			  {!isAdmin && 
 					<Button
 					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={{roundness:0}}
 					color={'#000000'}
-					icon={!isAdmin ? "plus" : "pencil"}
-					height={80}
+					icon={isNew ? "plus" : "pencil"}
+					height={Platform.OS=='ios' ? 80 : 65}
 					mode="contained"
 					labelStyle={{
 						fontFamily: "dosis-bold",
@@ -212,7 +207,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					}}
 					
 					onPress={handleSubmit(addProduct)}>
-					{isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*(parseFloat(initialValues.price)+parseFloat(additionalsPrice))).toFixed(2)}`}
+					{((!isNew ? 'EDITAR':'AGREGAR') + ` ${quantity} POR Q${parseFloat(quantity*(parseFloat(!isNew ? initialValues.unitPrice : initialValues.price)+parseFloat(additionalsPrice))).toFixed(2)}`)}
 					</Button>
 				
 				}
@@ -317,7 +312,7 @@ const styles = StyleSheet.create({
 export default connect(
 	state => {
 		const selector = formValueSelector('editProductOrderForm') // <-- same as form name
-		const initialValues =  selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId):{};
+		const initialValues =  selectors.getSelectedProduct(state)!=null? selectors.getSelectedProduct(state):{};
 		let additionalsPrice=0;
 		if(initialValues.additionals!=undefined){
 			initialValues.additionals.forEach((additional,index)=>{
@@ -329,6 +324,7 @@ export default connect(
 		return {
 		initialValues:initialValues,
 		initialImage: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
+		initialImage: selectors.getSelectedProduct(state)!=null? selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
 	  	ingredients: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductIngredients(state):[],
 		additionals: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductAdditionals(state):[],
 		categories: selectors.getCategories(state),
@@ -344,14 +340,15 @@ export default connect(
 			dispatch(actionsProducts.startEditingProduct(product));
 			navigation.navigate('Menu');
 		},
-		addProduct(productId) {
-			dispatch(actionsProducts.addProductToOrder(productId));
-		},
 		deleteProduct(productId) {
 			dispatch(actionsProducts.deleteProductToOrder(productId));
 		},
 		addProductToOrder(product) {
 			dispatch(actionsOrders.addProductToOrder(product));
+		},
+		editProductToOrder(product) {
+			console.log(product)
+			dispatch(actionsOrders.editProductOfOrder(product));
 		},
 	}),
   )(reduxForm({
