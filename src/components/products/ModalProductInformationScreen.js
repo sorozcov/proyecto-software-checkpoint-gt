@@ -1,12 +1,12 @@
 
 import 'firebase/firestore';
-import { Field, reduxForm, submit } from 'redux-form';
+import { Field, reduxForm, submit ,formValueSelector } from 'redux-form';
 import { Button, withTheme,IconButton } from 'react-native-paper';
 import Modal from 'react-native-modal';
 import { Text } from 'native-base';
 import React,{useState,useEffect} from 'react';
 import { KeyboardAvoidingView, StyleSheet, View ,FlatList, Dimensions, Platform} from 'react-native';
-import { Card, Divider } from 'react-native-elements';
+import { Card, Divider, } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import omit from 'lodash/omit';
@@ -19,9 +19,9 @@ import MyCheckbox from '../general/checkbox';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder }) {
+function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder,additionalsPrice }) {
 	const { colors, roundness } = theme;
-	
+	console.log(additionalsPrice)
 	const [quantity, setQuantity] = useState(0);
 	
 		useEffect(() => {
@@ -86,6 +86,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
 				<Card
 				title={initialValues.productName}
+				
 				titleStyle={{fontFamily:'dosis-bold',fontSize:22}}
 				containerStyle={{marginTop:50}}>
 				<Field name={'image'} component={ImagePicker} image={initialValues.image} showImageOnly={true}/>
@@ -179,7 +180,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					}}
 					
 					onPress={handleSubmit(addProduct)}>
-					{isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*initialValues.price).toFixed(2)}`}
+					{isAdmin? 'EDITAR PRODUCTO' : `AGREGAR ${quantity} POR Q${parseFloat(quantity*(parseFloat(initialValues.price)+parseFloat(additionalsPrice))).toFixed(2)}`}
 					</Button>
 					
 				</View>}
@@ -308,13 +309,26 @@ const styles = StyleSheet.create({
 });
 
 export default connect(
-	state => ({
-		initialValues: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId):{},
+	state => {
+		const selector = formValueSelector('editProductOrderForm') // <-- same as form name
+		const initialValues =  selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId):{};
+		let additionalsPrice=0;
+		if(initialValues.additionals!=undefined){
+			initialValues.additionals.forEach((additional,index)=>{
+				if(selector(state,`additionals${index}`)){
+					additionalsPrice=additionalsPrice+parseFloat(additional.cost)
+				} 
+			})
+		}
+		return {
+		initialValues:initialValues,
 		initialImage: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
 	  	ingredients: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductIngredients(state):[],
 		additionals: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductAdditionals(state):[],
 		categories: selectors.getCategories(state),
-	}),
+		additionalsPrice: additionalsPrice
+		// valuesIngredients:  selector(state,'additionals0')
+	}},
 	dispatch => ({
 		createProduct(navigation, product) {
 			dispatch(actionsProducts.startAddingProduct(product));
@@ -335,7 +349,7 @@ export default connect(
 		},
 	}),
   )(reduxForm({
-	form: 'editProductForm',
+	form: 'editProductOrderForm',
 	enableReinitialize : true,
 	validate: (values) => {
 	  const errors = {};

@@ -54,7 +54,7 @@ function ProductsList ({
                 value={searchProductText}
                 showCancel={true}
                 showLoading={false}
-                containerStyle={{width:'100%',backgroundColor:'black',fontFamily:'dosis-semi-bold'}}
+                containerStyle={{width:'100%',backgroundColor:'black'}}
                 //inputContainerStyle={{backgroundColor:'white',fontFamily:'dosis-light',fontSize:17}}
                 
                 inputStyle={{fontFamily:'dosis-light',fontSize:19}}
