@@ -111,7 +111,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 					}}
 					
 					onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}>
-					{`PROCESAR ORDEN POR Q${total}`}
+					{`PROCESAR ORDEN POR Q${parseFloat(total).toFixed(2)}`}
 					</Button>
 				
 				}
