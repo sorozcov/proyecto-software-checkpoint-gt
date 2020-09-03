@@ -79,8 +79,9 @@ const selectedOrder = (state = {}, action) => {
         case types.ORDER_ACTIVATED:
             {
                 return {
+                    products:[],
                     ...action.payload,
-                    products:[]
+                    
                 };
             }
         case types.ORDER_DEACTIVATED:

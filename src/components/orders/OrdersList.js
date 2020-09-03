@@ -1,5 +1,6 @@
-import { Container } from 'native-base';
-import React, { useEffect } from 'react';
+
+import { Body, Container, Icon, Left, ListItem } from 'native-base';
+import React, { useEffect,useState } from 'react';
 import { ActivityIndicator, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
 import { FloatingAction } from "react-native-floating-action";
 import { withTheme } from 'react-native-paper';
@@ -11,6 +12,7 @@ import * as actionsCategories from '../../logic/actions/categories';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import OrderItem from './OrderItem';
+import ModalOrderInformationScreen from './ModalOrderInformationScreen'
 
 const width = Dimensions.get('window').width; // full width
 
@@ -29,8 +31,19 @@ function OrdersList ({
     viewOrder,
 }) {
     const { colors, roundness } = theme;
+    const [modalOrder, setModalOrder] = useState(false);
     useEffect(onLoad, []);
-
+    const renderSectionHeader = ({ section }) => (
+        <ListItem   style={{backgroundColor:colors.accent}} itemDivider icon>
+            <Left>
+                <Icon active name="receipt"  type="MaterialCommunityIcons"/>
+            </Left>
+    
+            <Body>
+                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+            </Body>
+         </ListItem>
+         );
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             {
@@ -50,11 +63,14 @@ function OrdersList ({
                         }
                       
                         <SwipeListView
-                            style={{marginTop:8}}
+                            style={{marginTop:0}}
                             data={orders}
+                            useSectionList
+                            sections={orders}
+                            renderSectionHeader={renderSectionHeader}
                             renderItem={ (order, rowMap) => (
                                 <OrderItem
-                                    onPress={() => viewOrder(navigation, order.item)}
+                                    onPress={() => {setModalOrder(true);viewOrder(navigation, order.item);}}
                                     style={styles.rowFront}
                                     key={order.item.orderId}
                                     name={`${order.item.orderName}`}
@@ -62,6 +78,7 @@ function OrdersList ({
                                     total={order.item.total} image={order.item.image}
                                     order={order.item}
                                     navigation={navigation}
+                                    theme={theme}
                                 />
                             )}
                             refreshing={isLoading}
@@ -140,6 +157,7 @@ function OrdersList ({
                     </View>
                 </View>
             </Modal>
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} onlyDetail={true}/>}
         </View>
     )
 }
@@ -198,7 +216,7 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
-        orders: selectors.getOrders(state),
+        orders: selectors.getOrdersByTable(state),
         isLoading: selectors.isFetchingOrders(state),
         isAdding: selectors.isAddingOrders(state),
         isEditing: selectors.isEditingOrders(state),
@@ -216,8 +234,9 @@ export default connect(
         },
         viewOrder(navigation, order) {
             dispatch(actionsCategories.startFetchingCategories());
+           
             dispatch(actions.activateOrder(order));
-            navigation.navigate('FinishOrder');
+            // navigation.navigate('FinishOrder');
         },
         deleteOrder(orderId){
             dispatch(actions.startRemovingOrder(orderId));

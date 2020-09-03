@@ -17,7 +17,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FinishOrder from './FinishOrder';
 import * as actions from '../../logic/actions/orders';
 
-function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,closeModal, modal, submitFunction,isAdding,finishOrderButton=true,sendOrder,orderProducts,activeOrder,orderProductsByCategory }) {
+function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,closeModal, modal, submitFunction,isAdding,finishOrderButton=true,sendOrder,orderProducts,activeOrder,orderProductsByCategory,onlyDetail=false }) {
 	const { colors, roundness } = theme;
 	const [quantity, setQuantity] = useState(0);
 	
@@ -46,7 +46,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 			// propagateSwipe={false}
 		>
 			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'6%'}}>
-				<FinishOrder navigation={navigation}/>
+				<FinishOrder navigation={navigation} onlyDetail={onlyDetail}/>
 				<View style={{marginTop:'1%',marginBottom:'10%'}}>
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
@@ -74,7 +74,7 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 				<IconButton testID={'close-button'}  icon="close"  size={30} style={{top:20,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
 				
 			</View>
-			{finishOrderButton && 
+			{finishOrderButton && !onlyDetail && 
 					<Button
 					disabled={false}
 					theme={{roundness:0}}

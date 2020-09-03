@@ -20,7 +20,7 @@ import MyTextInput from '../general/textInput';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice }) {
+function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice,onlyDetail=false }) {
 	const { colors, roundness } = theme;
 	const isNew = initialValues.price!=null;
 	const [quantity, setQuantity] = useState(1);
@@ -92,7 +92,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
         	// swipeDirection={['right']}
 		>	
 			
-			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'18%'}}>
+			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:!onlyDetail?'18%':'10%'}}>
 				<Card
 				title={initialValues.productName}
 				
@@ -105,30 +105,33 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				<Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-semi-bold',fontSize:24}}>
 					{`Q${parseFloat(!isNew ? initialValues.unitPrice : initialValues.price).toFixed(2)}`}
 				</Text>
-				{isAdmin?<Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>:null}
+				{isAdmin?<Field name={'status'} disabled={isAdmin} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>:null}
 
 				<Divider style={{ backgroundColor: 'red',marginTop:10,marginBottom:10 }} />
 				<Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
 					{'Ingredientes'}  
 				</Text>
 				{ingredients.map((item, i)=>
-					<Field name={'ingredients'+ i} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
+					<Field name={'ingredients'+ i} disabled={isAdmin || onlyDetail} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
 				)}
 				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
 					{'Adicionales'}  
 				</Text>
 				{additionals.map((item, i)=>
-					<Field name={'additionals'+ i} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
+					<Field name={'additionals'+ i} disabled={isAdmin || onlyDetail} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
 				)}
 				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-				<Field name={'additionalInstructions'} component={MyTextInput} label='Instrucciones Adicionales' placeholder='Ingresa instrucciones adicionales para el chef'  multiline={true}/>
+				{!isAdmin && <Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
+					{'Instrucciones Adicionales'}  
+				</Text>}
+				{!isAdmin && <Field name={'additionalInstructions'} disabledInput={isAdmin || onlyDetail} component={MyTextInput} label='Instrucciones Adicionales' placeholder='Ingresa instrucciones adicionales para el chef'  multiline={true}/>}
 				</Card>
 				<View style={{flexDirection:'row',alignItems:'center',flex:1,justifyContent:'center',marginTop:15}}>
 												
 						{(isAdmin !== true) &&    
 						<>            
-							<Button
+							{!onlyDetail && <Button
 								style={[styles.btn, styles.btnLeft]}
 								onPress={() => {quantity>1?setQuantity(quantity-1):setQuantity(1)}}
 							>
@@ -138,11 +141,15 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 								size={22}
 								/>
 								
-							</Button>
+							</Button>}
+							{onlyDetail && 
+							<Text  style={{fontFamily:'dosis-light',fontSize:20,paddingRight:10}}>Cantidad</Text>
+							}	
 							<View style={styles.infoTxt} >
+							
 							<Text  style={{fontFamily:'dosis-light',fontSize:20}}>{quantity}</Text>
 						</View> 
-							<Button
+							{!onlyDetail &&<Button
 								style={[styles.btn, styles.btnRight]}
 								onPress={() => {setQuantity(quantity+1)}}
 							>
@@ -153,6 +160,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 								/>
 								
 							</Button>
+							}
 						</>
 						}		
 				</View> 
@@ -185,7 +193,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				
       		</ScrollView>
 			  <IconButton testID={'close-button'}  icon="close"  size={30} style={{top:Platform.OS=='ios' ? 20 : 0,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
-			  {!isAdmin && 
+			  {!isAdmin && !onlyDetail && 
 					<Button
 					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={{roundness:0}}
@@ -323,10 +331,10 @@ export default connect(
 		}
 		return {
 		initialValues:initialValues,
-		initialImage: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
-		initialImage: selectors.getSelectedProduct(state)!=null? selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
-	  	ingredients: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductIngredients(state):[],
-		additionals: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductAdditionals(state):[],
+		initialImage: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ?selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
+		initialImage: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
+	  	ingredients: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductIngredients(state):[],
+		additionals: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductAdditionals(state):[],
 		categories: selectors.getCategories(state),
 		additionalsPrice: additionalsPrice
 		// valuesIngredients:  selector(state,'additionals0')
