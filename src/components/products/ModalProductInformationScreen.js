@@ -22,12 +22,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice }) {
 	const { colors, roundness } = theme;
-	const [quantity, setQuantity] = useState(0);
 	const isNew = initialValues.price!=null;
-	useEffect(() => {	
-		initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null? 0: initialValues.quantity
-		setQuantity(initialValues.quantity)
+	const [quantity, setQuantity] = useState(1);
 	
+	useEffect(() => {
+		initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null || initialValues.quantity==0 ? 1:initialValues.quantity
+		setQuantity(initialValues.quantity)
 	},[ modal ]);
 
 
@@ -90,8 +90,9 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 			deviceHeight={Dimensions.get("window").height}
 			// onSwipeComplete={()=>closeModal()}
         	// swipeDirection={['right']}
-		>
-			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
+		>	
+			
+			<ScrollView style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'18%'}}>
 				<Card
 				title={initialValues.productName}
 				
@@ -129,7 +130,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 						<>            
 							<Button
 								style={[styles.btn, styles.btnLeft]}
-								onPress={() => {quantity>0?setQuantity(quantity-1):setQuantity(0)}}
+								onPress={() => {quantity>1?setQuantity(quantity-1):setQuantity(1)}}
 							>
 								<MaterialCommunityIcons
 								name="minus"
@@ -155,32 +156,8 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 						</>
 						}		
 				</View> 
-				{!isAdmin && <View style={{marginTop:'10%',marginBottom:'2%'}}>
-					<Button
-					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
-					theme={roundness}
-					color={'#000000'}
-					icon={!isAdmin ? "plus" : "pencil"}
-					height={50}
-					mode="contained"
-					labelStyle={{
-						fontFamily: "dosis-bold",
-						fontSize: 15,
-					}}
-					style={{
-						fontFamily: 'dosis',
-						marginLeft: '5%',
-						marginRight: '5%',
-						justifyContent: 'center',
-					}}
-					
-					onPress={handleSubmit(addProduct)}>
-						
-					{isAdmin? 'EDITAR PRODUCTO' : ((!isNew ? 'EDITAR':'AGREGAR') + ` ${quantity} POR Q${parseFloat(quantity*(parseFloat(!isNew ? initialValues.unitPrice : initialValues.price)+parseFloat(additionalsPrice))).toFixed(2)}`)}
-					</Button>
-					
-				</View>}
-				<View style={{marginTop:'1%',marginBottom:'10%'}}>
+				
+				<View style={{marginTop:'4%',marginBottom:'10%'}}>
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
 					theme={roundness}
@@ -203,10 +180,38 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					REGRESAR
 					</Button>}
 					
+					
 				</View>
-				<IconButton testID={'close-button'}  icon="close"  size={30} style={{top:5,left:3,position:'absolute'}} mode="contained" onPress={()=>closeModal()}  />
+				
       		</ScrollView>
-			
+			  <IconButton testID={'close-button'}  icon="close"  size={30} style={{top:20,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
+			  {!isAdmin && 
+					<Button
+					disabled={!isAdmin && (quantity==0 || quantity==undefined)}
+					theme={{roundness:0}}
+					color={'#000000'}
+					icon={isNew ? "plus" : "pencil"}
+					height={80}
+					mode="contained"
+					labelStyle={{
+						fontFamily: "dosis-bold",
+						fontSize: 15,
+					}}
+					style={{
+						fontFamily: 'dosis',
+						bottom:'0%',
+						width:'100%',
+						justifyContent: 'center',
+						
+						position:'absolute',
+					}}
+					
+					onPress={handleSubmit(addProduct)}>
+					{((!isNew ? 'EDITAR':'AGREGAR') + ` ${quantity} POR Q${parseFloat(quantity*(parseFloat(!isNew ? initialValues.unitPrice : initialValues.price)+parseFloat(additionalsPrice))).toFixed(2)}`)}
+					</Button>
+				
+				}
+		
 		</Modal>
 	);
 }
