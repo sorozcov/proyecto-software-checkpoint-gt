@@ -49,7 +49,7 @@ function FinishOrder({
         <View style={styles.container}>
             <View style={{flex:0.05,direction:'row',alignItems:'center',}}>
                 <Text style={{ fontFamily:'dosis-semi-bold',fontSize:19,}}>
-                     {'ORDEN'}  
+                     {'ORDEN' +' MESA '+activeOrder.table+ " " +activeOrder.name}  
                 </Text>
             </View>
             <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
@@ -92,23 +92,7 @@ function FinishOrder({
             <View style={styles.totalContainer}>
                 <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
             </View>
-            {finishOrderButton && <View style={styles.buttonContainer} >
-                <Button
-                    theme={roundness}
-                    color={'#000000'}
-                    icon={"arrow-right-bold"}
-                    height={50}
-                    mode="contained"
-                    labelStyle={{
-                        fontFamily: "dosis-bold",
-                        fontSize: 15,
-                    }}
-                    style={styles.button}
-                    onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}
-                >
-                    {'PROCESAR ORDEN'}
-                </Button>
-            </View>}
+           
             { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
         </View>
     );
@@ -148,7 +132,7 @@ const styles = StyleSheet.create({
     },
     rowFront: {
         backgroundColor: '#ffffff',
-        height:70,
+        height:100,
     },
     textContainer: {
         flex: 3,

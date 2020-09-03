@@ -15,21 +15,13 @@ import * as selectors from '../../logic/reducers';
 import MyCheckbox from '../general/checkbox';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FinishOrder from './FinishOrder';
+import * as actions from '../../logic/actions/orders';
 
-
-function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,closeModal, modal, submitFunction,initialValues, route, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault,isAdding,isEditing,isAdmin=false }) {
+function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,closeModal, modal, submitFunction,initialValues,isAdding,finishOrderButton=true,sendOrder,orderProducts,activeOrder,orderProductsByCategory }) {
 	const { colors, roundness } = theme;
-	
 	const [quantity, setQuantity] = useState(0);
-	const isNew = initialValues==null;
-	if(!isNew)
-		// navigation.setOptions({ title: 'PRODUCTO' });
-		useEffect(() => {
-		initialValues.quantity=initialValues.quantity==undefined || initialValues.quantity==null? 0:initialValues.quantity
-		setQuantity(initialValues.quantity)
-		
-		},[]);
-	
+
+	console.log(activeOrder)
 	
 	const editProductForm = values => {
 		// var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
@@ -54,15 +46,17 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 			animationOut={"slideOutDown"}
 			coverScreen={true}
 			onBackButtonPress={()=>closeModal()}
+			onBackdropPress={()=>closeModal()}
 			style={styles.modalB}
 			animationInTiming={0}
 			deviceWidth={Dimensions.get("window").width}
 			deviceHeight={Dimensions.get("window").height}
 			// onSwipeComplete={()=>closeModal()}
-        	// swipeDirection={['right']}
+			// swipeDirection={['right']}
+			// propagateSwipe={false}
 		>
-			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column'}}>
-				<FinishOrder finishOrderButton={true} navigation={navigation}/>
+			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'6%'}}>
+				<FinishOrder navigation={navigation}/>
 				<View style={{marginTop:'1%',marginBottom:'10%'}}>
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
@@ -87,9 +81,35 @@ function OrderInformationScreen({ theme, dirty, valid, handleSubmit,navigation,c
 					</Button>}
 					
 				</View>
-				<IconButton testID={'close-button'}  icon="close"  size={30} style={{top:5,left:3,position:'absolute'}} mode="contained" onPress={()=>closeModal()}  />
-      		</View>
-			 
+				<IconButton testID={'close-button'}  icon="close"  size={30} style={{top:20,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
+				
+			</View>
+			{finishOrderButton && 
+					<Button
+					disabled={false}
+					theme={{roundness:0}}
+					color={'#000000'}
+					icon={"arrow-right-bold"}
+					height={80}
+					mode="contained"
+					labelStyle={{
+						fontFamily: "dosis-bold",
+						fontSize: 15,
+					}}
+					style={{
+						fontFamily: 'dosis',
+						bottom:'0%',
+						width:'100%',
+						justifyContent: 'center',
+						
+						position:'absolute',
+					}}
+					
+					onPress={() => sendOrder(navigation, orderProducts, activeOrder, total)}>
+					{'PROCESAR ORDEN'}
+					</Button>
+				
+				}
 		</Modal>
 	);
 }
@@ -190,31 +210,19 @@ const styles = StyleSheet.create({
 export default connect(
 	state => ({
 		initialValues: selectors.getSelectedProduct(state)!=null?selectors.getProduct(state,selectors.getSelectedProduct(state).productId):{},
-	  	ingredients: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductIngredients(state):[],
-		additionals: selectors.getSelectedProduct(state)!=null? selectors.getSelectedProductAdditionals(state):[],
-		categories: selectors.getCategories(state),
+        orderProducts: selectors.getSelectedOrderProducts(state),
+        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
+        activeOrder: selectors.getSelectedOrder(state),
+        isAdding: selectors.isAddingOrders(state),
+        addingError: selectors.getOrdersError(state),
 	}),
 	dispatch => ({
-	  createProduct(navigation, product) {
-		dispatch(actionsProducts.startAddingProduct(product));
-		navigation.navigate('Menu');
-	  },
-	  editProduct(navigation, product) {
-		dispatch(actionsProducts.startEditingProduct(product));
-		navigation.navigate('Menu');
-	  },
-	  addProduct(productId) {
-		dispatch(actionsProducts.addProductToOrder(productId));
-	  },
-	  deleteProduct(productId) {
-		  dispatch(actionsProducts.deleteProductToOrder(productId));
-	  },
-		  changeIngredientDefault(ingredientId) {
-			  dispatch(actionsProducts.startEditingIngredient({ingredientId}))
-		  },
-		  changeAdditionalDefault(additionalId) {
-			  dispatch(actionsProducts.startEditingIngredient({additionalId}))
-		  },
+
+		sendOrder(navigation, orderProducts, activeOrder, total) {
+            // dispatch(actions.startAddingOrder(orderProducts, {...activeOrder, total}));
+            // dispatch(actions.deactivateOrder());
+            navigation.navigate('OrdersList');
+        },
 	}),
   )(reduxForm({
 	form: 'editProductForm',
