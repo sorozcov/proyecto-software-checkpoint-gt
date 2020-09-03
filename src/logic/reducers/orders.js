@@ -88,11 +88,14 @@ const selectedOrder = (state = null, action) => {
 
         case types.ORDER_PRODUCT_ADDED:
             {
-                state
+                const index = state.products.length===0 ? 0 : state.products[state.products.length - 1].index + 1 
                 return {...state, 
                     products: [
                         ...state.products,
-                        action.payload
+                        {
+                            ...action.payload,
+                            index:index,
+                        }
                     ] 
                 };
             }
@@ -101,14 +104,17 @@ const selectedOrder = (state = null, action) => {
             {
                 state.products[action.payload.index] = {
                     ...state.products[action.payload.index],
-                    ...action.payload.product,
+                    ...action.payload,
                 }
                 return state;
             }
 
         case types.ORDER_PRODUCT_DELETED:
             {
-                return state.filter(id => id !== action.payload);
+                return {
+                    ...state,
+                    products: state.products.filter(product => product.index !== action.payload)
+                }
             }
         default:
             return state;

@@ -1,15 +1,17 @@
 import React,{useState} from 'react';
 import { Button, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
 import { ListItem,Left,Icon,Body } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Card, Divider } from 'react-native-elements';
 import ProductListItem from './ProductListItem';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
 import * as actionsProducts from '../../logic/actions/products';
+import * as actionsOrders from '../../logic/actions/orders';
 
 
 function FinishOrder({
@@ -24,6 +26,7 @@ function FinishOrder({
     addingError,
     finishOrderButton=false,
     selectProductInformation,
+    deleteProductOfOrder,
 }) {
     const { roundness,colors } = theme;
     const [modalProduct, setModalProduct] = useState(false);
@@ -66,12 +69,12 @@ function FinishOrder({
                 style={{flex:1}}
                 useSectionList
                 sections={orderProductsByCategory}
-                
                 renderSectionHeader={renderSectionHeader}
+                keyExtractor={product => product.index}
                 renderItem={ (category, rowMap) => (
                     <ProductListItem
                         style={styles.rowFront}
-                        key={category.item.productId}
+                        key={category.item.index}
                         name={`${category.item.productName}`}
                         product={category.item}
                         navigation={navigation}
@@ -80,11 +83,48 @@ function FinishOrder({
                         
                     />
                 )}
+                renderHiddenItem= {
+                    (product, rowMap) => (
+                        <View style={styles.rowBack}>
+                            <TouchableOpacity
+                                style={[styles.backRightBtn, styles.backRightBtnRight]}
+                                onPress={ () => {
+                                    rowMap[product.item.index].closeRow();
+                                    Alert.alert(
+                                        '¿Eliminar producto de la orden?',
+                                        'Esta acción no puede ser revertida',
+                                        [
+                                            {
+                                                text: 'Cancelar', 
+                                                style: 'cancel'
+                                            },
+                                            {
+                                                text: 'Eliminar',
+                                                onPress: () => deleteProductOfOrder(product.item.index),
+                                                style: 'destructive'
+                                            }
+                                        ],
+                                        {
+                                            cancelable: true,
+                                        },
+                                    )
+                                }}
+                            >
+                                <MaterialCommunityIcons
+                                name="delete"
+                                color={'black'}
+                                size={30}
+                                />
+                                    <Text style={styles.backTextWhite}>Eliminar</Text>
+                                
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
                 disableRightSwipe={true}
                 closeOnRowPress={true}
-                keyExtractor={product => product.productId}
                 leftOpenValue={0}
-                rightOpenValue={-150}
+                rightOpenValue={-75}
                 previewRowKey={'0'}
                 
                 previewOpenDelay={1000}
@@ -150,12 +190,40 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         height:70,
     },
+    rowBack: {
+        alignItems: 'center',
+        backgroundColor: '#ffff',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 15,
+      
+    },
     textContainer: {
         flex: 3,
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center'
-    }
+    },
+    backRightBtn: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        top: 0,
+        width: 75,
+    },
+    backRightBtnLeft: {
+        backgroundColor: '#FFF11B',
+        right: 75,
+    },
+    backRightBtnRight: {
+        backgroundColor: '#FF0D0D',
+        right: 0,
+    },
+    backTextWhite: {
+        fontFamily: 'dosis-regular',
+    },
 });
 
 
@@ -177,6 +245,9 @@ export default connect(
             dispatch(actionsProducts.selectProduct(product));
             // navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
+		deleteProductOfOrder(index) {
+			dispatch(actionsOrders.deleteProductOfOrder(index));
+		},
         // finish(navigation) {
         //     dispatch(actions.deactivateOrder());
         //     navigation.navigate('NewOrder');

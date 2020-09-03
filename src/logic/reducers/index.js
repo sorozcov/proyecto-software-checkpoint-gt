@@ -69,7 +69,6 @@ export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrde
 
 export const getSelectedOrderProductsByCategory = state => {
     let products = ordersSelectors.getSelectedOrderProducts(state.orders);
-    console.log(products)
     let categories = getCategories(state);
     return categories.map(category => {
         return {

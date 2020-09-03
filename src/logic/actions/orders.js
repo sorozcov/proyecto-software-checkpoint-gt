@@ -94,12 +94,9 @@ export const addProductToOrder = product => ({
     payload: product
 });
 
-export const editProductOfOrder = (index, product) => ({
+export const editProductOfOrder = product => ({
     type: types.ORDER_PRODUCT_EDITED,
-    payload: {
-        index,
-        product,
-    }
+    payload: product,
 });
 
 export const deleteProductOfOrder = index => ({
