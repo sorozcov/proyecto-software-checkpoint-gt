@@ -16,6 +16,9 @@
   },
   "dependencies": {
     "@expo/vector-icons": "~10.0.6",
+    "@mdi/font": "^5.5.55",
+    "@mdi/js": "^5.5.55",
+    "@mdi/react": "^1.4.0",
     "@react-native-community/masked-view": "0.1.6",
     "@react-native-community/picker": "react-native-community/react-native-picker",
     "@react-navigation/bottom-tabs": "^5.0.0",

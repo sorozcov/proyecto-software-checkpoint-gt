@@ -4,7 +4,7 @@ import { all, fork } from 'redux-saga/effects';
 import { watchBranchesAdd, watchBranchesFetch, watchBranchesRemove, watchBranchesUpdate } from './branches';
 import { watchAddCategory, watchEditCategory, watchFetchCategories, watchRemoveCategory } from './categories';
 import { watchLoginStarted, watchLogoffStarted } from './login';
-import { watchAddOrderStarted, watchOrdersFetch, watchRemoveOrder } from './orders';
+import { watchAddOrderStarted, watchEditOrderStarted, watchOrdersFetch, watchRemoveOrder } from './orders';
 import { watchAddProductsStarted, watchDeleteProductStarted, watchEditProductsStarted, watchProductsFetchStarted, watchAddIngredientStarted, watchEditIngredientStarted } from './products';
 import { watchAddUsersStarted, watchDeleteUserStarted, watchEditUsersStarted, watchUsersFetchStarted } from './users';
 
@@ -39,6 +39,7 @@ function* mainSaga() {
         fork(watchEditIngredientStarted),
 
         fork(watchAddOrderStarted),
+        fork(watchEditOrderStarted),
         fork(watchOrdersFetch),
         fork(watchRemoveOrder),
     ]);

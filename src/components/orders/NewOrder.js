@@ -14,9 +14,9 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
     const { roundness } = theme
 
     const proceed = values => {
-        if (values.name && values.table) {
+        if (values.orderName && values.table) {
             next(navigation, values);
-            values.name = null;
+            values.orderName = null;
             values.table = null;
         }
         else {
@@ -37,7 +37,7 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
                         <Text style={{ fontSize: 22, fontFamily: 'dosis-bold', paddingBottom: 10, paddingTop: 0  }}>NUEVO PEDIDO </Text>
                     </View>
                     <Field name={'table'} component={MyTextInput} label='Mesa' placeholder='No. de Mesa' keyboardType='numeric'/>
-                    <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa un nombre' returnKeyType='done'/>
+                    <Field name={'orderName'} component={MyTextInput} label='Nombre' placeholder='Ingresa un nombre' returnKeyType='done'/>
                     <View style={styles.buttonContainer}>
                         <Button
                             disabled={!(dirty && valid)}
@@ -101,7 +101,7 @@ export default connect(
     validate: (values) => {
         const errors = {};
 
-        errors.name = !values.name ? 'Este campo es obligatorio' : undefined;
+        errors.orderName = !values.orderName ? 'Este campo es obligatorio' : undefined;
         errors.table = !values.table ? 'Este campo es obligatorio' : undefined;
         
         return errors;

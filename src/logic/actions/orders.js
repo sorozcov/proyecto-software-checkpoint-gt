@@ -20,12 +20,9 @@ export const failFetchingOrders = error => ({
     },
 });
 
-export const startAddingOrder = (order, data) => ({
+export const startAddingOrder = order => ({
     type: types.ORDER_ADD_STARTED,
-    payload: {
-        order,
-        data,
-    }
+    payload: order
 });
 
 export const completeAddingOrder = order => ({
@@ -42,7 +39,7 @@ export const failAddingOrder = error => ({
 
 export const startEditingOrder = order => ({
     type: types.ORDER_EDIT_STARTED,
-    payload: order,
+    payload: order
 });
 
 export const completeEditingOrder = order => ({
@@ -50,10 +47,9 @@ export const completeEditingOrder = order => ({
     payload: order,
 });
 
-export const failEditingOrder = (id, error) => ({
+export const failEditingOrder = error => ({
     type: types.ORDER_EDIT_FAILED,
     payload: {
-        id,
         error,
     },
 });
@@ -89,7 +85,17 @@ export const deactivateOrder = () => ({
     type: types.ORDER_DEACTIVATED,
 });
 
-export const addProducts = products => ({
-    type: types.ORDER_PRODUCTS_ADDED,
-    payload: products
-})
+export const addProductToOrder = product => ({
+    type: types.ORDER_PRODUCT_ADDED,
+    payload: product
+});
+
+export const editProductOfOrder = product => ({
+    type: types.ORDER_PRODUCT_EDITED,
+    payload: product,
+});
+
+export const deleteProductOfOrder = index => ({
+    type: types.ORDER_PRODUCT_DELETED,
+    payload: index
+});
