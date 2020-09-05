@@ -105,7 +105,7 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 				<Text style={{paddingTop: 10,textAlign:'center',fontFamily:'dosis-semi-bold',fontSize:24}}>
 					{`Q${parseFloat(!isNew ? initialValues.unitPrice : initialValues.price).toFixed(2)}`}
 				</Text>
-				{isAdmin?<Field name={'status'} disabled={isAdmin} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>:null}
+				{isAdmin?<Field name={'status'} disabled={isAdmin} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={initialValues.status}/>:null}
 
 				<Divider style={{ backgroundColor: 'red',marginTop:10,marginBottom:10 }} />
 				<Text style={{paddingLeft: 10,fontFamily:'dosis-light',fontSize:19}}>
