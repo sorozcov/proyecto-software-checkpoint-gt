@@ -118,15 +118,17 @@ function ProductInformationScreen({
                             <FlatList
                                 data={additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
                                 renderItem={({item}) => (
-                                    <Field
-                                        name={item.name}
-                                        component={MyCheckbox}
-                                        label={`${item.name} (Q${item.cost})`}
-                                        functionCheckbox={()=>changeAdditionalDefault(item.id)}
-                                        containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}}
-                                        center={true}
-                                        checked={item.default}
-                                    />
+                                    <>
+                                        <Field
+                                            name={item.name}
+                                            component={MyCheckbox}
+                                            label={`${item.name} (Q${item.cost})`}
+                                            functionCheckbox={()=>changeAdditionalDefault(item.id)}
+                                            containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}}
+                                            center={true}
+                                            checked={item.default}
+                                        />
+                                    </>
                                 )
                                 }
                             />
@@ -138,7 +140,7 @@ function ProductInformationScreen({
                             <>            
                                 <Button
                                     style={[styles.btn, styles.btnLeft]}
-                                    onPress={() => {quantity>0?setQuantity(quantity-1):setQuantity(0)}}
+                                    onPress={() => {quantity>0 ? setQuantity(quantity-1) : setQuantity(0)}}
                                 >
                                     <MaterialCommunityIcons
                                         name="minus"
@@ -146,7 +148,7 @@ function ProductInformationScreen({
                                         size={22}
                                     />	
                                 </Button>
-                                <View style={styles.infoTxt} >
+                                <View style={styles.infoTxt}>
                                     <Text style={{fontFamily:'dosis-light',fontSize:20}}>{quantity}</Text>
                                 </View>
                                 <Button

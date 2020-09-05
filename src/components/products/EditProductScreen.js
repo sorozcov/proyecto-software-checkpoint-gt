@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, StyleSheet, View, FlatList, Modal, TouchableOpacity } from 'react-native';
 import 'firebase/firestore';
 import { Text } from 'native-base';
 import { connect } from 'react-redux';
@@ -6,8 +7,9 @@ import { Field, reduxForm } from 'redux-form';
 import { Divider } from 'react-native-elements';
 import { Button, withTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { KeyboardAvoidingView, StyleSheet, View, FlatList, Modal } from 'react-native';
+
 import omit from 'lodash/omit';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import MyCheckbox from '../general/checkbox';
 import ModalIngrediens from './ModalIngrediens';
@@ -19,7 +21,26 @@ import ImagePicker from '../../components/general/ImagePickerProduct';
 
 
 
-function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, clearProduct, createProduct, editProduct, addIngredient, addIngredientNewProduct, categories, savedIngredients, savedAdditionals, ingredients, additionals, changeIngredientDefault, changeAdditionalDefault }) {
+function EditProductScreen({
+	theme,
+	navigation,
+	dirty,
+	valid,
+	handleSubmit,
+	initialValues,
+	clearProduct,
+	createProduct,
+	editProduct,
+	addIngredient,
+	addIngredientNewProduct,
+	categories,
+	savedIngredients,
+	savedAdditionals,
+	ingredients,
+	additionals,
+	changeIngredientDefault,
+	changeAdditionalDefault
+}) {
 	const { colors, roundness } = theme;
 	
 	const isNew = initialValues == null;
@@ -54,14 +75,54 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 		<View style={styles.container}>
 			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 				<View style={styles.formContainer}>
-					<Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image}/>
-					<Field name={'productName'} component={MyTextInput} label='Nombre' placeholder='Ingresa el nombre del producto'/>
-					<Field name={'description'} component={MyTextInput} label='Descripción' placeholder='Ingresa la descripción del producto'  multiline={true}/>
-					<Field name={'price'} component={MyTextInput} label='Precio Q.' placeholder='Ingresa el precio que tendrá el producto' keyboardType='numeric'/>
-					<Field name={'category'} component={PickerInput} title='Categoría' single={true} selectedText="Categoría" placeholderText="Seleccionar una categoría" 
+					<Field
+						name={'image'}
+						component={ImagePicker}
+						image={isNew ? null : initialValues.image}
+					/>
+					<Field
+						name={'productName'}
+						component={MyTextInput}
+						label='Nombre'
+						placeholder='Ingresa el nombre del producto'
+					/>
+					<Field
+						name={'description'}
+						component={MyTextInput}
+						label='Descripción'
+						placeholder='Ingresa la descripción del producto'
+						multiline={true}
+					/>
+					<Field
+						name={'price'}
+						component={MyTextInput}
+						label='Precio Q.'
+						placeholder='Ingresa el precio que tendrá el producto'
+						keyboardType='numeric'
+					/>
+					<Field
+						name={'category'}
+						component={PickerInput}
+						title='Categoría'
+						single={true}
+						selectedText="Categoría"
+						placeholderText="Seleccionar una categoría" 
 						options={categories.map(category => ({ value: category.categoryId, label: category.categoryName }))}
-						selectedItems={!isNew?[initialValues.categoryId]:[]}/>
-					<Field name={'status'} component={MyCheckbox} label='ACTIVO' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center'}} center={true} checked={!isNew?initialValues.status:true}/>
+						selectedItems={!isNew?[initialValues.categoryId]:[]}
+					/>
+
+					<Field
+						name={'status'}
+						component={MyCheckbox}
+						label='ACTIVO'
+						containerStyle={{
+							backgroundColor:null,
+							width:'50%',
+							alignSelf:'center'
+						}}
+						center={true}
+						checked={!isNew?initialValues.status:true}
+					/>
 					<View style={{ marginTop: 8, marginBottom: 8 }}>
 						<Button
 							theme={roundness}
@@ -86,23 +147,62 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 						{'Nuevo Ingrediente'}
 						</Button>
 					</View>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
+
+					<Divider style={styles.contentDivider}/>
+
+					{/* Listado de ingredientes */}
+					<Text style={{paddingLeft:10, fontFamily:'dosis-light', fontSize:18, marginBottom:20}}>
 						{'Ingredientes'}  
 					</Text>
+
 					<FlatList
 						data={isNew ? savedIngredients.map((ingredient, i) => ({...ingredient, id: i})) : ingredients.map((ingredient, i) => ({...ingredient, id: i}))}
-						renderItem={({item}) => <Field name={item.name} component={MyCheckbox} label={item.name} functionCheckbox={()=>changeIngredientDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={item.default}/>}
+						renderItem={({item}) => (
+							<Field
+								name={item.name}
+								component={MyCheckbox}
+								label={item.name}
+								functionCheckbox={()=>changeIngredientDefault(isNew,item.id)}
+								containerStyle={{backgroundColor:null, width:'80%', alignSelf:'center'}}
+								center={true}
+								checked={item.default}
+							/>
+						)}
 					/>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
-					<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
+					<Divider style={styles.contentDivider}/>
+
+					{/* Listado de adicionales */}
+					<Text style={{paddingLeft:10, fontFamily:'dosis-light', fontSize:18, marginBottom:20}}>
 						{'Adicionales'}  
 					</Text>
 					<FlatList
 						data={isNew ? savedAdditionals.map((ingredient, i) => ({ ...ingredient, id: i })) : additionals.map((ingredient, i) => ({ ...ingredient, id: i }))}
-						renderItem={({item}) => <View style={{width:'100%'}}><Field name={item.name} component={MyCheckbox} label={`${item.name} (Q${item.cost})`} functionCheckbox={()=>changeAdditionalDefault(isNew, item.id)} containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center', justifyContent: 'center'}} center={true} checked={item.default} /></View>}
+						renderItem={({item}) => (
+								<View style={{alignSelf:'center',width:'90%',display:'flex',flexDirection:'row',alignItems:'center',alignContent:'center',backgroundColor:'grey'}}>
+										<Field
+											name={item.name}
+											component={MyCheckbox}
+											label={`${item.name} (Q${item.cost})`}
+											functionCheckbox={()=>changeAdditionalDefault(isNew, item.id)}
+											center={true}
+											checked={item.default}
+										/>
+
+										<TouchableOpacity
+											style={[styles.deleteButton]}
+											onPress={() => {/* @TODO: Eliminar adicional */}}
+										>
+											<MaterialCommunityIcons
+												name="minus"
+												color={'red'}
+												size={25}
+											/>
+										</TouchableOpacity>
+								</View>
+						)
+						}
 					/>
-					<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
+					<Divider style={styles.contentDivider} />
 					
 					<View style={{marginTop:'4%',marginBottom:'10%'}}>
 					<Button
@@ -129,12 +229,22 @@ function EditProductScreen({ theme, navigation, dirty, valid, handleSubmit, init
 				</View>
 			</ScrollView>
 		</View>
-		<ModalIngrediens modal={modal} closeModal={()=>setModal(false)} submitFunction={(values)=>addAdditionalIngredient(values)} />
+
+		<ModalIngrediens
+			modal={modal}
+			closeModal={()=>setModal(false)}
+			submitFunction={(values)=>addAdditionalIngredient(values)}
+		/>
 		</KeyboardAvoidingView>
 	);
 }
 	
 const styles = StyleSheet.create({
+	contentDivider: {
+		backgroundColor:'red',
+		marginTop:20,
+		marginBottom:20
+	},
 	container: {
 		flex: 1,
 		flexDirection: 'column',
@@ -166,6 +276,15 @@ const styles = StyleSheet.create({
 		paddingTop: 20,
 		paddingBottom: 20,
 	},
+	deleteButton:{
+		marginRight:10,
+		borderRadius: 5,
+		width: 30,
+		height: 30,
+		// backgroundColor: '#FA7659',
+		backgroundColor: '#FFF',
+		alignItems: 'center',
+	}
 });
 
 export default connect(
