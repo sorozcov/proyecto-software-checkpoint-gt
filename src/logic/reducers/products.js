@@ -6,277 +6,313 @@ import * as types from '../types/products';
 
 
 const byId = (state = {}, action) => {
-  switch(action.type) {
-    case types.PRODUCTS_FETCH_COMPLETED: {
-      const { entities, order } = action.payload;
-      const newState = { ...state };
-      order.forEach(id => {
-        newState[id] = {
-          ...entities[id],
-        };
-      });
-      return newState;
+    switch (action.type) {
+        // CRUD
+        case types.PRODUCTS_FETCH_COMPLETED:
+            {
+                const { entities, order } = action.payload;
+                const newState = {...state };
+                order.forEach(id => {
+                    newState[id] = {
+                        ...entities[id],
+                    };
+                });
+                return newState;
+            }
+        case types.PRODUCT_ADD_COMPLETED:
+            {
+                const product = action.payload;
+                state[product.productId] = {
+                    ...product,
+                };
+                return state;
+            }
+        case types.PRODUCT_EDIT_COMPLETED:
+            {
+                return {
+                    ...state,
+                    [action.payload.productId]: {
+                        ...state[action.payload.productId],
+                        ...action.payload,
+                    },
+                };
+            }
+        case types.PRODUCT_REMOVE_COMPLETED:
+            {
+                return omit(state, action.payload.productId);
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCT_ADD_COMPLETED: {
-      const product = action.payload;
-      state[product.productId] = {
-        ...product,
-      };
-      return state;
-    }
-    case types.PRODUCT_EDIT_COMPLETED: {
-      return {
-        ...state,
-        [action.payload.productId]: {
-          ...state[action.payload.productId],
-          ...action.payload,
-        },
-      };
-    }
-    case types.PRODUCT_INGREDIENT_ADD_COMPLETED: {
-      return {
-        ...state,
-        [action.payload.productId]: {
-          ...state[action.payload.productId],
-          ...action.payload,
-        },
-      };
-    }
-    case types.PRODUCT_INGREDIENT_EDIT_COMPLETED: {
-      return {
-        ...state,
-        [action.payload.productId]: {
-          ...state[action.payload.productId],
-          ...action.payload,
-        },
-      };
-    }
-    case types.PRODUCT_REMOVE_COMPLETED: {
-      return omit(state, action.payload.productId);
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const order = (state = [], action) => {
-  switch(action.type) {
-    case types.PRODUCTS_FETCH_COMPLETED: {
-      return union(action.payload.order);
+    switch (action.type) {
+        case types.PRODUCTS_FETCH_COMPLETED:
+            {
+                return union(action.payload.order);
+            }
+        case types.PRODUCT_ADD_COMPLETED:
+            {
+                return [...state, action.payload.productId];
+            }
+        case types.PRODUCT_REMOVE_COMPLETED:
+            {
+                return state.filter(id => id !== action.payload.productId);
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCT_ADD_COMPLETED: {
-      return [...state, action.payload.productId];
-    }
-    case types.PRODUCT_REMOVE_COMPLETED: {
-      return state.filter(id => id !== action.payload.productId);
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const productSelected = (state = null, action) => {
-  switch (action.type) {
-    case types.PRODUCT_SELECTED: {
-      return action.payload;
+    switch (action.type) {
+        case types.PRODUCT_SELECTED:
+            {
+                return action.payload;
+            }
+
+            // INGREDIENTS      
+        case types.PRODUCT_INGREDIENT_ADDED:
+            {
+                const newIngredient = action.payload.Ingredient;
+
+                return {
+                    ...state,
+                    ingredients: [...state.ingredients, newIngredient]
+                };
+            }
+        case types.PRODUCT_INGREDIENT_REMOVED:
+            {
+                const Idx = action.payload.ingredientIdx;
+                const ingredients = state.ingredients;
+
+                return {
+                    ...state,
+                    ingredients: ingredients.filter(i => ingredients.indexOf(i) !== Idx),
+                };
+            }
+        case types.PRODUCT_INGREDIENT_TOGGLED_DEFAULT:
+            {
+                const idx = action.payload.idx;
+                const ingredients_ = [...state.ingredients];
+                ingredients_[idx].default = !ingredients_[idx].default;
+
+                return {
+                    ...state,
+                    ingredients: ingredients_
+                };
+            }
+
+            // ADDITIONALS 
+        case types.PRODUCT_ADDITIONAL_ADDED:
+            {
+                const newAdditional = action.payload.Additional;
+
+                return {
+                    ...state,
+                    additionals: [...state.additionals, newAdditional]
+                };
+            }
+        case types.PRODUCT_ADDITIONAL_REMOVED:
+            {
+                const Idx = action.payload.additionalIdx;
+                const additionals = state.additionals;
+
+                return {
+                    ...state,
+                    additionals: additionals.filter(i => additionals.indexOf(i) !== Idx),
+                };
+            }
+        case types.PRODUCT_ADDITIONAL_TOGGLED_DEFAULT:
+            {
+                console.log(action.payload.idx);
+                const idx = action.payload.idx;
+                const additionals_ = [...state.additionals];
+                additionals_[idx].default = !additionals_[idx].default;
+
+                return {
+                    ...state,
+                    additionals: additionals_
+                };
+            }
+        case types.PRODUCT_DESELECTED:
+            {
+                return null;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCT_DESELECTED: {
-      var newState = null;
-      return newState;
-    }
-    case types.PRODUCT_INGREDIENT_ADD_COMPLETED: {
-      return action.payload;
-    }
-    case types.PRODUCT_INGREDIENT_EDIT_COMPLETED: {
-      return action.payload;
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const isFetching = (state = false, action) => {
-  switch(action.type) {
-    case types.PRODUCTS_FETCH_STARTED: {
-      return true;
+    switch (action.type) {
+        case types.PRODUCTS_FETCH_STARTED:
+            {
+                return true;
+            }
+        case types.PRODUCTS_FETCH_COMPLETED:
+            {
+                return false;
+            }
+        case types.PRODUCTS_FETCH_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCTS_FETCH_COMPLETED: {
-      return false;
-    }
-    case types.PRODUCTS_FETCH_FAILED: {
-      return false;
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const isAdding = (state = false, action) => {
-  switch(action.type) {
-    case types.PRODUCT_ADD_STARTED: {
-      return true;
+    switch (action.type) {
+        case types.PRODUCT_ADD_STARTED:
+            {
+                return true;
+            }
+        case types.PRODUCT_ADD_COMPLETED:
+            {
+                return false;
+            }
+        case types.PRODUCT_ADD_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCT_ADD_COMPLETED: {
-      return false;
-    }
-    case types.PRODUCT_ADD_FAILED: {
-      return false;
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const isEditing = (state = false, action) => {
-  switch(action.type) {
-    case types.PRODUCT_EDIT_STARTED: {
-      return true;
+    switch (action.type) {
+        case types.PRODUCT_EDIT_STARTED:
+            {
+                return true;
+            }
+        case types.PRODUCT_EDIT_COMPLETED:
+        case types.PRODUCT_EDIT_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCT_EDIT_COMPLETED: {
-      return false;
-    }
-    case types.PRODUCT_EDIT_FAILED: {
-      return false;
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const isRemoving = (state = false, action) => {
-  switch(action.type) {
-    case types.PRODUCT_REMOVE_STARTED: {
-      return true;
+    switch (action.type) {
+        case types.PRODUCT_REMOVE_STARTED:
+            {
+                return true;
+            }
+        case types.PRODUCT_REMOVE_COMPLETED:
+        case types.PRODUCT_REMOVE_FAILED:
+            {
+                return false;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCT_REMOVE_COMPLETED: {
-      return false;
-    }
-    case types.PRODUCT_REMOVE_FAILED: {
-      return false;
-    }
-    default: {
-      return state;
-    }
-  }
 };
 
 const error = (state = null, action) => {
-  switch(action.type) {
-    //fetch
-    case types.PRODUCTS_FETCH_FAILED: {
-      return action.payload.error;
+    switch (action.type) {
+        //fetch
+        case types.PRODUCTS_FETCH_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.PRODUCTS_FETCH_STARTED:
+            {
+                return null;
+            }
+        case types.PRODUCTS_FETCH_COMPLETED:
+            {
+                return null;
+            }
+            //add
+        case types.PRODUCT_ADD_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.PRODUCT_ADD_STARTED:
+            {
+                return null;
+            }
+        case types.PRODUCT_ADD_COMPLETED:
+            {
+                return null;
+            }
+            //edit
+        case types.PRODUCT_EDIT_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.PRODUCT_EDIT_STARTED:
+            {
+                return null;
+            }
+        case types.PRODUCT_EDIT_COMPLETED:
+            {
+                return null;
+            }
+            //remove
+        case types.PRODUCT_REMOVE_FAILED:
+            {
+                return action.payload.error;
+            }
+        case types.PRODUCT_REMOVE_STARTED:
+            {
+                return null;
+            }
+        case types.PRODUCT_REMOVE_COMPLETED:
+            {
+                return null;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    case types.PRODUCTS_FETCH_STARTED: {
-      return null;
-    }
-    case types.PRODUCTS_FETCH_COMPLETED: {
-      return null;
-    }
-    //add
-    case types.PRODUCT_ADD_FAILED: {
-      return action.payload.error;
-    }
-    case types.PRODUCT_ADD_STARTED: {
-      return null;
-    }
-    case types.PRODUCT_ADD_COMPLETED: {
-      return null;
-    }
-    //edit
-    case types.PRODUCT_EDIT_FAILED: {
-      return action.payload.error;
-    }
-    case types.PRODUCT_EDIT_STARTED: {
-      return null;
-    }
-    case types.PRODUCT_EDIT_COMPLETED: {
-      return null;
-    }
-    //remove
-    case types.PRODUCT_REMOVE_FAILED: {
-      return action.payload.error;
-    }
-    case types.PRODUCT_REMOVE_STARTED: {
-      return null;
-    }
-    case types.PRODUCT_REMOVE_COMPLETED: {
-      return null;
-    }
-    default: {
-      return state;
-    }
-  }
 };
-
-const savedIngredients = (state = [], action) => {
-  switch (action.type) {
-    case types.PRODUCT_INGREDIENT_SAVED: {
-      return [...state, action.payload];
-    }
-    case types.PRODUCT_INGREDIENT_EDITED: {
-      var newState = state; 
-      newState[action.payload] = {...newState[action.payload], default: !newState[action.payload].default };
-      return newState;
-    }
-    case types.PRODUCT_INGREDIENTS_CLEARED: {
-      return []
-    }
-    default: {
-      return state;
-    }
-  }
-}
-
-const savedAdditionals = (state = [], action) => {
-  switch (action.type) {
-    case types.PRODUCT_ADDITIONAL_SAVED: {
-      return [...state, action.payload];
-    }
-    case types.PRODUCT_ADDITIONAL_EDITED: {
-      var newState = state; 
-      newState[action.payload] = {...newState[action.payload], default: !newState[action.payload].default };
-      return newState;
-    }
-    case types.PRODUCT_ADDITIONALS_CLEARED: {
-      return []
-    }
-    default: {
-      return state;
-    }
-  }
-}
-
 
 const searchProduct = (state = "", action) => {
-  switch (action.type) {
-    case types.PRODUCT_SEARCH_STARTED: {
-      return action.payload;
+    switch (action.type) {
+        case types.PRODUCT_SEARCH_STARTED:
+            {
+                return action.payload;
+            }
+        default:
+            {
+                return state;
+            }
     }
-    default: {
-      return state;
-    }
-  }
 };
 
-
 const products = combineReducers({
-  byId,
-  order,
-  productSelected,
-  isFetching,
-  isAdding,
-  isEditing,
-  isRemoving,
-  error,
-  savedIngredients,
-  savedAdditionals,
-  searchProduct,
+    byId,
+    order,
+    productSelected,
+    isFetching,
+    isAdding,
+    isEditing,
+    isRemoving,
+    error,
+    searchProduct,
 });
 
 export default products;
@@ -291,6 +327,4 @@ export const isAddingProducts = state => state.isAdding;
 export const isEditingProducts = state => state.isEditing;
 export const isRemovingProducts = state => state.isRemoving;
 export const getProductsError = state => state.error;
-export const getSavedIngredients = state => state.savedIngredients;
-export const getSavedAdditionals = state => state.savedAdditionals;
 export const getSearchTextProduct = state => state.searchProduct;
