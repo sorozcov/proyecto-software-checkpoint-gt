@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "proyecto-software-checkpoint-gt",
-    "slug": "proyecto-software-checkpoint-gt",
+    "name": "checkpoint-gt-app",
+    "slug": "checkpoint-gt-app",
     "platforms": [
       "ios",
       "android",
@@ -9,7 +9,7 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
+    "icon": "./src/assets/images/checkpoint.png",
     "scheme": "myapp",
     "splash": {
       "image": "./src/assets/images/checkpointLogo.png",

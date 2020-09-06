@@ -1,6 +1,6 @@
 import { Body, Container, Icon, Left, ListItem } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View, Platform } from "react-native";
 import { ActivityIndicator, withTheme, Button } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,26 +10,26 @@ import * as actionsCategories from '../../logic/actions/categories';
 import * as actionsProducts from '../../logic/actions/products';
 import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
-import ProductListItem from './ProductListItem';
+import ProductListItem from '../products/ProductListItem';
 import { SearchBar } from 'react-native-elements';
 
 const width = Dimensions.get('window').width; // full width
-
+import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
+import ModalOrderInformationScreen from './ModalOrderInformationScreen'
 
 function ProductsList ({
     theme,
     onLoad,
     isLoading,
     navigation,
-    next,
     productsByCategories,
-    user,
-    productsOfOrder,
     searchProductText,
-    onSearchProduct
+    onSearchProduct,
+    selectProductInformation
 }) {
     const { colors, roundness } = theme;
-
+    const [modalProduct, setModalProduct] = useState(false);
+    const [modalOrder, setModalOrder] = useState(false);
     
     const renderSectionHeader = ({ section }) => (
     <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
@@ -45,7 +45,6 @@ function ProductsList ({
 
     useEffect(onLoad, []);
 
-    const proceed = () => next(navigation, productsOfOrder);
 
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white'}}>
@@ -54,8 +53,11 @@ function ProductsList ({
                 onChangeText={onSearchProduct}
                 value={searchProductText}
                 showCancel={true}
+                showLoading={false}
                 containerStyle={{width:'100%',backgroundColor:'black'}}
-                inputContainerStyle={{backgroundColor:'white'}}
+                //inputContainerStyle={{backgroundColor:'white',fontFamily:'dosis-light',fontSize:17}}
+                
+                inputStyle={{fontFamily:'dosis-light',fontSize:19}}
             />
             <Container width={width}>
                     {
@@ -83,6 +85,7 @@ function ProductsList ({
                                 name={`${category.item.productName}`}
                                 product={category.item}
                                 navigation={navigation}
+                                onPress={()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} 
                             />
                         )}
                         disableRightSwipe={true}
@@ -99,20 +102,33 @@ function ProductsList ({
                 
             </Container>
             <Button
-                theme={roundness}
+                theme={{roundness:0}}
                 color={'#000000'}
-                icon={"arrow-right-bold"}
-                height={50}
+                icon={Platform.OS=='ios' ? ()=><MaterialCommunityIcons
+                    name="clipboard-text-outline"
+                    color='white'
+                    size={24}
+                    style={{paddingRight:30}}
+                /> : "clipboard-text-outline"
+                    }
+                
+                height={55}
                 mode="contained"
                 labelStyle={{
                     fontFamily: "dosis-bold",
                     fontSize: 15,
+                    paddingLeft:5,
                 }}
-                style={styles.button}
-                onPress={proceed}
-                disabled={productsOfOrder.length===0}
+                contentStyle={{height:'100%',}}
+                style={{marginLeft: '0%',
+                marginRight: '0%',
+                width:'100%',
+                
+                justifyContent: 'center',}}
+                onPress={() => setModalOrder(true)}
+                
             >
-                {'CONTINUAR'}
+                {'VER ORDEN'}
             </Button>
             <Modal
                 transparent={true}
@@ -124,6 +140,8 @@ function ProductsList ({
                 </View>
                 </View>
             </Modal>
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false}/>}
         </View>
     )
 }
@@ -146,7 +164,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   button: {
-      margin:10
+      margin:10,
+      width:'100%'
   },
     rowFront: {        
         backgroundColor: '#ffffff',
@@ -159,7 +178,6 @@ export default connect(
         user: selectors.getLoggedUser(state),
         productsByCategories: selectors.getProductsByCategoryActive(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
-        productsOfOrder: selectors.getProductsOfOrder(state),
         searchProductText:selectors.getSearchTextProduct(state)
     }),
     dispatch => ({
@@ -171,9 +189,9 @@ export default connect(
             dispatch(actionsProducts.productSearchStarted(searchText));
             
         },
-        next(navigation, products) {
-            dispatch(actionsOrders.addProducts(products));
-            navigation.navigate('FinishOrder');
+        selectProductInformation(navigation, product) {
+            dispatch(actionsProducts.selectProduct(product));
+            // navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
     }),
 )(withTheme(ProductsList));

@@ -7,11 +7,10 @@ import * as types from '../types/orders';
 
 function* makeOrder(action) {
     try {
-        const { order, data } = action.payload;
-        const response = yield updateOrder({...data, products: order });
+        const order = action.payload;
+        const response = yield updateOrder(order);
 
         if (response.error == null) {
-            console.log(response.order)
             yield put(actions.completeAddingOrder(response.order));
         } else {
             yield put(actions.failAddingOrder(response.error));
@@ -26,6 +25,29 @@ export function* watchAddOrderStarted() {
     yield takeEvery(
         types.ORDER_ADD_STARTED,
         makeOrder,
+    );
+}
+
+function* editOrder(action) {
+    try {
+        const order = action.payload;
+        const response = yield updateOrder(order);
+
+        if (response.error == null) {
+            yield put(actions.completeEditingOrder(response.order));
+        } else {
+            yield put(actions.failEditingOrder(response.error));
+        }
+    } catch (error) {
+        console.log(error);
+        yield put(actions.failAddingOrder('Falló la creación del pedido'));
+    }
+}
+
+export function* watchEditOrderStarted() {
+    yield takeEvery(
+        types.ORDER_EDIT_STARTED,
+        editOrder,
     );
 }
 

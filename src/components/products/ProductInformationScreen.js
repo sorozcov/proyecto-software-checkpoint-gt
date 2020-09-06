@@ -313,5 +313,5 @@ export default connect(
         errors.category = values.category && values.category.length === 0 ? 'Este campo es obligatorio' : undefined;
         errors.price = !values.price ? 'Este campo es obligatorio' : isNaN(parseFloat(values.price)) ? 'Ingresa un número correcto' : undefined;
         return errors;
-}
+    }
 })(withTheme(ProductInformationScreen)));

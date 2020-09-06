@@ -6,7 +6,7 @@ import loggedUser, * as loggedUserSelectors from './loggedUser';
 import orders, * as ordersSelectors from './orders';
 import products, * as productsSelectors from './products';
 import users, * as usersSelectors from './users';
-
+import _ from 'lodash'
 
 
 const reducer = combineReducers({
@@ -63,6 +63,13 @@ export const getUsersError = state => usersSelectors.getUsersError(state.users);
 //Orders
 export const getOrder = (state, id) => ordersSelectors.getOrder(state.orders, id);
 export const getOrders = state => ordersSelectors.getOrders(state.orders);
+export const getOrdersByDate = state => ordersSelectors.getOrders(state.orders).sort((o1, o2) => o1.date<o2.date);;
+export const getOrdersByTable = state => {
+    let orders = getOrdersByDate(state);
+    let ordersByTables=_.chain(orders).groupBy('table').map((value, key) => ({ title: `Mesa ${key}`, data: value,tableNumber:key })).value().sort((table1,table2)=>table1.tableNumber>table2.tableNumber)
+    
+    return ordersByTables;
+};
 export const getSelectedOrder = state => ordersSelectors.getSelectedOrder(state.orders);
 
 export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrderProducts(state.orders);
@@ -136,6 +143,4 @@ export const getProductsByCategoryActive = state => {
     filteredSearchProducts = filteredSearchProducts.filter(cat=>cat.data.length>0)
     return filteredSearchProducts   
 };
-
-export const getProductsOfOrder = state => getProducts(state).filter(product => product.quantity != null && product.quantity !== 0);
 

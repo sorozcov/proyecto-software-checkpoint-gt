@@ -74,45 +74,49 @@ const order = (state = [], action) => {
     }
 };
 
-const orderSelected = (state = null, action) => {
+const selectedOrder = (state = {}, action) => {
     switch (action.type) {
         case types.ORDER_ACTIVATED:
             {
-                const date = new Date();
                 return {
+                    products:[],
                     ...action.payload,
-                    fecha: date
+                    
+                };
+            }
+        case types.ORDER_DEACTIVATED:
+            return {};
+
+        case types.ORDER_PRODUCT_ADDED:
+            {
+                const index = state.products.length===0 ? 0 : state.products[state.products.length - 1].index + 1 
+                return {...state, 
+                    products: [
+                        ...state.products,
+                        {
+                            ...action.payload,
+                            index:index,
+                        }
+                    ] 
                 };
             }
 
-        case types.ORDER_DEACTIVATED:
-            return null;
-
-        default:
-            return state;
-    }
-};
-
-const selectedOrderProducts = (state = [], action) => {
-    switch (action.type) {
-        case types.ORDER_PRODUCTS_ADDED:
+        case types.ORDER_PRODUCT_EDITED:
             {
-                const newState = action.payload;
-                return newState;
-            }
-        case types.ORDER_ACTIVATED:
-            {
-                if (action.payload.products != null) {
-                    const newState = action.payload.products;
-                    return newState;
+                state.products[action.payload.index] = {
+                    ...state.products[action.payload.index],
+                    ...action.payload,
                 }
-
                 return state;
             }
 
-        case types.ORDER_DEACTIVATED:
-            return [];
-
+        case types.ORDER_PRODUCT_DELETED:
+            {
+                return {
+                    ...state,
+                    products: state.products.filter(product => product.index !== action.payload)
+                }
+            }
         default:
             return state;
     }
@@ -267,8 +271,7 @@ const error = (state = null, action) => {
 const orders = combineReducers({
     byId,
     order,
-    orderSelected,
-    selectedOrderProducts,
+    selectedOrder,
     isFetching,
     isAdding,
     isEditing,
@@ -280,8 +283,8 @@ export default orders;
 
 export const getOrder = (state, id) => state.byId[id];
 export const getOrders = state => state.order.map(id => getOrder(state, id));
-export const getSelectedOrder = state => state.orderSelected;
-export const getSelectedOrderProducts = state => state.selectedOrderProducts;
+export const getSelectedOrder = state => state.selectedOrder;
+export const getSelectedOrderProducts = state => state.selectedOrder != null && state.selectedOrder.products != null ? state.selectedOrder.products : [];
 export const isFetchingOrders = state => state.isFetching;
 export const isAddingOrders = state => state.isAdding;
 export const isEditingOrders = state => state.isEditing;

@@ -4,8 +4,8 @@ import { Text, TextInput } from 'react-native-paper';
 
 
 export default function MyTextInput(props) {
-  const { input, meta, ...inputProps } = props;
-
+  let { input, meta, ...inputProps } = props;
+  inputProps ={disabledInput:false,...inputProps}
   return (
     <View>
       <TextInput
@@ -16,7 +16,7 @@ export default function MyTextInput(props) {
         style={styles.inputContainerStyle}
         placeholderTextColor={'red'}
         mode={'outlined'}
-        editable={inputProps.disabled == null}
+        editable={!inputProps.disabledInput}
         label={inputProps.label}
         placeholder={inputProps.placeholder}
         keyboardType={inputProps.keyboardType}
