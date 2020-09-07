@@ -12,7 +12,7 @@ import * as selectors from '../../logic/reducers';
 import ProductListItem from './ProductListItem';
 import { SearchBar } from 'react-native-elements';
 import ModalProductInformationScreen from './ModalProductInformationScreen'
-import ModalIngrediens from './ModalIngrediens'
+import ModalIngredients from './ModalIngredients'
 
 
 const width = Dimensions.get('window').width; // full width
@@ -291,6 +291,7 @@ export default connect(
         },
 
         selectProduct(navigation, product) {
+            console.log(product)
               dispatch(actionsProducts.selectProduct(product));
               navigation.navigate('EditProductScreen');
         },
