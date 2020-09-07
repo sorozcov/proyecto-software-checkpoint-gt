@@ -214,12 +214,6 @@ export default connect(
         deleteUser(uid) {
             dispatch(actions.startRemovingUser(uid))
         },
-          
-        checkLoggedInUser(user, users) {
-            const userx = users.filter(u => u.uid === user.uid)[0]
-            console.log(userx)
-            dispatch(actionsLoggedUser.login(userx))
-        }
     }),
     (stateProps, dispatchProps, { navigation }) => ({
         activeUser: stateProps.activeUser,
@@ -230,12 +224,10 @@ export default connect(
 
         onLoad() {
             dispatchProps.onLoad();
-            dispatchProps.checkLoggedInUser(stateProps.activeUser, stateProps.users);
         },
 
         onRefresh() {
             dispatchProps.onRefresh();
-            dispatchProps.checkLoggedInUser(stateProps.activeUser, stateProps.users);
         },
 
         newUser() {

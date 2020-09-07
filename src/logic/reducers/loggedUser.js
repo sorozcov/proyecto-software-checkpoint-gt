@@ -1,17 +1,29 @@
 import * as types from '../types/loggedUser';
+import * as userTypes from '../types/users';
 
 const loggedUser = (state = {}, action) => {
   switch (action.type) {
     case types.USER_LOGGED_IN: {
-      let newState = action.payload;
-      return newState;
+      return action.payload;
     }
 
     case types.USER_LOGGED_OFF: {
-      // let newState = {};
-      // return newState;
       return state;
     }
+
+    case userTypes.USER_EDIT_COMPLETED: {
+      const edited = action.payload;
+      if (state.uid === edited.uid) {
+        return {
+          ...state,
+          ...edited
+        }
+      }
+      else {
+        return state
+      }
+    }
+
     default: {
       return state;
     }
