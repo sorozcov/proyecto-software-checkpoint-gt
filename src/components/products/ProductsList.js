@@ -21,6 +21,7 @@ const width = Dimensions.get('window').width; // full width
 function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,selectProductInformation,productsByCategories, deleteProduct, user,initialValuesProduct,ingredients,additionals}) {
     const { colors, roundness } = theme;
     const [modalProduct, setModalProduct] = useState(false);
+    useEffect(onLoad, []);
     
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -277,7 +278,6 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
         },
          onRefresh() {

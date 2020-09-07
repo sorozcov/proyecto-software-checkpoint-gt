@@ -20,6 +20,7 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
     const { colors, roundness } = theme;
 
     useEffect(onLoad, []);
+    categories = [...new Set(categories)];
 
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
