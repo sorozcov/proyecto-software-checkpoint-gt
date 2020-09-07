@@ -199,7 +199,7 @@ export default connect(
 					cost: parseFloat(values.additionalCost).toFixed(2),
 				}
 				dispatch(actionsProducts.startAddingIngredient({additionalInfo}))
-			}else{
+			} else{
 				const ingredientInfo = {
 					name: values.additional,
 					default: true
@@ -215,7 +215,7 @@ export default connect(
 					cost: parseFloat(values.additionalCost).toFixed(2),
 				}
 				dispatch(actionsProducts.saveNewAdditional(additionalInfo))
-			}else{
+			} else{
 				const ingredientInfo = {
 					name: values.additional,
 					default: true,
@@ -233,7 +233,7 @@ export default connect(
 		changeAdditionalDefault(isNew, additionalId) {
 			if (isNew) {
 				dispatch(actionsProducts.editNewAdditional(additionalId))
-			}else{
+			} else{
 				dispatch(actionsProducts.startEditingIngredient({additionalId}))
 			};
 		},

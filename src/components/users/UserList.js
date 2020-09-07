@@ -12,12 +12,13 @@ import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/users';
 import * as actionsUsers from '../../logic/actions/users';
 import * as actionBranches from '../../logic/actions/branches';
+import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 
 
 const width = Dimensions.get('window').width; // full width
 
 
-function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser }) {
+function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, activeUser, checkLoggedInUser }) {
     const { colors, roundness } = theme;
     
     useEffect(onLoad, []);
@@ -51,7 +52,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                             
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                                onPress={() => {selectUser(navigation, user.item); rowMap[user.item.uid].closeRow();}}
+                                                onPress={() => {selectUser(user.item); rowMap[user.item.uid].closeRow();}}
                                             >
                                                 <MaterialCommunityIcons
                                                     name="pencil"
@@ -61,37 +62,40 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                                 <Text style={styles.backTextWhite}>Editar</Text>
                                                
                                             </TouchableOpacity>
-                                            <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                                onPress={ () => {
-                                                    rowMap[user.item.uid].closeRow();
-                                                    Alert.alert(
-                                                        '¿Eliminar usuario?',
-                                                        'Esta acción no puede ser revertida',
-                                                        [
+                                            {
+                                                user.item.uid === activeUser.uid ? null :
+                                                <TouchableOpacity
+                                                    style={[styles.backRightBtn, styles.backRightBtnRight]}
+                                                    onPress={ () => {
+                                                        rowMap[user.item.uid].closeRow();
+                                                        Alert.alert(
+                                                            '¿Eliminar usuario?',
+                                                            'Esta acción no puede ser revertida',
+                                                            [
+                                                                {
+                                                                    text: 'Cancelar', 
+                                                                    style: 'cancel'
+                                                                },
+                                                                {
+                                                                    text: 'Eliminar',
+                                                                    onPress: () => deleteUser(user.item.uid),
+                                                                    style: 'destructive'
+                                                                }
+                                                            ],
                                                             {
-                                                                text: 'Cancelar', 
-                                                                style: 'cancel'
+                                                                cancelable: true,
                                                             },
-                                                            {
-                                                                text: 'Eliminar',
-                                                                onPress: () => deleteUser(user.item.uid),
-                                                                style: 'destructive'
-                                                            }
-                                                        ],
-                                                        {
-                                                            cancelable: true,
-                                                        },
-                                                    )
-                                                }}
-                                            >
-                                                <MaterialCommunityIcons
-                                                    name="delete"
-                                                    color={'black'}
-                                                    size={30}
-                                                />
-                                                <Text style={styles.backTextWhite}>Eliminar</Text>
-                                            </TouchableOpacity>
+                                                        )
+                                                    }}
+                                                >
+                                                    <MaterialCommunityIcons
+                                                        name="delete"
+                                                        color={'black'}
+                                                        size={30}
+                                                    />
+                                                    <Text style={styles.backTextWhite}>Eliminar</Text>
+                                                </TouchableOpacity>
+                                            }
                                         </View>
                                     )
                                 }
@@ -104,7 +108,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                             buttonSize={50}
                             color='black'
                             overrideWithAction={true}
-                            onPressItem={() => newUser(navigation)}
+                            onPressItem={newUser}
                             actions={[{
                                 icon: (
                                     <MaterialCommunityIcons name="account-plus" color='white' size={20} style={{ marginRight: 4, }}/>
@@ -181,6 +185,7 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
+        activeUser: selectors.getLoggedUser(state),
         users: selectors.getUsers(state),
         isLoading: selectors.isFetchingUsers(state),
         isAdding: selectors.isAddingUsers(state),
@@ -191,6 +196,7 @@ export default connect(
             dispatch(actions.startFetchingUsers());
             dispatch(actionBranches.startFetchingBranch());
         },
+
         onRefresh() {
             dispatch(actions.startFetchingUsers());
         },
@@ -209,5 +215,40 @@ export default connect(
             dispatch(actions.startRemovingUser(uid))
         },
           
+        checkLoggedInUser(user, users) {
+            const userx = users.filter(u => u.uid === user.uid)[0]
+            console.log(userx)
+            dispatch(actionsLoggedUser.login(userx))
+        }
     }),
+    (stateProps, dispatchProps, { navigation }) => ({
+        activeUser: stateProps.activeUser,
+        users: stateProps.users,
+        isLoading: stateProps.isLoading,
+        isAdding: stateProps.isAdding,
+        isEditing: stateProps.isEditing,
+
+        onLoad() {
+            dispatchProps.onLoad();
+            dispatchProps.checkLoggedInUser(stateProps.activeUser, stateProps.users);
+        },
+
+        onRefresh() {
+            dispatchProps.onRefresh();
+            dispatchProps.checkLoggedInUser(stateProps.activeUser, stateProps.users);
+        },
+
+        newUser() {
+            dispatchProps.newUser(navigation);
+        },
+
+        selectUser(user) {
+            dispatchProps.selectUser(navigation, user);
+        },
+
+        deleteUser(uid) {
+            dispatchProps.deleteUser(uid);
+        },
+        
+    })
 )(withTheme(UserList))

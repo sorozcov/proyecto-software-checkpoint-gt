@@ -1,6 +1,6 @@
 import 'firebase/firestore';
 import React from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
@@ -16,13 +16,18 @@ import * as selectors from '../../logic/reducers';
 const userTypesArray = [{ label:'Administrador', value:"1" }, { label:'Mesero', value:"2" }];
 // const restaurants = [{ label:'Checkpoint z11', value:"1" }, { label:'Checkpoint z16', value:"2" }];
 
-function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser, branches }) {
+function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initialValues, createUser, editUser, branches, createErrors, addStatus, clearStatus }) {
 
   let restaurants = [];
   branches.map((branch, index) => restaurants.push({
     label: branch.name,
     value: branch.id,
   }));
+
+  if (addStatus === "COMPLETED") {
+    clearStatus();
+    navigation.navigate('UserList');
+  }
 
   const { colors, roundness } = theme;
   const isNew = initialValues==null;
@@ -33,7 +38,7 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
 
     var selectedRestaurant = restaurants.filter(restaurant => restaurant.value == values.restaurant[0])[0];
 
-    values.restaurantId = selectedRestaurant.value;``
+    values.restaurantId = selectedRestaurant.value;
     values.restaurantName = selectedRestaurant.label;
     var selectedUserType = userTypesArray.filter(userType => userType.value == values.userType[0])[0];
     values.userTypeId = selectedUserType.value;
@@ -41,10 +46,24 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
 
 
     if(isNew){
-      createUser(navigation, values)
+      createUser(values)
     } else {
       editUser(navigation, values)
     }
+  }
+
+  if (createErrors !== null && addStatus === "FAILED") {
+    setTimeout(() => {
+      Alert.alert(
+        "Error",
+        "Error, el correo ingresado ya ha tiene una cuenta asociada.",
+        [
+          {text: 'OK', onPress: () => {}},
+        ],
+      )
+      clearStatus();
+    }, 1000)
+    
   }
 
   return (
@@ -56,7 +75,7 @@ function EditUserScreen({ theme, navigation, dirty, valid, handleSubmit, initial
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         <View style={styles.formContainer}>
           <Field name={'image'} component={ImagePicker} image={isNew ? null : initialValues.image}/>
-          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email-address' disabled={isNew ? null : true}/>
+          <Field name={'email'} component={MyTextInput} label='Correo' placeholder='Ingresa tu correo' keyboardType='email-address' disabled={isNew ? false : true}/>
           <Field name={'name'} component={MyTextInput} label='Nombre' placeholder='Ingresa tu nombre'/>
           <Field name={'lastName'} component={MyTextInput} label='Apellido' placeholder='Ingresa tu apellido'/>
           <Field name={'userType'} component={PickerInput} title='Tipo' single={true} selectedText="Tipo" placeholderText="Seleccionar tipo de usuario" options={userTypesArray}
@@ -130,11 +149,16 @@ export default connect(
   state => ({
     branches: selectors.getBranches(state),
     initialValues: selectors.getSelectedUser(state),
+    createErrors: selectors.getUsersError(state),
+    addStatus: selectors.getAddStatus(state),
   }),
   dispatch => ({
-    createUser(navigation, user) {
+    createUser(user) {
+      dispatch(actionsUsers.clearAddingUser());
       dispatch(actionsUsers.startAddingUser(user));
-      navigation.navigate('UserList');
+    },
+    clearStatus() {
+      dispatch(actionsUsers.clearAddingUser());
     },
     editUser(navigation, user) {
       dispatch(actionsUsers.startEditingUser(user));

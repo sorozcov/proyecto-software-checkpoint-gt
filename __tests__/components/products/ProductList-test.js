@@ -236,7 +236,7 @@ const navigation = { navigate: jest.fn() };
 
 describe('<ProductsList />', () => {
     
-    it('Categories sectioned correctly. Has 6', () => {
+    it('Categories sectioned correctly. Has 5', () => {
 
         const rendered = render(
             <Provider store={store}><ProductsList /></Provider>
@@ -246,14 +246,14 @@ describe('<ProductsList />', () => {
         
         const productList = rendered.toJSON().children[0].children[0].props;
         
-        expect(productList.sections.length).toBe(6)
+        expect(productList.sections.length).toBe(5)
         
   });
 });
 
 describe('<ProductsList />', () => {
     
-    it('Products of N4 Category. Has 0', () => {
+    it('Products of Bebidas Category. Has 2', () => {
 
         const rendered = render(
             <Provider store={store}><ProductsList /></Provider>
@@ -263,7 +263,7 @@ describe('<ProductsList />', () => {
         
         const productList = rendered.toJSON().children[0].children[0].props;
         
-        expect(productList.sections.find(section=>section.title=='N4').data.length).toBe(0)
+        expect(productList.sections.find(section=>section.title=='Bebidas').data.length).toBe(2)
         
   });
 });

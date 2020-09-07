@@ -26,7 +26,8 @@ function NewOrder({ theme, navigation, dirty, valid, handleSubmit, next }){
 
     return(
         <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            behavior={"padding"}
+            // CHANGE behavior={Platform.OS == "ios" ? "padding" : "height"} 
             style={styles.container}
         >
             <View style={styles.container}>

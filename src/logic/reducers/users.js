@@ -142,6 +142,23 @@ const isRemoving = (state = false, action) => {
   }
 };
 
+const addStatus = (state = null, action) => {
+  switch (action.type) {
+    case types.USER_ADD_COMPLETED: {
+      return "COMPLETED";
+    }
+    case types.USER_ADD_FAILED: {
+      return "FAILED";
+    }
+    case types.USER_ADD_CLEAR: {
+      return null
+    }
+    default:{
+      return state;
+    }
+  }
+}
+
 const error = (state = null, action) => {
   switch(action.type) {
     //fetch
@@ -200,6 +217,7 @@ const users = combineReducers({
   isEditing,
   isRemoving,
   error,
+  addStatus,
 });
 
 export default users;
@@ -212,3 +230,4 @@ export const isAddingUsers = state => state.isAdding;
 export const isEditingUsers = state => state.isEditing;
 export const isRemovingUsers = state => state.isRemoving;
 export const getUsersError = state => state.error;
+export const getAddStatus = state => state.addStatus;

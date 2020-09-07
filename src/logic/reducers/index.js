@@ -59,6 +59,7 @@ export const isAddingUsers = state => usersSelectors.isAddingUsers(state.users);
 export const isEditingUsers = state => usersSelectors.isEditingUsers(state.users);
 export const isRemovingUsers = state => usersSelectors.isRemovingUsers(state.users);
 export const getUsersError = state => usersSelectors.getUsersError(state.users);
+export const getAddStatus = state => usersSelectors.getAddStatus(state.users);
 
 //Orders
 export const getOrder = (state, id) => ordersSelectors.getOrder(state.orders, id);

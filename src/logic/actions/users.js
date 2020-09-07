@@ -32,6 +32,9 @@ export const failAddingUser = error => ({
     error,
   },
 });
+export const clearAddingUser = () => ({
+  type: types.USER_ADD_CLEAR,
+})
 
 export const startEditingUser = user => ({
   type: types.USER_EDIT_STARTED,
