@@ -4,12 +4,20 @@ import { Field, reduxForm, submit } from 'redux-form';
 import { Button, withTheme } from 'react-native-paper';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
-import MyTextInput from '../../components/general/textInput';
+import MyTextInput from '../general/textInput';
 
 
-function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal, submitFunction }) {
+function ModalAdditional({
+	theme,
+	dirty,
+	valid,
+	handleSubmit,
+	closeModal,
+	modal,
+	submitFunction
+}) {
     const { colors, roundness } = theme;
-    const addIngredient = values => {
+    const addAdditional = values => {
         closeModal();
         submitFunction(values);
         values.additional = '';
@@ -31,10 +39,23 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 		>
 			<View style={styles.modalBackground} >
 				<View style={styles.modal}>
-				<View style={{justifyContent: 'center'}}>
-						<Field name={'additional'} component={MyTextInput} label='Ingrediente' placeholder='Ingrediente'></Field>
-						<Field name={'additionalCost'} component={MyTextInput} label='Precio Unitario' placeholder='Precio' keyboardType='numeric'></Field>
+					<View style={{justifyContent: 'center'}}>
+						<Field
+                            name={'additional'}
+                            component={MyTextInput}
+                            label='Adicional'
+                            placeholder='Adicional'
+                        />
+						<Field
+                            name={'additionalCost'}
+                            component={MyTextInput}
+                            label='Precio
+                            Unitario'
+                            placeholder='Precio'
+                            keyboardType='numeric'
+                        />
 					</View>
+
 					<Button
 						disabled={!(dirty && valid)}
 						theme={roundness}
@@ -52,10 +73,11 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 							marginRight: '5%',
 							justifyContent: 'center'
 						}}
-						onPress={handleSubmit(addIngredient)}
+						onPress={handleSubmit(addAdditional)}
 					>
 					{'Agregar'}
 					</Button>
+					
 					<Button
 						theme={roundness}
 						color={'red'}
@@ -85,9 +107,7 @@ function ModalIngredients({ theme, dirty, valid, handleSubmit, closeModal, modal
 const styles = StyleSheet.create({
 	modalB:{
 		flex:1,
-		
 		flexDirection: 'row',
-		
 		margin: 0
 	},
 	modalBackground: {
@@ -102,7 +122,6 @@ const styles = StyleSheet.create({
 		height: 350,
 		width: '80%',
 		borderRadius: 10,
-		
 		justifyContent: 'space-around'
 	  },
 });
@@ -112,8 +131,8 @@ export default reduxForm({
 	enableReinitialize : true,
 	validate: (values) => {
 		const errors = {};
-		errors.additional = !values.additional ? 'Ingrese el nombre del ingrediente' : undefined;
+		errors.additional = !values.additional ? 'Ingrese el nombre del adicional' : undefined;
 		errors.additionalCost = values.additionalCost && isNaN(parseInt(values.additionalCost)) ? 'Ingrese un número correcto' : undefined;
 		return errors;
 	}
-})(withTheme(ModalIngredients));
+})(withTheme(ModalAdditional));

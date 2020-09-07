@@ -10,7 +10,6 @@ import _ from 'lodash'
 
 
 const reducer = combineReducers({
-
     loggedUser,
     categories,
     users,
@@ -18,7 +17,6 @@ const reducer = combineReducers({
     branches,
     orders,
     form: formReducer,
-
 });
 
 
@@ -64,11 +62,11 @@ export const getAddStatus = state => usersSelectors.getAddStatus(state.users);
 //Orders
 export const getOrder = (state, id) => ordersSelectors.getOrder(state.orders, id);
 export const getOrders = state => ordersSelectors.getOrders(state.orders);
-export const getOrdersByDate = state => ordersSelectors.getOrders(state.orders).sort((o1, o2) => o1.date<o2.date);;
+export const getOrdersByDate = state => ordersSelectors.getOrders(state.orders).sort((o1, o2) => o1.date < o2.date);;
 export const getOrdersByTable = state => {
     let orders = getOrdersByDate(state);
-    let ordersByTables=_.chain(orders).groupBy('table').map((value, key) => ({ title: `Mesa ${key}`, data: value,tableNumber:key })).value().sort((table1,table2)=>table1.tableNumber>table2.tableNumber)
-    
+    let ordersByTables = _.chain(orders).groupBy('table').map((value, key) => ({ title: `Mesa ${key}`, data: value, tableNumber: key })).value().sort((table1, table2) => table1.tableNumber > table2.tableNumber)
+
     return ordersByTables;
 };
 export const getSelectedOrder = state => ordersSelectors.getSelectedOrder(state.orders);
@@ -103,8 +101,6 @@ export const isAddingProducts = state => productsSelectors.isAddingProducts(stat
 export const isEditingProducts = state => productsSelectors.isEditingProducts(state.products);
 export const isRemovingProducts = state => productsSelectors.isRemovingProducts(state.products);
 export const getProductsError = state => productsSelectors.getProductsError(state.products);
-export const getSavedIngredients = state => productsSelectors.getSavedIngredients(state.products);
-export const getSavedAdditionals = state => productsSelectors.getSavedAdditionals(state.products);
 
 export const getProductsByCategory = state => {
     let categories = getCategories(state);
@@ -115,14 +111,14 @@ export const getProductsByCategory = state => {
             data: products.filter(product => product.categoryId === category.categoryId)
         }
     })
-    return allCategories.filter(cat=>cat.data.length>0)
+    return allCategories.filter(cat => cat.data.length > 0)
 };
 export const getSearchTextProduct = state => productsSelectors.getSearchTextProduct(state.products);
 
 export const getProductsByCategoryActive = state => {
-    
+
     let categories = getCategories(state);
-    let products = getProducts(state).filter(product=>product.status==true);
+    let products = getProducts(state).filter(product => product.status == true);
     // let products = getProducts(state).filter(product=>product.status==true && (product.productName.search(searchText)>-1 || searchText==""));
     let allCategories = categories.map(category => {
         return {
@@ -130,18 +126,17 @@ export const getProductsByCategoryActive = state => {
             data: products.filter(product => product.categoryId === category.categoryId)
         }
     })
-    
-    let filteredSearchProducts = allCategories
-    
-    let searchText = getSearchTextProduct(state)
-    allCategories.forEach((category,index) => {
-       if(category.title.toLowerCase().search(searchText.toLowerCase())==-1 && searchText!=""){
-        filteredSearchProducts[index].data = category.data.filter(prod=>prod.productName.toLowerCase().search(searchText.toLowerCase())>-1 || searchText=="")
-       }else{
-        filteredSearchProducts[index].data = category.data;
-       }
-    });
-    filteredSearchProducts = filteredSearchProducts.filter(cat=>cat.data.length>0)
-    return filteredSearchProducts   
-};
 
+    let filteredSearchProducts = allCategories
+
+    let searchText = getSearchTextProduct(state)
+    allCategories.forEach((category, index) => {
+        if (category.title.toLowerCase().search(searchText.toLowerCase()) == -1 && searchText != "") {
+            filteredSearchProducts[index].data = category.data.filter(prod => prod.productName.toLowerCase().search(searchText.toLowerCase()) > -1 || searchText == "")
+        } else {
+            filteredSearchProducts[index].data = category.data;
+        }
+    });
+    filteredSearchProducts = filteredSearchProducts.filter(cat => cat.data.length > 0)
+    return filteredSearchProducts
+};

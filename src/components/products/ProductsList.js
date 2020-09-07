@@ -12,7 +12,7 @@ import * as selectors from '../../logic/reducers';
 import ProductListItem from './ProductListItem';
 import { SearchBar } from 'react-native-elements';
 import ModalProductInformationScreen from './ModalProductInformationScreen'
-import ModalIngrediens from './ModalIngrediens'
+import ModalIngredients from './ModalIngredients'
 
 
 const width = Dimensions.get('window').width; // full width
@@ -21,6 +21,7 @@ const width = Dimensions.get('window').width; // full width
 function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigation, newProduct, isCreating, isEditing, isRemoving, selectProduct,selectProductInformation,productsByCategories, deleteProduct, user,initialValuesProduct,ingredients,additionals}) {
     const { colors, roundness } = theme;
     const [modalProduct, setModalProduct] = useState(false);
+    useEffect(onLoad, []);
     
     const closeRow = (rowMap, rowKey) => {
         if (rowMap[rowKey]) {
@@ -277,7 +278,6 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actionsCategories.startFetchingCategories());
             dispatch(actionsProducts.startFetchingProducts());
         },
          onRefresh() {
@@ -291,6 +291,7 @@ export default connect(
         },
 
         selectProduct(navigation, product) {
+            console.log(product)
               dispatch(actionsProducts.selectProduct(product));
               navigation.navigate('EditProductScreen');
         },
