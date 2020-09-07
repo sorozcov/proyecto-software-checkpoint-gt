@@ -17,8 +17,11 @@ class ProductListItem extends Component {
             <ListItem  style={{backgroundColor: '#ffffff',
                 minHeight:80,}} onPress={this.props.onPress}>
                 <Left>
-                {this.props.product.image==null &&  <Avatar rounded size={55} overlayContainerStyle={{backgroundColor: 'white'}} icon={{name: 'food', color: 'black',type: 'material-community'}}  />}
-                {this.props.product.image!=null &&  <Avatar rounded size={55} source={{ uri: `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/ProductImages%2F${this.props.product.image}_400x400.jpg?alt=media` }}  />}
+                    {this.props.product.image==null &&  <Avatar rounded size={55} overlayContainerStyle={{backgroundColor: 'white'}} icon={{name: 'food', color: 'black',type: 'material-community'}}  />}
+                    {this.props.product.image!=null &&  <Avatar rounded size={55} source={{ 
+                        uri: `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/ProductImages%2F${this.props.product.image}_400x400.jpg?alt=media`,
+                        cache:'force-scache'}}  
+                    />}
                 </Left>
                 <Body itemDivider style={{marginLeft:-10}}>
                     <View style={{flexDirection:'column'}}>

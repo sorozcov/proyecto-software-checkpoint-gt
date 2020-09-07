@@ -15,7 +15,7 @@ class UserListItem extends Component{
         return(
             <ListItem thumbnail style={{...this.style}}>
                 <Left>
-                    <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} />
+                    <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image, cache:'force-cache'}} />
                 </Left>
                 <Body>
                     <Text style={{ fontFamily: 'dosis-semi-bold', fontSize: 18 }}>{this.props.name}</Text>
