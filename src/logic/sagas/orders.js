@@ -2,6 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import { getOrders, updateOrder, deleteOrder } from '../../database/firebase/orders';
 import * as actions from '../../logic/actions/orders';
 import * as types from '../types/orders';
+import { suscribeFirebase } from '../../../App';
 
 
 
@@ -11,7 +12,9 @@ function* makeOrder(action) {
         const response = yield updateOrder(order);
 
         if (response.error == null) {
-            yield put(actions.completeAddingOrder(response.order));
+            if(!suscribeFirebase){
+                yield put(actions.completeAddingOrder(response.order));
+            }
         } else {
             yield put(actions.failAddingOrder(response.error));
         }
@@ -34,7 +37,9 @@ function* editOrder(action) {
         const response = yield updateOrder(order);
 
         if (response.error == null) {
-            yield put(actions.completeEditingOrder(response.order));
+            if(!suscribeFirebase){
+                yield put(actions.completeEditingOrder(response.order));
+            }
         } else {
             yield put(actions.failEditingOrder(response.error));
         }
@@ -54,8 +59,9 @@ export function* watchEditOrderStarted() {
 function* fetchOrders(action) {
     try {
         const response = yield getOrders();
-        console.log(response);
-        yield put(actions.completeFetchingOrders(response.orders.byId, response.orders.order));
+        if(!suscribeFirebase){
+            yield put(actions.completeFetchingOrders(response.orders.byId, response.orders.order));
+        }
     } catch (error) {
         yield put(actions.failFetchingOrders(response.error));
     }
@@ -72,8 +78,9 @@ function* removeOrder(action) {
     try {
         const order = action.payload;
         const response = yield deleteOrder(order);
-
-        yield put(actions.completeRemovingOrder(response.orderId));
+        if(!suscribeFirebase){
+            yield put(actions.completeRemovingOrder(response.orderId));
+        }
     } catch (error) {
         yield put(actions.failRemovingOrder(action.payload.orderId, "Falló el remove de órden"));
     }

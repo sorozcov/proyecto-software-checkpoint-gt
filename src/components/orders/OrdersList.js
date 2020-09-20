@@ -13,6 +13,7 @@ import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import OrderItem from './OrderItem';
 import ModalOrderInformationScreen from './ModalOrderInformationScreen'
+import { suscribeFirebase } from '../../../App';
 
 const width = Dimensions.get('window').width; // full width
 
@@ -223,10 +224,15 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingOrders());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingOrders());
+            }
         },
         onRefresh() {
-            dispatch(actions.startFetchingOrders());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingOrders());
+            }
+            
         },
         viewOrder(order) {
             dispatch(actionsCategories.startFetchingCategories());

@@ -12,10 +12,15 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
+
 import { Button, Text, TextInput, withTheme } from 'react-native-paper';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
+
+import {createDatesDocuments} from '../../database/firebase/salesDates'
+import { suscribeToFirebase } from '../../database/firebase/suscribeChanges';
+import { suscribeFirebase } from '../../../App';
 
 
 const resetAction = StackActions.reset({
@@ -38,18 +43,23 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
       
       try {
         let userCheckpoint = JSON.parse(await AsyncStorage.getItem('userCheckpoint'));
-        console.log("persisted storage")
-        console.log(userCheckpoint)
+        // console.log("persisted storage")
+        // console.log(userCheckpoint)
         if(userCheckpoint){
           let saveLogged = await saveLoggedUser(navigation,userCheckpoint)
           if(saveLogged){
             setVerifyingUser(false)
           }
+          // if(!suscribeFirebase){
+          //   await suscribeToFirebase();
+          // }
           
+
           console.log("Relogin succesfull");
           
         }else{
           setVerifyingUser(false)
+          
         }
         
       } catch (error) {
@@ -64,6 +74,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
   async function login(email, pass) {
     Keyboard.dismiss();
     console.log("started");
+    // await createDatesDocuments({})
     setmodalVisibleIndicatorLogin(true);
      try {
          

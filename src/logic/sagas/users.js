@@ -2,6 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import { deleteUser, getUsers, updateUser } from '../../database/firebase/users';
 import * as actions from '../../logic/actions/users';
 import * as types from '../types/users';
+import { suscribeFirebase } from '../../../App';
 
 
 
@@ -9,7 +10,9 @@ import * as types from '../types/users';
 function* usersFetchStarted(action) {
     try {
         const result = yield getUsers()
-        yield put(actions.completeFetchingUsers(result.users.byId, result.users.order));
+        if(!suscribeFirebase){
+            yield put(actions.completeFetchingUsers(result.users.byId, result.users.order));
+        }
     } catch (error) {
         yield put(actions.failFetchingUsers('Falló el fetch'))
     }
@@ -29,7 +32,9 @@ function* addUser(action) {
         const response = yield updateUser(user);
         
         if (response.error == null) {
-            yield put(actions.completeAddingUser(response.user));
+            if(!suscribeFirebase){
+                yield put(actions.completeAddingUser(response.user));
+            }
         } else {
             yield put(actions.failAddingUser(response.error));
         }
@@ -52,7 +57,9 @@ function* editUser(action) {
         const response = yield updateUser(user);
         
         if (response.error == null) {
-            yield put(actions.completeEditingUser(response.user));
+            if(!suscribeFirebase){
+                yield put(actions.completeEditingUser(response.user));
+            }
         } else {
             yield put(actions.failEditingUser(response.error));
         }
@@ -72,7 +79,9 @@ export function* watchEditUsersStarted() {
 function* deleteUserStarted(action){
     try {
         const deleted = yield deleteUser(action.payload)
-        yield put(actions.completeRemovingUser(deleted.uid))
+        if(!suscribeFirebase){
+            yield put(actions.completeRemovingUser(deleted.uid))
+        }
     } catch (error) {
         yield put(actions.failRemovingUser(action.payload.uid, 'Falló el remove de usuario'))
     }

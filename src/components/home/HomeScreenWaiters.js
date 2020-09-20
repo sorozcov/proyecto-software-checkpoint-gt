@@ -26,7 +26,7 @@ function DrawerContent(props) {
 
   return (
     <DrawerContentScrollView {...props}>
-    <View
+    {user.name!==undefined && <View
       style={
         styles.drawerContent
       }
@@ -76,7 +76,7 @@ function DrawerContent(props) {
           <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
       </View>
      
-    </View>
+    </View>}
   </DrawerContentScrollView>
   );
 }

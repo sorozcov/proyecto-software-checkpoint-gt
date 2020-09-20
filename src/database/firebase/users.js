@@ -6,6 +6,10 @@
 import randomString from 'random-string';
 import { firebaseAuth, firebaseFirestore } from '.';
 import { uploadImageToFirebase } from './images';
+import * as actions from '../../logic/actions/users';
+import {store} from '../../../App'
+import * as selectors from '../../logic/reducers';
+
 
 const db = firebaseFirestore;
 const collection = "users";
@@ -28,6 +32,8 @@ export const getUsers= async () =>{
     usersArray.map((user) => {userById[user.uid] = user})
     usersNormalizer['byId'] = userById;
     usersNormalizer['array'] = usersArray;
+    
+    
 
     return {users:usersNormalizer,error:null};
   } catch(error){
@@ -141,6 +147,7 @@ export const updateUser= async ({ uid=null,email, name, lastName, image,userType
 export const deleteUser = async ({uid})=>{
   try {
       let userDoc = await firebaseFirestore.collection(collection).doc(uid);
+
       userDoc = await userDoc.delete();
       return { 
         uid: uid,
@@ -157,4 +164,42 @@ export const deleteUser = async ({uid})=>{
       }
     }
 
+}
+
+//Suscribe to user changes
+export const suscribeUsers = async ()=>{
+      db.collection(collection)
+          .onSnapshot(function(snapshot) {
+              snapshot.docChanges().forEach(function(change) {
+                  if (change.type === "added") {
+                      // console.log("New user: ", change.doc.data());
+                      let id=change.doc.id;
+                      let docSaved = selectors.getUser(store.getState(),id)
+                      if(docSaved!==null && docSaved!==undefined){
+                        console.log("Retrieve user again.")
+                      }else{
+                        store.dispatch(actions.completeAddingUser({...change.doc.data(),uid:change.doc.id}))
+                      }
+                      
+
+                  }
+                  if (change.type === "modified") {
+                      store.dispatch(actions.completeEditingUser({...change.doc.data(),uid:change.doc.id}))
+                      // console.log("Modified user: ", change.doc.data());
+                  }
+                  if (change.type === "removed") {
+                      store.dispatch(actions.completeRemovingUser(change.doc.id))
+                      // console.log(change.doc.id)
+                      // console.log("Removed user: ", change.doc.data());
+                  }
+              });
+          });
+}
+
+//Unsuscribe to users changes
+export const unsuscribeUsers = async ()=>{
+    db.collection(collection)
+      .onSnapshot(function(snapshot) {
+         //Nothing
+      });
 }

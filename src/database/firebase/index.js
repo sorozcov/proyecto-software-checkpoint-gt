@@ -1,5 +1,6 @@
 // Configuracion de Firebase
 import * as firebase from 'firebase';
+
 import "firebase/storage";
 //Firebase Config del Proyecto
 var firebaseConfig = {
@@ -16,6 +17,8 @@ var firebaseConfig = {
 //Inicializar configuración de Firebase
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
+
+
 const firebaseFirestore =  firebase.firestore();
 const firebaseStorage =firebase.storage();
 const firebaseAuth =  firebase.auth();
@@ -25,5 +28,6 @@ export {
   firebaseFirestore,
   firebaseStorage,
   firebaseAuth,
-  firebase
+  firebase,
+
 };
