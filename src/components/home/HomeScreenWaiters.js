@@ -21,7 +21,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 
 function DrawerContent(props) {
-  const {navigation,user,logOff} = props;
+  const {navigation, user, logOff, toggleAppMode, isAdminMode} = props;
   const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
 
   return (
@@ -66,6 +66,24 @@ function DrawerContent(props) {
           labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
           onPress={() => logOff(navigation)}
         />
+
+        
+        {
+            user.userTypeId == 1 && (
+                <DrawerItem
+                icon={({ color, size }) => (
+                    <MaterialCommunityIcons
+                    name="logout"
+                    color={color}
+                    size={size}
+                    />
+                )}
+                label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
+                labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                onPress={() => toggleAppMode(navigation)}
+                />
+            )
+          }
         
       </Drawer.Section>
       <View style={styles.footer}>
@@ -82,9 +100,17 @@ function DrawerContent(props) {
 }
 
 
-function RootNavigator({theme,navigation,user,logOff}) {
+function RootNavigator({theme,navigation,user,logOff, toggleAppMode, isAdminMode}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} user={user} logOff={logOff}/>}>
+    <DrawerR.Navigator drawerContent={() => (
+        <DrawerContent
+            navigation={navigation}
+            user={user}
+            logOff={logOff}
+            toggleAppMode={toggleAppMode}
+            isAdminMode={isAdminMode}
+        />
+    )}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
@@ -242,16 +268,17 @@ Main = withTheme(Main);
 export default connect(
   state => ({
     user: selectors.getLoggedUser(state),
+    isAdminMode: selectors.getIsAdminMode(state),
   }),
   dispatch => ({
-    
-      logOff:(navigation)=>{
-  
+      logOff:(navigation) => {
         //Hacemos dispatch de loggoff
         navigation.replace('Login')
         dispatch(actionsLoggedUser.logout());
-        
       },
-   
+      toggleAppMode:(navigation) => {
+        dispatch(actionsLoggedUser.toggleAdminAppMode());
+        navigation.replace('HomeAdmin');
+      },
   }),
 )(withTheme(RootNavigator));
