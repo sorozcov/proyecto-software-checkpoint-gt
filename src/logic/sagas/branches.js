@@ -2,6 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import { deleteBranch, getBranches, updateBranch } from '../../database/firebase/branches';
 import * as actions from '../../logic/actions/branches';
 import * as types from '../types/branches';
+import { suscribeFirebase } from '../../../App';
 
 
 
@@ -11,7 +12,9 @@ import * as types from '../types/branches';
 function* fetchBranches(action) {
     try {
         const result = yield getBranches();
-        yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
+        if(!suscribeFirebase){
+            yield put(actions.completeFetchingBranch(result.branches.byId, result.branches.order));
+        }
 
     } catch (error) {
         yield put(actions.failFetchingBranch(result.error));
@@ -31,7 +34,9 @@ function* addBranch(action) {
         const branch = action.payload;
         const result = yield updateBranch(branch);
         if (result.error == null) {
-            yield put(actions.completeAddingBranch(result.branch));
+            if(!suscribeFirebase){
+                yield put(actions.completeAddingBranch(result.branch));
+            }
         } else {
             yield put(actions.failAddingBranch(result.error));
         }
@@ -52,8 +57,9 @@ export function* watchBranchesAdd() {
 function* removeBranch(action) {
     try {
         const result = yield deleteBranch({ id: action.payload.id });
-
-        yield put(actions.completeRemovingBranch(result.id));
+        if(!suscribeFirebase){
+            yield put(actions.completeRemovingBranch(result.id));
+        }
 
     } catch (error) {
         yield put(actions.failRemovingBranch(action.payload.id, error));
@@ -74,7 +80,9 @@ function* editBranch(action) {
         const result = yield updateBranch(branch);
 
         if (result.error == null) {
-            yield put(actions.completeUpdatingBranch(result.branch));
+            if(!suscribeFirebase){
+                yield put(actions.completeUpdatingBranch(result.branch));
+            }
         } else {
             yield put(actions.failUpdatingBranch(action.payload.id, result.error));
         }
@@ -92,21 +100,3 @@ export function* watchBranchesUpdate() {
 
 
 
-
-// function* usersFetchStarted(action) {
-//     try {
-//         const result = yield getUsers()
-//         yield put(actions.completeFetchingUsers(result.users.byId, result.users.order));
-
-//     } catch (error) {
-//         console.log("Falló el fetch de usuarios")
-//         yield put(actions.failFetchingUsers('Falló el fetch'))
-//     }
-// }
-
-// export function* watchUsersFetchStarted() {
-//     yield takeEvery(
-//         types.USERS_FETCH_STARTED,
-//         usersFetchStarted,
-//     );
-// }

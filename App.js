@@ -22,7 +22,8 @@ console.disableYellowBox = true;
 
 
 //Se crea el store
-const store = configureStore();
+export const store = configureStore();
+export const suscribeFirebase = true;
 // store.subscribe(() => console.log(store.getState()))
 
 //Se configura el tema 

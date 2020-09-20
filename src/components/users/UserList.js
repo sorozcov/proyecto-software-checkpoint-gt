@@ -13,6 +13,7 @@ import * as actions from '../../logic/actions/users';
 import * as actionsUsers from '../../logic/actions/users';
 import * as actionBranches from '../../logic/actions/branches';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
+import { suscribeFirebase } from '../../../App';
 
 
 const width = Dimensions.get('window').width; // full width
@@ -193,12 +194,16 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingUsers());
-            dispatch(actionBranches.startFetchingBranch());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingUsers());
+                dispatch(actionBranches.startFetchingBranch());
+            }
         },
 
         onRefresh() {
-            dispatch(actions.startFetchingUsers());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingUsers());
+            }
         },
 
         newUser(navigation) {
@@ -227,7 +232,9 @@ export default connect(
         },
 
         onRefresh() {
-            dispatchProps.onRefresh();
+            if(!suscribeFirebase){
+                dispatchProps.onRefresh();
+            }
         },
 
         newUser() {

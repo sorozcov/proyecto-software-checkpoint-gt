@@ -12,6 +12,7 @@ import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from '../products/ProductListItem';
 import { SearchBar } from 'react-native-elements';
+import { suscribeFirebase } from '../../../App';
 
 const width = Dimensions.get('window').width; // full width
 import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
@@ -182,8 +183,10 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actionsCategories.startFetchingCategories());
-            dispatch(actionsProducts.startFetchingProducts());
+            if(!suscribeFirebase){
+                dispatch(actionsCategories.startFetchingCategories());
+                dispatch(actionsProducts.startFetchingProducts());
+            }
         },
         onSearchProduct(searchText) {
             dispatch(actionsProducts.productSearchStarted(searchText));

@@ -19,6 +19,8 @@ import { connect } from 'react-redux';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 
 import {createDatesDocuments} from '../../database/firebase/salesDates'
+import { suscribeToFirebase } from '../../database/firebase/suscribeChanges';
+import { suscribeFirebase } from '../../../App';
 
 
 const resetAction = StackActions.reset({
@@ -48,7 +50,11 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
           if(saveLogged){
             setVerifyingUser(false)
           }
+          // if(!suscribeFirebase){
+          //   await suscribeToFirebase();
+          // }
           
+
           console.log("Relogin succesfull");
           
         }else{

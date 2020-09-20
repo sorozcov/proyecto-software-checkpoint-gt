@@ -3,14 +3,16 @@ import { deleteProduct, getProducts, updateProduct } from '../../database/fireba
 import * as actions from '../../logic/actions/products';
 import * as selectors from '../../logic/reducers';
 import * as types from '../types/products';
+import { suscribeFirebase } from '../../../App';
 
 
 
 function* productsFetchStarted(action) {
     try {
         const result = yield getProducts();
-
-        yield put(actions.completeFetchingProducts(result.products.byId, result.products.order));
+        if(!suscribeFirebase){
+            yield put(actions.completeFetchingProducts(result.products.byId, result.products.order));
+        }
     } catch (error) {
         console.log("Falló el fetch de productos")
         console.log(error);
@@ -31,7 +33,9 @@ function* addProduct(action) {
 
         const response = yield updateProduct(newProduct);
         if (response.error == null)
-            yield put(actions.completeAddingProduct(response.product));
+            if(!suscribeFirebase){
+                yield put(actions.completeAddingProduct(response.product));
+            }
 
         else
             yield put(actions.failAddingProduct(response.error));
@@ -55,7 +59,9 @@ function* editProduct(action) {
         const response = yield updateProduct(product);
 
         if (response.error == null) {
-            yield put(actions.completeEditingProduct(response.product));
+            if(!suscribeFirebase){
+                yield put(actions.completeEditingProduct(response.product));
+            }
         } else {
             yield put(actions.failEditingProduct(response.error));
         }
@@ -74,7 +80,9 @@ export function* watchEditProductsStarted() {
 function* deleteProductStarted(action) {
     try {
         const deleted = yield deleteProduct(action.payload)
-        yield put(actions.completeRemovingProduct(deleted.productId))
+        if(!suscribeFirebase){
+            yield put(actions.completeRemovingProduct(deleted.productId))
+        }
     } catch (error) {
         yield put(actions.failRemovingProduct(action.payload.productId, 'Falló el remove de producto'))
     }

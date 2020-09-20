@@ -1,8 +1,11 @@
 import { firebaseFirestore } from '.';
+import * as actions from '../../logic/actions/branches';
+import {store} from '../../../App'
 
-
+import * as selectors from '../../logic/reducers';
 const db = firebaseFirestore;
 const collection = "branches";
+
 
 //Función para obtener Branches de Firebase
 export const getBranches = async() => {
@@ -93,4 +96,44 @@ export const deleteBranch = async({ id }) => {
             id: null
         };
     }
+}
+
+//Suscribe to branches changes
+export const suscribeBranches = async ()=>{
+    db.collection(collection)
+        .onSnapshot(function(snapshot) {
+            snapshot.docChanges().forEach(function(change) {
+                if (change.type === "added") {
+                    // 
+                    let id=change.doc.id;
+                    let docSaved = selectors.getBranch(store.getState(),id)
+                    console.log(docSaved)
+                    if(docSaved!==null && docSaved!==undefined){
+                      console.log("Retrieve branch again.")
+                    }else{
+                      console.log("New branche: ", change.doc.data());
+                      store.dispatch(actions.completeAddingBranch({...change.doc.data(),id:change.doc.id}))
+                    }
+                   
+
+                }
+                if (change.type === "modified") {
+                    store.dispatch(actions.completeUpdatingBranch({...change.doc.data(),id:change.doc.id}))
+                    // console.log("Modified branche: ", change.doc.data());
+                }
+                if (change.type === "removed") {
+                    store.dispatch(actions.completeRemovingBranch(change.doc.id))
+                    // console.log(change.doc.id)
+                    // console.log("Removed branche: ", change.doc.data());
+                }
+            });
+        });
+}
+
+//Unsuscribe to branches changes
+export const unsuscribeBranches = async ()=>{
+  db.collection(collection)
+    .onSnapshot(function(snapshot) {
+       //Nothing
+    });
 }

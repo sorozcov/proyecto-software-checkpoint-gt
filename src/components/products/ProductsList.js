@@ -13,6 +13,7 @@ import ProductListItem from './ProductListItem';
 import { SearchBar } from 'react-native-elements';
 import ModalProductInformationScreen from './ModalProductInformationScreen'
 import ModalIngredients from './ModalIngredients'
+import { suscribeFirebase } from '../../../App';
 
 
 const width = Dimensions.get('window').width; // full width
@@ -278,11 +279,17 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actionsProducts.startFetchingProducts());
+            if(!suscribeFirebase){
+                dispatch(actionsProducts.startFetchingProducts());
+                dispatch(actionsCategories.startFetchingCategories());
+            }
         },
          onRefresh() {
-            dispatch(actionsCategories.startFetchingCategories());
-            dispatch(actionsProducts.startFetchingProducts());
+            if(!suscribeFirebase){
+                dispatch(actionsCategories.startFetchingCategories());
+                dispatch(actionsProducts.startFetchingProducts());
+            }
+            
         },
         newProduct(navigation,screen) {
             dispatch(actionsProducts.deselectProduct());

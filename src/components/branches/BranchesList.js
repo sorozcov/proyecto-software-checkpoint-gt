@@ -11,6 +11,7 @@ import BranchItem from './BranchItem';
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/branches';
 import * as actionsUsers from '../../logic/actions/users';
+import { suscribeFirebase } from '../../../App';
 
 const width = Dimensions.get('window').width; // full width
 
@@ -208,11 +209,15 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingBranch());
-            dispatch(actionsUsers.startFetchingUsers());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingBranch());
+                dispatch(actionsUsers.startFetchingUsers());
+            }
         },
         onRefresh() {
-            dispatch(actions.startFetchingBranch());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingBranch());
+            }
         },
         newBranch(navigation) {
             dispatch(actions.deselectBranch());
