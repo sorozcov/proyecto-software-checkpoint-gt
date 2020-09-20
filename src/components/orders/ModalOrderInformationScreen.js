@@ -17,15 +17,15 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FinishOrder from './FinishOrder';
 import * as actions from '../../logic/actions/orders';
 
-function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrderButton=true,sendOrder,orderProducts,activeOrder,onlyDetail=false }) {
+function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrderButton=true,sendOrder,orderProducts,activeOrder, onlyDetail=false, newOrder }) {
 	const { colors, roundness } = theme;
 	const [quantity, setQuantity] = useState(0);
 	
 	//Se calcula el total
-    var total = 0
-    orderProducts.forEach(product => {
-        total = total + parseFloat(product.totalPrice);
-    });
+	var total = 0
+	orderProducts.forEach(product => {
+		total = total + parseFloat(product.totalPrice);
+	});
 	return (
 		<Modal
 			transparent={true}
@@ -46,7 +46,7 @@ function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrder
 			// propagateSwipe={false}
 		>
 			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'6%'}}>
-				<FinishOrder navigation={navigation} onlyDetail={onlyDetail}/>
+				<FinishOrder navigation={navigation} onlyDetail={onlyDetail} newOrder={newOrder}/>
 				<View style={{marginTop:'1%',marginBottom:'10%'}}>
 					{ <Button
 					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
@@ -97,9 +97,9 @@ function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrder
 					
 					onPress={() =>{ 
 						closeModal();
-						sendOrder(navigation, activeOrder, total);
+						sendOrder(activeOrder, total);
 						}}>
-					{(activeOrder.orderId!= null ? 'Actualizar' : 'PROCESAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
+					{(!newOrder ? 'Actualizar' : 'PROCESAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
 					</Button>
 				
 				}
@@ -201,22 +201,24 @@ const styles = StyleSheet.create({
 });
 
 export default connect(
-	state => ({
-        orderProducts: selectors.getSelectedOrderProducts(state),
-        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
-        activeOrder: selectors.getSelectedOrder(state),
+	(state, { newOrder }) => ({
+        orderProducts: newOrder ? selectors.getNewOrderProducts(state) : selectors.getSelectedOrderProducts(state),
+        activeOrder: newOrder ? selectors.getNewOrder(state) : selectors.getSelectedOrder(state),
         isAdding: selectors.isAddingOrders(state),
         addingError: selectors.getOrdersError(state),
 	}),
-	dispatch => ({
+	(dispatch, { newOrder, navigation }) => ({
 
-		sendOrder(navigation, activeOrder, total) {
-			if(activeOrder.orderId!=null)
-            	dispatch(actions.startEditingOrder({...activeOrder, total}));
-			else
-            	dispatch(actions.startAddingOrder({...activeOrder, total}));
-            dispatch(actions.deactivateOrder());
-            navigation.navigate('OrdersList');
+		sendOrder(activeOrder, total) {
+			if(!newOrder){
+				dispatch(actions.startEditingOrder({...activeOrder, total}));
+				dispatch(actions.deactivateOrder());
+				navigation.navigate('OrdersList');
+			} else {
+				dispatch(actions.startAddingOrder({...activeOrder, total}));
+				dispatch(actions.deactivateNewOrder());
+				navigation.navigate('Orders');
+			}
         },
 	}),
   )(reduxForm({

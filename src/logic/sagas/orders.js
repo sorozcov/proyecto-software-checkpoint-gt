@@ -71,7 +71,6 @@ export function* watchOrdersFetch() {
 function* removeOrder(action) {
     try {
         const order = action.payload;
-        console.log("Borrala compaa" + order);
         const response = yield deleteOrder(order);
 
         yield put(actions.completeRemovingOrder(response.orderId));

@@ -84,6 +84,21 @@ export const getSelectedOrderProductsByCategory = state => {
     }).filter(category => category.data.length !== 0)
 };
 
+export const getNewOrder = state => ordersSelectors.getNewOrder(state.orders);
+
+export const getNewOrderProducts = state => ordersSelectors.getNewOrderProducts(state.orders);
+
+export const getNewOrderProductsByCategory = state => {
+    let products = ordersSelectors.getNewOrderProducts(state.orders);
+    let categories = getCategories(state);
+    return categories.map(category => {
+        return {
+            title: category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)
+        }
+    }).filter(category => category.data.length !== 0)
+};
+
 export const isFetchingOrders = state => ordersSelectors.isFetchingOrders(state.orders);
 export const isAddingOrders = state => ordersSelectors.isAddingOrders(state.orders);
 export const isEditingOrders = state => ordersSelectors.isEditingOrders(state.orders);

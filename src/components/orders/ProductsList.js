@@ -18,6 +18,7 @@ import ModalProductInformationScreen from '../products/ModalProductInformationSc
 import ModalOrderInformationScreen from './ModalOrderInformationScreen'
 
 function ProductsList ({
+    route,
     theme,
     onLoad,
     isLoading,
@@ -30,6 +31,10 @@ function ProductsList ({
     const { colors, roundness } = theme;
     const [modalProduct, setModalProduct] = useState(false);
     const [modalOrder, setModalOrder] = useState(false);
+
+    const { newOrder } = route.params;
+
+
     
     const renderSectionHeader = ({ section }) => (
     <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
@@ -140,8 +145,8 @@ function ProductsList ({
                 </View>
                 </View>
             </Modal>
-            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
-            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false}/>}
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false} newOrder={newOrder} />}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} newOrder={newOrder} />}
         </View>
     )
 }

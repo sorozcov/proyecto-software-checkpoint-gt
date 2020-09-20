@@ -156,7 +156,7 @@ function OrdersList ({
                     </View>
                 </View>
             </Modal>
-            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} onlyDetail={true}/>}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} onlyDetail={true} newOrder={false}/>}
         </View>
     )
 }
@@ -237,7 +237,7 @@ export default connect(
         },
         selectOrder(navigation, orderId){
             dispatch(actions.activateOrder(orderId));
-            navigation.navigate('ProductSelect');
+            navigation.navigate('ProductSelect', { newOrder: false });
         }
     }),
 )(withTheme(OrdersList));
