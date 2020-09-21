@@ -36,7 +36,10 @@ export default rootReducer = (state, action) => {
 
 //Logged User
 export const getLoggedUser = state => loggedUserSelectors.getLoggedUser(state.loggedUser);
+export const getIsAdminMode = state => loggedUserSelectors.getIsAdminMode(state.loggedUser);
 export const isLoggedUser = state => loggedUserSelectors.isLoggedUser(state.loggedUser);
+export const getLoggedUserType = state => loggedUserSelectors.getLoggedUserType(state.loggedUser);
+
 
 //Categories 
 export const getCategory = (state, id) => categoriesSelectors.getCategory(state.categories, id);

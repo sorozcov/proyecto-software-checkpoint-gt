@@ -53,71 +53,96 @@ const Tab = createMaterialBottomTabNavigator();
 
 
 function DrawerContent(props) {
-  const {navigation,user,logOff} = props;
+  const {navigation, user, logOff, toggleAppMode, isAdminMode} = props;
   const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
   
   return (
     <DrawerContentScrollView {...props}>
-    {user.name!==undefined && <View
-      style={
-        styles.drawerContent
-      }
-    >
-   
-      <View style={styles.userInfoSection}>
+        <View
+            style={
+            styles.drawerContent
+            }
+        >
 
-        {image!=18 && <Avatar.Image
-          source={{
-            uri:
-              image,
-          }}
+            <View style={styles.userInfoSection}>
 
-          size={140}
-          style={{marginTop:10}}
-        />}
-        {image==18 && <Avatar.Image
-          source={
-              image
-          }
-          size={140}
-          style={{marginTop:10}}
-        />}
-        <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
-        <Caption style={styles.caption}>{user.restaurantName}</Caption>
-       
-      </View>
-      <Drawer.Section style={styles.drawerSection}>
-        
-        <DrawerItem
-          icon={({ color, size }) => (
-            <MaterialCommunityIcons
-              name="logout"
-              color={color}
-              size={size}
-            />
-          )}
-          label="Cerrar sesión"
-          labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-          onPress={() => logOff(navigation)}
-        />
-        
-      </Drawer.Section>
-      <View style={styles.footer}>
-      <Image
-            source={ require('../../assets/images/checkpoint.jpg') }
-            style={styles.logoImage}
-          />
-          <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
-      </View>
-     
-    </View>}
+                {image!=18 && (
+                    <Avatar.Image
+                    source={{
+                        uri: image,
+                    }}
+                    size={140}
+                    style={{marginTop:10}}
+                    />
+                )}
+                {image==18 && (
+                    <Avatar.Image
+                    source={image}
+                    size={140}
+                    style={{marginTop:10}}
+                    />
+                )}
+                <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
+                <Caption style={styles.caption}>{user.restaurantName}</Caption>
+            
+            </View>
+            <Drawer.Section style={styles.drawerSection}>
+                
+                <DrawerItem
+                    icon={({ color, size }) => (
+                        <MaterialCommunityIcons
+                        name="logout"
+                        color={color}
+                        size={size}
+                        />
+                    )}
+                    label="Cerrar sesión"
+                    labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                    onPress={() => logOff(navigation)}
+                />
+
+                {
+                    user.userTypeId == 1 && (
+                        <DrawerItem
+                            icon={({ color, size }) => (
+                                <MaterialCommunityIcons
+                                name="logout"
+                                color={color}
+                                size={size}
+                                />
+                            )}
+                            label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
+                            labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                            onPress={() => toggleAppMode(navigation)}
+                        />
+                    )
+                }
+                
+            </Drawer.Section>
+            <View style={styles.footer}>
+            <Image
+                source={ require('../../assets/images/checkpoint.jpg') }
+                style={styles.logoImage}
+                />
+                <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
+            </View>
+            
+        </View>
   </DrawerContentScrollView>
   );
 }
 
-function RootNavigator({theme,navigation,user,logOff}) {
+function RootNavigator({theme, navigation, user, logOff, toggleAppMode, isAdminMode}) {
   return (
-    <DrawerR.Navigator drawerContent={() => <DrawerContent navigation={navigation} logOff={logOff} user={user}/>}>
+    <DrawerR.Navigator drawerContent={() => (
+        <DrawerContent
+            navigation={navigation}
+            logOff={logOff}
+            user={user}
+            toggleAppMode={toggleAppMode}
+            isAdminMode={isAdminMode}
+        />
+    )}>
       <DrawerR.Screen name="Main" component={Main} />
     </DrawerR.Navigator>
   );
@@ -127,53 +152,61 @@ function RootNavigator({theme,navigation,user,logOff}) {
 function Main({theme, navigation}) {
   const {colors} = theme;
   return (
-    
-      <Tab.Navigator
+
+    <Tab.Navigator
         initialRouteName="Home"
         activeColor="#f0edf6"
         inactiveColor="#000000"
         lazy={false}
         shifting={false}
         barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
-      >
-       
-        <Tab.Screen name="Menu"  component={Categories}
-                options={{
-                  tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> MENÚ </Text>,
-                  
-                  
-                  tabBarIcon: ({ color }) => (
+    > 
+        <Tab.Screen
+            name="Menu"
+            component={Categories}
+            options={{
+                tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> MENÚ </Text>,
+                tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="food" color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }} />
-                  ),
-                }} />
-        <Tab.Screen name="Sucursales" component={Branches} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> SUCURSALES </Text>,
-                  tabBarIcon: ({ color }) => (
+                ),
+            }}
+        />
+        <Tab.Screen
+            name="Sucursales"
+            component={Branches}
+            options={{
+                tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> SUCURSALES </Text>,
+                tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="store" color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}/>
-                  ),
-                }} />
-         <Tab.Screen name="Usuarios" component={Users} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> USUARIOS </Text>,
-                 
-                  tabBarIcon: ({ color }) => (
+                ),
+            }}
+        />
+        <Tab.Screen
+            name="Usuarios"
+            component={Users}
+            options={{
+                tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> USUARIOS </Text>,
+                tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="account-multiple"  color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}  />
-                  ),
-                  
-                }} />
-        <Tab.Screen name="Reportes" component={SettingsScreen} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> REPORTES </Text>,
-                 
-                  tabBarIcon: ({ color }) => (
+                ),
+            }}
+        />
+        <Tab.Screen
+            name="Reportes"
+            component={SettingsScreen}
+            options={{
+                tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> REPORTES </Text>,
+                tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="chart-bar"  color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}  />
-                  ),
-                  
-                }} />
+                ),
+            }}
+        />
              
-      </Tab.Navigator>
+    </Tab.Navigator>
     
   );
 }
@@ -291,6 +324,7 @@ Main = withTheme(Main);
 export default connect(
   state => ({
     user: selectors.getLoggedUser(state),
+    isAdminMode: selectors.getIsAdminMode(state),
   }),
   dispatch => ({
     logOff:(navigation)=>{
@@ -299,6 +333,11 @@ export default connect(
       navigation.replace('Login')
       dispatch(actionsLoggedUser.logout());
       
+    },
+    toggleAppMode:(navigation)=>{
+      dispatch(actionsLoggedUser.toggleAdminAppMode());
+      navigation.replace('HomeWaiters');
+  
     },
   }),
 )(withTheme(RootNavigator));
