@@ -5,6 +5,7 @@ import {
 } from '../../database/firebase/categories';
 import * as actions from '../../logic/actions/categories';
 import * as types from '../types/categories';
+import { suscribeFirebase } from '../../../App';
 
 
 
@@ -13,8 +14,9 @@ import * as types from '../types/categories';
 function* fetchCategories(action) {
     try {
         const result = yield getCategories();
-
-        yield put(actions.completeFetchingCategories(result.categories.byId, result.categories.order));
+        if(!suscribeFirebase){
+            yield put(actions.completeFetchingCategories(result.categories.byId, result.categories.order));
+        }
     } catch (error) {
         yield put(actions.failFetchingCategories('Falló al obtener categorías'));
     }
@@ -27,7 +29,9 @@ function* addCategory(action) {
         const response = yield updateCategory(category);
 
         if (response.error == null) {
-            yield put(actions.completeAddingCategory(response.category));
+            if(!suscribeFirebase){
+                yield put(actions.completeAddingCategory(response.category));
+            }
         } else {
             yield put(actions.failAddingCategory(response.error));
         }
@@ -41,8 +45,9 @@ function* removeCategory(action) {
     try {
         var category = action.payload;
         const response = yield deleteCategory(category);
-
-        yield put(actions.completeRemovingCategory(response.categoryId));
+        if(!suscribeFirebase){
+            yield put(actions.completeRemovingCategory(response.categoryId));
+        }
     } catch(error) {
         yield put(actions.failRemovingCategory('Falló al eliminar categoría'));
     }
@@ -56,7 +61,9 @@ function* editCategory(action) {
         const response = yield updateCategory(category);
 
         if(response.error == null) {
-            yield put(actions.completeEditingCategory(response.category));
+            if(!suscribeFirebase){
+                yield put(actions.completeEditingCategory(response.category));
+            }
         } else {
             yield put(actions.failEditingCategory('Falló al editar categoría'));
         }

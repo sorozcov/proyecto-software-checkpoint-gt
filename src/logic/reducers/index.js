@@ -6,7 +6,10 @@ import loggedUser, * as loggedUserSelectors from './loggedUser';
 import orders, * as ordersSelectors from './orders';
 import products, * as productsSelectors from './products';
 import users, * as usersSelectors from './users';
+import * as types from '../types/loggedUser'
 import _ from 'lodash'
+
+import { suscribeFirebase } from '../../../App';
 
 
 const reducer = combineReducers({
@@ -19,8 +22,17 @@ const reducer = combineReducers({
     form: formReducer,
 });
 
+export default rootReducer = (state, action) => {
+    if(suscribeFirebase){
+        if (action.type === types.USER_LOGGED_OFF) {
+            state = undefined
+        }
+    }
+  
+    return reducer(state, action)
+}
 
-export default reducer;
+
 
 //Logged User
 export const getLoggedUser = state => loggedUserSelectors.getLoggedUser(state.loggedUser);
@@ -78,6 +90,21 @@ export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrde
 
 export const getSelectedOrderProductsByCategory = state => {
     let products = ordersSelectors.getSelectedOrderProducts(state.orders);
+    let categories = getCategories(state);
+    return categories.map(category => {
+        return {
+            title: category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)
+        }
+    }).filter(category => category.data.length !== 0)
+};
+
+export const getNewOrder = state => ordersSelectors.getNewOrder(state.orders);
+
+export const getNewOrderProducts = state => ordersSelectors.getNewOrderProducts(state.orders);
+
+export const getNewOrderProductsByCategory = state => {
+    let products = ordersSelectors.getNewOrderProducts(state.orders);
     let categories = getCategories(state);
     return categories.map(category => {
         return {

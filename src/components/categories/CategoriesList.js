@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../logic/actions/categories';
 import * as selectors from '../../logic/reducers';
 import CategoryListItem from './CategoryListItem';
+import { suscribeFirebase } from '../../../App';
 
 
 
@@ -208,11 +209,15 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingCategories());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingCategories());
+            }
         },
 
-         onRefresh() {
-            dispatch(actions.startFetchingCategories());
+        onRefresh() {
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingCategories());
+            }
         },
 
         newCategory(navigation) {

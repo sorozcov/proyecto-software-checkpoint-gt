@@ -61,7 +61,7 @@ const order = (state = [], action) => {
             }
         case types.ORDER_ADD_COMPLETED:
             {
-                return [...state, action.payload.orderId];
+                return union(state, [action.payload.orderId]);
             }
         case types.ORDER_REMOVE_COMPLETED:
             {
@@ -111,6 +111,54 @@ const selectedOrder = (state = {}, action) => {
             }
 
         case types.ORDER_PRODUCT_DELETED:
+            {
+                return {
+                    ...state,
+                    products: state.products.filter(product => product.index !== action.payload)
+                }
+            }
+        default:
+            return state;
+    }
+};
+
+const newOrder = (state = {}, action) => {
+    switch (action.type) {
+        case types.NEW_ORDER_ACTIVATED:
+            {
+                return {
+                    products:[],
+                    ...action.payload,
+                    
+                };
+            }
+        case types.NEW_ORDER_DEACTIVATED:
+            return {};
+
+        case types.NEW_ORDER_PRODUCT_ADDED:
+            {
+                const index = state.products.length===0 ? 0 : state.products[state.products.length - 1].index + 1 
+                return {...state, 
+                    products: [
+                        ...state.products,
+                        {
+                            ...action.payload,
+                            index:index,
+                        }
+                    ] 
+                };
+            }
+
+        case types.NEW_ORDER_PRODUCT_EDITED:
+            {
+                state.products[action.payload.index] = {
+                    ...state.products[action.payload.index],
+                    ...action.payload,
+                }
+                return state;
+            }
+
+        case types.NEW_ORDER_PRODUCT_DELETED:
             {
                 return {
                     ...state,
@@ -272,6 +320,7 @@ const orders = combineReducers({
     byId,
     order,
     selectedOrder,
+    newOrder,
     isFetching,
     isAdding,
     isEditing,
@@ -285,6 +334,8 @@ export const getOrder = (state, id) => state.byId[id];
 export const getOrders = state => state.order.map(id => getOrder(state, id));
 export const getSelectedOrder = state => state.selectedOrder;
 export const getSelectedOrderProducts = state => state.selectedOrder != null && state.selectedOrder.products != null ? state.selectedOrder.products : [];
+export const getNewOrder = state => state.newOrder;
+export const getNewOrderProducts = state => state.newOrder != null && state.newOrder.products != null ? state.newOrder.products : [];
 export const isFetchingOrders = state => state.isFetching;
 export const isAddingOrders = state => state.isAdding;
 export const isEditingOrders = state => state.isEditing;

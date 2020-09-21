@@ -1,6 +1,7 @@
 import { firebase, firebaseFirestore } from '.';
-
-
+import * as actions from '../../logic/actions/orders';
+import {store} from '../../../App'
+import * as selectors from '../../logic/reducers';
 const db = firebaseFirestore;
 const collection = "orders";
 
@@ -107,3 +108,41 @@ export const deleteOrder = async({ orderId }) => {
         };
     };
 }
+
+
+//Suscribe to Orders changes
+export const suscribeOrders = async ()=>{
+    db.collection(collection)
+        .onSnapshot(function(snapshot) {
+            snapshot.docChanges().forEach(function(change) {
+                if (change.type === "added") {
+                    // console.log("New order: ", change.doc.data());
+                    
+                    let id=change.doc.id;
+                    let docSaved = selectors.getOrder(store.getState(),id)
+                    if(docSaved!==null && docSaved!==undefined){
+                        console.log("Retrieve order again.")
+                    }else{
+                        //console.log("New product: ", change.doc.data());
+                        store.dispatch(actions.completeAddingOrder({...change.doc.data(),id:change.doc.id}))
+                    }
+  
+                }
+                if (change.type === "modified") {
+                    store.dispatch(actions.completeEditingOrder({...change.doc.data(),id:change.doc.id}))
+                    // console.log("Modified order: ", change.doc.data());
+                }
+                if (change.type === "removed") {
+                    store.dispatch(actions.completeRemovingOrder(change.doc.id))
+                    // console.log(change.doc.id)
+                    // console.log("Removed order: ", change.doc.data());
+                }
+            });
+        });
+  }
+  
+  //Unsuscribe to Orders changes
+  export const unsuscribeOrders = async ()=>{
+        await db.collection(collection)
+            .onSnapshot(function(snapshot) {});
+  }

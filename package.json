@@ -36,6 +36,7 @@
     "expo-permissions": "~8.1.0",
     "expo-web-browser": "~8.1.0",
     "firebase": "7.9.0",
+    "firebase-admin": "^9.2.0",
     "moment": "^2.27.0",
     "native-base": "2.13.8",
     "random-string": "^0.2.0",

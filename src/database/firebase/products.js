@@ -5,7 +5,9 @@
 
 import { firebase, firebaseFirestore } from '.';
 import { uploadImageToFirebase } from './images';
-
+import * as actions from '../../logic/actions/products';
+import {store} from '../../../App'
+import * as selectors from '../../logic/reducers';
 const db = firebaseFirestore;
 const collection = "products";
 
@@ -109,4 +111,44 @@ export const deleteProduct = async ({productId})=>{
         return {errorMessage:errorMessage,error,productId:null}
       }
 
+}
+
+
+//Suscribe to Products changes
+export const suscribeProducts = async ()=>{
+  db.collection(collection)
+      .onSnapshot(function(snapshot) {
+          snapshot.docChanges().forEach(function(change) {
+              if (change.type === "added") {
+                  // console.log("New product: ", change.doc.data());
+                  let id=change.doc.id;
+                  let docSaved = selectors.getProduct(store.getState(),id)
+                  if(docSaved!==null && docSaved!==undefined){
+                    console.log("Retrieve product again.")
+                  }else{
+                    //console.log("New product: ", change.doc.data());
+                    store.dispatch(actions.completeAddingProduct({...change.doc.data(),id:change.doc.id}))
+                  }
+                  
+
+              }
+              if (change.type === "modified") {
+                  store.dispatch(actions.completeEditingProduct({...change.doc.data(),id:change.doc.id}))
+                  // console.log("Modified product: ", change.doc.data());
+              }
+              if (change.type === "removed") {
+                  store.dispatch(actions.completeRemovingProduct(change.doc.id))
+                  // console.log(change.doc.id)
+                  // console.log("Removed product: ", change.doc.data());
+              }
+          });
+      });
+}
+
+//Unsuscribe to Products changes
+export const unsuscribeProducts = async ()=>{
+  db.collection(collection)
+    .onSnapshot(function() {
+      //Nothing
+    });
 }

@@ -2,8 +2,10 @@
 /*                        Functions for Categories Firebase                        */
 /* -------------------------------------------------------------------------- */
 
-
+import * as actions from '../../logic/actions/categories';
+import {store} from '../../../App'
 import { firebase, firebaseFirestore } from '.';
+import * as selectors from '../../logic/reducers';
 
 
 
@@ -111,4 +113,41 @@ export const deleteCategory = async ({categoryId})=>{
 }
 
 
- 
+//Suscribe to Categories changes
+export const suscribeCategories = async ()=>{
+  db.collection(collection)
+      .onSnapshot(function(snapshot) {
+          snapshot.docChanges().forEach(function(change) {
+              if (change.type === "added") {
+                  // console.log("New category: ", change.doc.data());
+                  let id=change.doc.id;
+                  let docSaved = selectors.getCategory(store.getState(),id)
+                  if(docSaved!==null && docSaved!==undefined){
+                    console.log("Retrieve category again.")
+                  }else{
+                    //console.log("New category: ", change.doc.data());
+                    store.dispatch(actions.completeAddingCategory({...change.doc.data(),id:change.doc.id}))
+                  }
+                  
+
+              }
+              if (change.type === "modified") {
+                  store.dispatch(actions.completeEditingCategory({...change.doc.data(),id:change.doc.id}))
+                  // console.log("Modified category: ", change.doc.data());
+              }
+              if (change.type === "removed") {
+                  store.dispatch(actions.completeRemovingCategory(change.doc.id))
+                  // console.log(change.doc.id)
+                  // console.log("Removed category: ", change.doc.data());
+              }
+          });
+      });
+}
+
+//Unsuscribe to Categories changes
+export const unsuscribeCategories = async ()=>{
+db.collection(collection)
+  .onSnapshot(function(snapshot) {
+     //Nothing
+  });
+}

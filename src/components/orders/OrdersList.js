@@ -13,6 +13,7 @@ import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import OrderItem from './OrderItem';
 import ModalOrderInformationScreen from './ModalOrderInformationScreen'
+import { suscribeFirebase } from '../../../App';
 
 const width = Dimensions.get('window').width; // full width
 
@@ -156,7 +157,7 @@ function OrdersList ({
                     </View>
                 </View>
             </Modal>
-            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} onlyDetail={true}/>}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} onlyDetail={true} newOrder={false}/>}
         </View>
     )
 }
@@ -223,10 +224,15 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actions.startFetchingOrders());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingOrders());
+            }
         },
         onRefresh() {
-            dispatch(actions.startFetchingOrders());
+            if(!suscribeFirebase){
+                dispatch(actions.startFetchingOrders());
+            }
+            
         },
         viewOrder(order) {
             dispatch(actionsCategories.startFetchingCategories());
@@ -237,7 +243,7 @@ export default connect(
         },
         selectOrder(navigation, orderId){
             dispatch(actions.activateOrder(orderId));
-            navigation.navigate('ProductSelect');
+            navigation.navigate('ProductSelect', { newOrder: false });
         }
     }),
 )(withTheme(OrdersList));

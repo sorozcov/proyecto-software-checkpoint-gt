@@ -20,7 +20,7 @@ import MyTextInput from '../general/textInput';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice,onlyDetail=false,backButton=false }) {
+function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModal, modal, valuesIngredients,submitFunction,initialValues, initialImage, route, ingredients, additionals,isAdding,isAdmin=false, addProductToOrder, editProductToOrder, additionalsPrice,onlyDetail=false,backButton=false, newOrder }) {
 	const { colors, roundness } = theme;
 	const isNew = initialValues.price!=null;
 	const [quantity, setQuantity] = useState(1);
@@ -112,14 +112,14 @@ function ProductInformationScreen({ theme, dirty, valid, handleSubmit, closeModa
 					{'Ingredientes'}  
 				</Text>
 				{ingredients.map((item, i)=>
-					<Field name={'ingredients'+ i} disabled={isAdmin || onlyDetail} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
+					<Field key={i} name={'ingredients'+ i} disabled={isAdmin || onlyDetail} component={MyCheckbox} label={item.name}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
 				)}
 				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 				<Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
 					{'Adicionales'}  
 				</Text>
 				{additionals.map((item, i)=>
-					<Field name={'additionals'+ i} disabled={isAdmin || onlyDetail} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
+					<Field key={i} name={'additionals'+ i} disabled={isAdmin || onlyDetail} component={MyCheckbox} label={`${item.name} (Q${item.cost})`}  containerStyle={{backgroundColor: null, width: '80%', alignSelf: 'center'}} center={true} checked={isNew ? item.default : item.selected}/>
 				)}
 				<Divider style={{ backgroundColor: 'red', marginTop: 20, marginBottom: 20 }} />
 				{!isAdmin && <Text style={{ paddingLeft: 10, fontFamily: 'dosis-light', fontSize: 18, marginBottom: 20}}>
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
 export default connect(
 	state => {
 		const selector = formValueSelector('editProductOrderForm') // <-- same as form name
-		const initialValues =  selectors.getSelectedProduct(state)!=null? selectors.getSelectedProduct(state):{};
+		const initialValues = selectors.getSelectedProduct(state)!=null? selectors.getSelectedProduct(state):{};
 		let additionalsPrice=0;
 		if(initialValues.additionals!=undefined){
 			initialValues.additionals.forEach((additional,index)=>{
@@ -331,31 +331,19 @@ export default connect(
 		}
 		return {
 		initialValues:initialValues,
-		initialImage: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ?selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
 		initialImage: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
-	  	ingredients: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductIngredients(state):[],
+		ingredients: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductIngredients(state):[],
 		additionals: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductAdditionals(state):[],
 		categories: selectors.getCategories(state),
 		additionalsPrice: additionalsPrice
 		// valuesIngredients:  selector(state,'additionals0')
 	}},
-	dispatch => ({
-		createProduct(navigation, product) {
-			dispatch(actionsProducts.startAddingProduct(product));
-			navigation.navigate('Menu');
-		},
-		editProduct(navigation, product) {
-			dispatch(actionsProducts.startEditingProduct(product));
-			navigation.navigate('Menu');
-		},
-		deleteProduct(productId) {
-			dispatch(actionsProducts.deleteProductToOrder(productId));
-		},
+	(dispatch, { newOrder }) => ({
 		addProductToOrder(product) {
-			dispatch(actionsOrders.addProductToOrder(product));
+			newOrder ? dispatch(actionsOrders.addProductToNewOrder(product)) : dispatch(actionsOrders.addProductToOrder(product));
 		},
 		editProductToOrder(product) {
-			dispatch(actionsOrders.editProductOfOrder(product));
+			newOrder ? dispatch(actionsOrders.editProductOfNewOrder(product)) : dispatch(actionsOrders.editProductOfOrder(product));
 		},
 	}),
   )(reduxForm({

@@ -23,6 +23,7 @@ function FinishOrder({
     onlyDetail,
     selectProductInformation,
     deleteProductOfOrder,
+    newOrder,
 }) {
     const { roundness,colors } = theme;
     const [modalProduct, setModalProduct] = useState(false);
@@ -76,7 +77,7 @@ function FinishOrder({
                         product={category.item}
                         navigation={navigation}
                         onlyView={true}
-                        onPress={onlyDetail?null:()=>{setModalProduct(true);selectProductInformation(navigation, category.item);}} 
+                        onPress={onlyDetail?null:()=>{setModalProduct(true);selectProductInformation(category.item);}} 
                         
                     />
                 )}
@@ -130,7 +131,7 @@ function FinishOrder({
                 <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
             </View>
            
-            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false} onlyDetail={onlyDetail} />}
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false} onlyDetail={onlyDetail} newOrder={newOrder} />}
         </View>
     );
 };
@@ -209,20 +210,25 @@ const styles = StyleSheet.create({
 
 
 export default connect(
-    state => ({
-        orderProducts: selectors.getSelectedOrderProducts(state),
-        orderProductsByCategory: selectors.getSelectedOrderProductsByCategory(state),
-        activeOrder: selectors.getSelectedOrder(state),
+    (state, { newOrder }) => ({
+        orderProducts: newOrder ? 
+            selectors.getNewOrderProducts(state) :
+            selectors.getSelectedOrderProducts(state),
+        orderProductsByCategory: newOrder ? 
+            selectors.getNewOrderProductsByCategory(state) :
+            selectors.getSelectedOrderProductsByCategory(state),
+        activeOrder: newOrder ? 
+            selectors.getNewOrder(state) :
+            selectors.getSelectedOrder(state),
         isAdding: selectors.isAddingOrders(state),
         addingError: selectors.getOrdersError(state),
     }),
-    dispatch => ({
-        selectProductInformation(navigation, product) {
+    (dispatch, { newOrder }) => ({
+        selectProductInformation(product) {
             dispatch(actionsProducts.selectProduct(product));
-            // navigation.navigate('ProductInformationScreen',{isAdmin:true});
         },
 		deleteProductOfOrder(index) {
-			dispatch(actionsOrders.deleteProductOfOrder(index));
+            newOrder ? dispatch(actionsOrders.deleteProductOfNewOrder(index)) : dispatch(actionsOrders.deleteProductOfOrder(index));
 		},
     }),
 )(withTheme(FinishOrder));

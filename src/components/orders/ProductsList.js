@@ -12,12 +12,14 @@ import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from '../products/ProductListItem';
 import { SearchBar } from 'react-native-elements';
+import { suscribeFirebase } from '../../../App';
 
 const width = Dimensions.get('window').width; // full width
 import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
 import ModalOrderInformationScreen from './ModalOrderInformationScreen'
 
 function ProductsList ({
+    route,
     theme,
     onLoad,
     isLoading,
@@ -30,6 +32,10 @@ function ProductsList ({
     const { colors, roundness } = theme;
     const [modalProduct, setModalProduct] = useState(false);
     const [modalOrder, setModalOrder] = useState(false);
+
+    const { newOrder } = route.params;
+
+
     
     const renderSectionHeader = ({ section }) => (
     <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
@@ -140,8 +146,8 @@ function ProductsList ({
                 </View>
                 </View>
             </Modal>
-            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false}/>}
-            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false}/>}
+            { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false} newOrder={newOrder} />}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} newOrder={newOrder} />}
         </View>
     )
 }
@@ -182,8 +188,10 @@ export default connect(
     }),
     dispatch => ({
         onLoad() {
-            dispatch(actionsCategories.startFetchingCategories());
-            dispatch(actionsProducts.startFetchingProducts());
+            if(!suscribeFirebase){
+                dispatch(actionsCategories.startFetchingCategories());
+                dispatch(actionsProducts.startFetchingProducts());
+            }
         },
         onSearchProduct(searchText) {
             dispatch(actionsProducts.productSearchStarted(searchText));
