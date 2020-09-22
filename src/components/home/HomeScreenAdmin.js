@@ -87,7 +87,22 @@ function DrawerContent(props) {
             
             </View>
             <Drawer.Section style={styles.drawerSection}>
-                
+            {
+                    user.userTypeId == 1 && (
+                        <DrawerItem
+                            icon={({ color, size }) => (
+                                <MaterialCommunityIcons
+                                name="account-arrow-right"
+                                color={color}
+                                size={size}
+                                />
+                            )}
+                            label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
+                            labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                            onPress={() => toggleAppMode(navigation)}
+                        />
+                    )
+                }
                 <DrawerItem
                     icon={({ color, size }) => (
                         <MaterialCommunityIcons
@@ -101,22 +116,7 @@ function DrawerContent(props) {
                     onPress={() => logOff(navigation)}
                 />
 
-                {
-                    user.userTypeId == 1 && (
-                        <DrawerItem
-                            icon={({ color, size }) => (
-                                <MaterialCommunityIcons
-                                name="logout"
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
-                            labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-                            onPress={() => toggleAppMode(navigation)}
-                        />
-                    )
-                }
+               
                 
             </Drawer.Section>
             <View style={styles.footer}>
