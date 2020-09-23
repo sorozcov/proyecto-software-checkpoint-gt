@@ -106,7 +106,7 @@ function DrawerContent(props) {
                         <DrawerItem
                             icon={({ color, size }) => (
                                 <MaterialCommunityIcons
-                                name="logout"
+                                name="account-convert"
                                 color={color}
                                 size={size}
                                 />
