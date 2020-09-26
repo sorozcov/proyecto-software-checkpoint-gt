@@ -20,20 +20,27 @@ function BranchSelectionModal({
 	handleSubmit,
 	closeModal,
 	modal,
+	branches,
 	initialValues,
-	branches
+	editLoggedUser
 }) {
 
+	console.log("initialValues: ", initialValues);
 
 	const isNew = initialValues == null;
 
     const { colors, roundness } = theme;
     const editLoggedUserBranchForm = values => {
+		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
 		closeModal();
+		
+		console.log("values.restaurantId: ", values.restaurantId[0]);
+		console.log("Branches: \n", branches);
+		values = {...initialValues};
+        values.restaurantName = selectedBranch.name;
+        values.restaurantId = selectedBranch.id;
 		console.log("Values: \n", values);
-        values.restaurantName = selectors.getBranch(values.restaurantId).name;
         editLoggedUser(navigation, values);
-        values.additionalCost = '';
 	}
 	
 	return (
@@ -147,8 +154,7 @@ export default connect(
 	dispatch => ({
         editLoggedUser (navigation, values) {
             dispatch(actions.startEditingUser(values));
-            navigation.replace('HomeAdmin');
-        }
+		},
 	}),
 )(reduxForm({
 	form: 'editLoggedUserBranchForm',
