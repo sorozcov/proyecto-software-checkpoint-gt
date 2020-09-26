@@ -213,10 +213,12 @@ export default connect(
 			if(!newOrder){
 				dispatch(actions.startEditingOrder({...activeOrder, total}));
 				dispatch(actions.deactivateOrder());
+				navigation.pop();
 				navigation.navigate('OrdersList');
 			} else {
 				dispatch(actions.startAddingOrder({...activeOrder, total}));
 				dispatch(actions.deactivateNewOrder());
+				navigation.popToTop();
 				navigation.navigate('Orders');
 			}
         },

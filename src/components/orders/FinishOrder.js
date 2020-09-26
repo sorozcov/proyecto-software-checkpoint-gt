@@ -48,11 +48,11 @@ function FinishOrder({
 
     return (
         <View style={styles.container}>
-            <View style={{flex:0.05,direction:'row',alignItems:'center',}}>
+            {activeOrder.table!==undefined && <View style={{flex:0.05,direction:'row',alignItems:'center',}}>
                 <Text style={{ fontFamily:'dosis-semi-bold',fontSize:19,}}>
                      {'ORDEN' +' MESA '+activeOrder.table+ " " +activeOrder.orderName}  
                 </Text>
-            </View>
+            </View>}
             <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
             <View style={{flex:0.04}}>
                 

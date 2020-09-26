@@ -36,21 +36,27 @@ function DrawerContent(props) {
         >
     
         <View style={styles.userInfoSection}>
-            {image!=18 && <Avatar.Image
-            source={{
-                uri:
-                image,
-            }}
-            size={140}
-            style={{marginTop:10}}
-            />}
-            {image==18 && <Avatar.Image
-            source={
-                image
-            }
-            size={140}
-            style={{marginTop:10}}
-            />}
+            {
+            image!=18 && (
+                <Avatar.Image
+                    source={{
+                        uri:
+                        image,
+                    }}
+                    size={140}
+                    style={{marginTop:10}}
+                />
+            )}
+            {
+            image==18 && (
+                <Avatar.Image
+                    source={
+                        image
+                    }
+                    size={140}
+                    style={{marginTop:10}}
+                />
+            )}
             <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
             <Caption style={styles.caption}>{user.restaurantName}</Caption>
         
@@ -58,48 +64,48 @@ function DrawerContent(props) {
         <Drawer.Section style={styles.drawerSection}>
             
             <DrawerItem
-            icon={({ color, size }) => (
-                <MaterialCommunityIcons
-                name="logout"
-                color={color}
-                size={size}
-                />
-            )}
-            label="Cerrar sesión"
-            labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-            onPress={() => logOff(navigation)}
+                icon={({ color, size }) => (
+                    <MaterialCommunityIcons
+                        name="logout"
+                        color={color}
+                        size={size}
+                    />
+                )}
+                label="Cerrar sesión"
+                labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                onPress={() => logOff(navigation)}
             />
 
             
             {
                 user.userTypeId == 1 && (
                     <DrawerItem
-                    icon={({ color, size }) => (
-                        <MaterialCommunityIcons
-                        name="account-convert"
-                        color={color}
-                        size={size}
-                        />
-                    )}
-                    label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
-                    labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-                    onPress={() => toggleAppMode(navigation)}
+                        icon={({ color, size }) => (
+                            <MaterialCommunityIcons
+                            name="account-convert"
+                            color={color}
+                            size={size}
+                            />
+                        )}
+                        label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
+                        labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                        onPress={() => toggleAppMode(navigation)}
                     />
                 )
             }
             {
                 user.userTypeId == 1 && (
                     <DrawerItem
-                    icon={({ color, size }) => (
-                        <MaterialCommunityIcons
-                        name="store"
-                        color={color}
-                        size={size}
-                        />
-                    )}
-                    label={`Cambiar sucursal`}
-                    labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-                    onPress={() => setBranchModal(true)}
+                        icon={({ color, size }) => (
+                            <MaterialCommunityIcons
+                            name="store"
+                            color={color}
+                            size={size}
+                            />
+                        )}
+                        label={`Cambiar sucursal`}
+                        labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                        onPress={() => setBranchModal(true)}
                     />
                 )
             }
