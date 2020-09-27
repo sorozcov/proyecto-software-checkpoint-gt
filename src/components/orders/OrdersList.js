@@ -13,7 +13,7 @@ import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import OrderItem from './OrderItem';
 import ModalOrderInformationScreen from './ModalOrderInformationScreen'
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 const width = Dimensions.get('window').width; // full width
 

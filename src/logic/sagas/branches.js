@@ -2,7 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import { deleteBranch, getBranches, updateBranch } from '../../database/firebase/branches';
 import * as actions from '../../logic/actions/branches';
 import * as types from '../types/branches';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 

@@ -1,4 +1,5 @@
 import { firebase, firebaseFirestore } from '.';
+
 import * as actions from '../../logic/actions/orders';
 import {store} from '../../../App'
 import * as selectors from '../../logic/reducers';
@@ -112,7 +113,14 @@ export const deleteOrder = async({ orderId }) => {
 
 //Suscribe to Orders changes
 export const suscribeOrders = async ()=>{
-    db.collection(collection)
+    var date = new Date();
+    date.setUTCHours(-18,0)
+    
+
+    console.log("hey")
+    // console.log(date)
+    console.log("sorders1")
+    db.collection(collection).where("date", ">=", date)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {

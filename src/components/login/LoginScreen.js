@@ -20,7 +20,7 @@ import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 
 import {createDatesDocuments} from '../../database/firebase/salesDates'
 import { suscribeToFirebase } from '../../database/firebase/suscribeChanges';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 const resetAction = StackActions.reset({

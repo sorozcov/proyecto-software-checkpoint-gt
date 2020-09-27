@@ -13,7 +13,7 @@ import ProductListItem from './ProductListItem';
 import { SearchBar } from 'react-native-elements';
 import ModalProductInformationScreen from './ModalProductInformationScreen'
 import ModalIngredients from './ModalIngredients'
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 const width = Dimensions.get('window').width; // full width

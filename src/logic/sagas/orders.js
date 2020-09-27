@@ -1,7 +1,7 @@
 import { put, takeEvery } from 'redux-saga/effects';
 
 
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 import { getOrders, updateOrder, deleteOrder } from '../../database/firebase/orders';
 import * as actions from '../../logic/actions/orders';
 import * as types from '../types/orders';

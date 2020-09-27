@@ -36,7 +36,7 @@ export const createDatesDocuments = async({ startDate=null,endDate=null }) => {
             currentDate=currentDate.add(1, 'days');
             let saleDayInfo = {
                 id:id,
-                date: new Date(currentDate.year(),currentDate.month(),currentDate.date()-1,12,0,0),
+                date: new Date(currentDate.year(),currentDate.month(),currentDate.date()).setUTCHours(-18,0,0),
                 month:currentDate.month(),
                 year:currentDate.year(),
                 dayOfWeek: currentDate.day(),

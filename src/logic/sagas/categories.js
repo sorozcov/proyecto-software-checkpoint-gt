@@ -5,7 +5,7 @@ import {
 } from '../../database/firebase/categories';
 import * as actions from '../../logic/actions/categories';
 import * as types from '../types/categories';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 

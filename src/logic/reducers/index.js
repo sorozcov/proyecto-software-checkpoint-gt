@@ -9,7 +9,7 @@ import users, * as usersSelectors from './users';
 import * as types from '../types/loggedUser'
 import _ from 'lodash'
 
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 const reducer = combineReducers({

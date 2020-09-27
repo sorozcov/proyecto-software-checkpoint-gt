@@ -13,7 +13,7 @@ import * as actions from '../../logic/actions/users';
 import * as actionsUsers from '../../logic/actions/users';
 import * as actionBranches from '../../logic/actions/branches';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 const width = Dimensions.get('window').width; // full width
