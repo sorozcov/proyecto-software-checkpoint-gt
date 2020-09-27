@@ -231,7 +231,7 @@ export default connect(
 					['user']: user 
 				};
 				
-				dispatch(actions.startAddingOrder({...activeOrder, total}));
+				dispatch(actions.startAddingOrder({...newOrder, total}));
 				dispatch(actions.deactivateNewOrder());
 				navigation.popToTop();
 				navigation.navigate('Orders');
