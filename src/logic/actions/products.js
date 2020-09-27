@@ -82,10 +82,11 @@ export const deselectProduct = () => ({
 });
 
 // INGREDIENTS
-export const addIngredient = Ingredient => ({
+export const addIngredient = (Ingredient,actualValues={}) => ({
     type: types.PRODUCT_INGREDIENT_ADDED,
     payload: {
-        Ingredient
+        Ingredient,
+        actualValues
     }
 });
 export const removeIngredient = ingredientIdx => ({
@@ -103,10 +104,11 @@ export const toggleIngredientDefault = idx => ({
 });
 
 // ADDITIONALS
-export const addAdditional = Additional => ({
+export const addAdditional = (Additional,actualValues={})  => ({
     type: types.PRODUCT_ADDITIONAL_ADDED,
     payload: {
-        Additional
+        Additional,
+        actualValues
     }
 });
 export const removeAdditional = additionalIdx => ({

@@ -3,7 +3,7 @@ import union from 'lodash/union';
 import { combineReducers } from 'redux';
 import * as types from '../types/products';
 import { addIngredient } from '../actions/products';
-
+import { formValueSelector } from 'redux-form' // ES6
 
 
 const byId = (state = {}, action) => {
@@ -81,8 +81,11 @@ const productSelected = (state = null, action) => {
         case types.PRODUCT_INGREDIENT_ADDED:
             {
                 const newIngredient = action.payload.Ingredient;
-                
-                let newState={...state}
+                const actualValuesForm = action.payload.actualValues
+                let newState={...actualValuesForm,...state}
+                if(newState.ingredients==undefined){
+                    newState.ingredients=[]
+                }
                 if(state==null){
                     newState.ingredients=[]
                 }else{
@@ -119,13 +122,21 @@ const productSelected = (state = null, action) => {
         case types.PRODUCT_ADDITIONAL_ADDED:
             {
                 const newAdditional = action.payload.Additional;
-                // let additionals =[]
-                // let newState ={...state}
-                // additionals=newState.additionals==null || newState.additionals==undefined ? []: newState.additionals
+                const actualValuesForm = action.payload.actualValues
+                let newState={...actualValuesForm,...state}
+                if(newState.additionals==undefined){
+                    newState.additionals=[]
+                }
                 
+                if(state==null){
+                    newState.additionals=[]
+                }else{
+                    newState.additionals = newState.additionals
+                }
+               
                 return {
-                    ...state,
-                    additionals: [...state.additionals, newAdditional]
+                    ...newState,
+                    additionals: [...newState.additionals, newAdditional]
                 };
             }
         case types.PRODUCT_ADDITIONAL_REMOVED:
