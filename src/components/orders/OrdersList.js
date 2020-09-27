@@ -2,11 +2,11 @@
 import { Body, Container, Icon, Left, ListItem } from 'native-base';
 import React, { useEffect,useState } from 'react';
 import { ActivityIndicator, Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
-import { FloatingAction } from "react-native-floating-action";
 import { withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
+import SegmentedControlTab from "react-native-segmented-control-tab";
 
 import * as actionsCategories from '../../logic/actions/categories';
 import * as actions from '../../logic/actions/orders';
@@ -22,17 +22,22 @@ function OrdersList ({
     theme,
     onLoad,
     onRefresh,
-    orders,
+    createdOrders,
+    deliveredOrders,
+    chargedOrders,
     isLoading,
     navigation,
     isAdding,
     isEditing,
     selectOrder,
     viewOrder,
+    editOrderStatus,
 }) {
     const { colors, roundness } = theme;
     const [modalOrder, setModalOrder] = useState(false);
+    const [indexShowTab, changeIndexShowTab] = useState(0);
     useEffect(onLoad, []);
+
     const renderSectionHeader = ({ section }) => (
         <ListItem   style={{backgroundColor:'black'}} itemDivider icon>
             <Left>
@@ -49,8 +54,18 @@ function OrdersList ({
             {
                (
                     <Container width={width}>
+                        <SegmentedControlTab
+                            values={[ "Creados", "Entregados", "Cobrados"]}
+                            activeTabStyle={{backgroundColor:colors.primary}}
+                            tabsContainerStyle={{paddingTop:10,paddingBottom:10,marginRight:"10%",marginLeft:"10%"}}
+                            tabTextStyle={{fontFamily:'dosis-semi-bold',color:'black'}}
+                            tabStyle={{borderColor:'black'}}
+                            selectedIndex={indexShowTab}
+                            onTabPress={changeIndexShowTab}
+                            tabBadgeContainerStyle={{backgroundColor:'black'}}
+                        />
                         {
-                            orders.length <= 0 && !isLoading && (
+                            !isLoading && (indexShowTab==0 ? createdOrders.length <= 0 : indexShowTab==1 ? deliveredOrders.length <= 0 : chargedOrders.length <= 0) && (
                                 <View style={{flex:0.1, alignItems:'center', paddingTop:10}}>
                                         <MaterialCommunityIcons
                                             name="information"
@@ -61,87 +76,193 @@ function OrdersList ({
                                 </View>
                             )
                         }
-                      
-                        <SwipeListView
-                            style={{marginTop:0}}
-                            data={orders}
-                            useSectionList
-                            sections={orders}
-                            renderSectionHeader={renderSectionHeader}
-                            renderItem={ (order, rowMap) => (
-                                <OrderItem
-                                    onPress={() => {setModalOrder(true);viewOrder(order.item);}}
-                                    style={styles.rowFront}
-                                    key={order.item.orderId}
-                                    name={`${order.item.orderName}`}
-                                    date={order.item.date.toDate().toString()}
-                                    total={order.item.total} image={order.item.image}
-                                    order={order.item}
-                                    navigation={navigation}
-                                    theme={theme}
-                                />
-                            )}
-                            refreshing={isLoading}
-                            onRefresh={()=>onRefresh()}
-                            disableRightSwipe={true}
-                            closeOnRowPress={true}
-                            keyExtractor={(order, index) => (order.orderId)}
-                            renderHiddenItem={
-                                (order, rowMap) => (
-                                    <View style={styles.rowBack}>
-                                        <TouchableOpacity
-                                            style={[styles.backRightBtn, styles.backRightBtnLeft]}
-                                            onPress={() => {selectOrder(navigation, order.item);rowMap[order.item.orderId].closeRow();}}
-                                        >
-                                            <MaterialCommunityIcons
-                                                name="pencil"
-                                                color={'black'}
-                                                size={30}
-                                            />
-                                            <Text style={styles.backTextWhite}>Editar</Text>  
-                                        </TouchableOpacity>
+                        {indexShowTab==0 &&
+                            <SwipeListView
+                                style={{marginTop:0}}
+                                data={createdOrders}
+                                useSectionList
+                                sections={createdOrders}
+                                renderSectionHeader={renderSectionHeader}
+                                renderItem={ (order, rowMap) => (
+                                    <OrderItem
+                                        onPress={() => {setModalOrder(true);viewOrder(order.item);}}
+                                        style={styles.rowFront}
+                                        key={order.item.orderId}
+                                        name={`${order.item.orderName}`}
+                                        date={order.item.date.toDate().toString()}
+                                        total={order.item.total} image={order.item.image}
+                                        order={order.item}
+                                        navigation={navigation}
+                                        theme={theme}
+                                    />
+                                )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
+                                disableRightSwipe={true}
+                                closeOnRowPress={true}
+                                keyExtractor={(order, index) => (order.orderId)}
+                                renderHiddenItem={
+                                    (order, rowMap) => (
+                                        <View style={styles.rowBack}>
+                                            <TouchableOpacity
+                                                style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                                                onPress={() => {selectOrder(navigation, order.item);rowMap[order.item.orderId].closeRow();}}
+                                            >
+                                                <MaterialCommunityIcons
+                                                    name="pencil"
+                                                    color={'black'}
+                                                    size={30}
+                                                />
+                                                <Text style={styles.backTextWhite}>Editar</Text>  
+                                            </TouchableOpacity>
 
-                                        <TouchableOpacity
-                                            style={[styles.backRightBtn, styles.backRightBtnRight]}
-                                            
-                                            onPress={ () => {
-                                                rowMap[order.item.orderId].closeRow();
-                                                Alert.alert(
-                                                    '¿Eliminar orden?',
-                                                    'Esta acción no puede ser revertida',
-                                                    [
+                                            <TouchableOpacity
+                                                style={[styles.backRightBtn, styles.backRightBtnMiddle]}
+                                                
+                                                onPress={ () => {
+                                                    rowMap[order.item.orderId].closeRow();
+                                                    Alert.alert(
+                                                        '¿Eliminar orden?',
+                                                        'Esta acción no puede ser revertida',
+                                                        [
+                                                            {
+                                                                text: 'Cancelar', 
+                                                                style: 'cancel'
+                                                            },
+                                                            {
+                                                                text: 'Eliminar',
+                                                                onPress: () => deleteOrder(order.item.orderId),
+                                                                style: 'destructive'
+                                                            }
+                                                        ],
                                                         {
-                                                            text: 'Cancelar', 
-                                                            style: 'cancel'
+                                                            cancelable: true,
                                                         },
-                                                        {
-                                                            text: 'Eliminar',
-                                                            onPress: () => deleteOrder(order.item.orderId),
-                                                            style: 'destructive'
-                                                        }
-                                                    ],
-                                                    {
-                                                        cancelable: true,
-                                                    },
-                                                )
-                                            }}
-                                        >
-                                            <MaterialCommunityIcons
-                                                name="delete"
-                                                color={'black'}
-                                                size={30}
-                                            />
-                                            <Text style={styles.backTextWhite}>Eliminar</Text>
+                                                    )
+                                                }}
+                                            >
+                                                <MaterialCommunityIcons
+                                                    name="delete"
+                                                    color={'black'}
+                                                    size={30}
+                                                />
+                                                <Text style={styles.backTextWhite}>Eliminar</Text>
+                                                
+                                            </TouchableOpacity>
                                             
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            }
-                            leftOpenValue={0}
-                            rightOpenValue={-150}
-                            
-                            previewOpenDelay={1000}
-                        />
+                                            <TouchableOpacity
+                                                style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent}]}
+                                                onPress={() => editOrderStatus(order.item, 2, null)}
+                                            >
+                                                <MaterialCommunityIcons
+                                                    name="check-circle"
+                                                    color={'black'}
+                                                    size={30}
+                                                />
+                                                <Text style={styles.backTextWhite}>Entregado</Text>  
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    )
+                                }
+                                leftOpenValue={0}
+                                rightOpenValue={-225}
+                                
+                                previewOpenDelay={1000}
+                            />
+                        }
+                        {indexShowTab==1 &&
+                            <SwipeListView
+                                style={{marginTop:0}}
+                                data={deliveredOrders}
+                                useSectionList
+                                sections={deliveredOrders}
+                                renderSectionHeader={renderSectionHeader}
+                                renderItem={ (order, rowMap) => (
+                                    <OrderItem
+                                        onPress={() => {setModalOrder(true);viewOrder(order.item);}}
+                                        style={styles.rowFront}
+                                        key={order.item.orderId}
+                                        name={`${order.item.orderName}`}
+                                        date={order.item.date.toDate().toString()}
+                                        total={order.item.total} image={order.item.image}
+                                        order={order.item}
+                                        navigation={navigation}
+                                        theme={theme}
+                                    />
+                                )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
+                                disableRightSwipe={true}
+                                closeOnRowPress={true}
+                                keyExtractor={(order, index) => (order.orderId)}
+                                renderHiddenItem={
+                                    (order, rowMap) => (
+                                        <View style={styles.rowBack}>
+                                            <TouchableOpacity
+                                                style={[styles.backRightBtn, styles.backRightBtnMiddle, {borderWidth: 3, borderColor: 'red', backgroundColor: 'white'}]}
+                                                onPress={() => editOrderStatus(order.item, 1, null)}
+                                            >
+                                                <MaterialCommunityIcons
+                                                    name="close-circle"
+                                                    color={'black'}
+                                                    size={30}
+                                                />
+                                                <Text style={styles.backTextWhite}>Creado</Text>  
+                                            </TouchableOpacity>                                            
+                                            <TouchableOpacity
+                                                style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent}]}
+                                                onPress={() => editOrderStatus(order.item, 3, null)}
+                                            >
+                                                <MaterialCommunityIcons
+                                                    name="check-circle"
+                                                    color={'black'}
+                                                    size={30}
+                                                />
+                                                <Text style={styles.backTextWhite}>Cobrar</Text>  
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    )
+                                }
+                                leftOpenValue={0}
+                                rightOpenValue={-150}
+                                
+                                previewOpenDelay={1000}
+                            />
+                        }
+                        {indexShowTab==2 &&
+                            <SwipeListView
+                                style={{marginTop:0}}
+                                data={chargedOrders}
+                                useSectionList
+                                sections={chargedOrders}
+                                renderSectionHeader={renderSectionHeader}
+                                renderItem={ (order, rowMap) => (
+                                    <OrderItem
+                                        onPress={() => {setModalOrder(true);viewOrder(order.item);}}
+                                        style={styles.rowFront}
+                                        key={order.item.orderId}
+                                        name={`${order.item.orderName}`}
+                                        date={order.item.date.toDate().toString()}
+                                        total={order.item.total} image={order.item.image}
+                                        order={order.item}
+                                        navigation={navigation}
+                                        theme={theme}
+                                    />
+                                )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
+                                disableRightSwipe={true}
+                                disableLeftSwipe={true}
+                                keyExtractor={(order, index) => (index)}
+                                leftOpenValue={0}
+                                renderHiddenItem={() => (<></>)}
+                                rightOpenValue={0}
+                                
+                                previewOpenDelay={1000}
+                            />
+                        }
                                   
                     </Container>
                 )
@@ -202,11 +323,16 @@ const styles = StyleSheet.create({
     },
     backRightBtnLeft: {
         backgroundColor: '#FFF11B',
+        right: 150,
+        
+    },
+    backRightBtnMiddle: {
+        backgroundColor: '#FF0D0D',
         right: 75,
         
     },
     backRightBtnRight: {
-        backgroundColor: '#FF0D0D',
+        backgroundColor: 'white',
         
         right: 0,
     },
@@ -216,11 +342,12 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
-        orders: selectors.getOrdersByTable(state),
+        createdOrders: selectors.getCreatedOrdersByTable(state),
+        deliveredOrders: selectors.getDeliveredOrdersByTable(state),
+        chargedOrders: selectors.getChargedOrdersByTable(state),
         isLoading: selectors.isFetchingOrders(state),
         isAdding: selectors.isAddingOrders(state),
         isEditing: selectors.isEditingOrders(state),
-        orderHasUsers: (orderId)=>selectors.orderHasUsers(orderId, state)
     }),
     dispatch => ({
         onLoad() {
@@ -237,6 +364,9 @@ export default connect(
         viewOrder(order) {
             dispatch(actionsCategories.startFetchingCategories());
             dispatch(actions.activateOrder(order));
+        },
+        editOrderStatus(order,orderStatus,invoiceInfo) {
+            dispatch(actions.startEditingOrderStatus(order,orderStatus,invoiceInfo));
         },
         deleteOrder(orderId){
             dispatch(actions.startRemovingOrder(orderId));

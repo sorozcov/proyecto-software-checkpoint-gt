@@ -102,7 +102,7 @@ function ProductsList ({
                         leftOpenValue={0}
                         rightOpenValue={-150}
                         previewRowKey={'0'}
-                        
+                        renderHiddenItem={() => (<></>)}
                         previewOpenDelay={1000}
                     />
                 
