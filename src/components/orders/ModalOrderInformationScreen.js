@@ -17,7 +17,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FinishOrder from './FinishOrder';
 import * as actions from '../../logic/actions/orders';
 
-function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrderButton=true,sendOrder,orderProducts,activeOrder, onlyDetail=false, newOrder }) {
+function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrderButton=true,sendOrder,orderProducts,activeOrder, onlyDetail=false, newOrder, user }) {
 	const { colors, roundness } = theme;
 	const [quantity, setQuantity] = useState(0);
 	
@@ -97,7 +97,7 @@ function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrder
 					
 					onPress={() =>{ 
 						closeModal();
-						sendOrder(activeOrder, total);
+						sendOrder(activeOrder, total, user);
 						}}>
 					{(!newOrder ? 'Actualizar' : 'PROCESAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
 					</Button>
@@ -205,17 +205,32 @@ export default connect(
         orderProducts: newOrder ? selectors.getNewOrderProducts(state) : selectors.getSelectedOrderProducts(state),
         activeOrder: newOrder ? selectors.getNewOrder(state) : selectors.getSelectedOrder(state),
         isAdding: selectors.isAddingOrders(state),
-        addingError: selectors.getOrdersError(state),
+		addingError: selectors.getOrdersError(state),
+		user: selectors.getLoggedUser(state)
 	}),
 	(dispatch, { newOrder, navigation }) => ({
 
-		sendOrder(activeOrder, total) {
+		sendOrder(activeOrder, total, user) {
 			if(!newOrder){
 				dispatch(actions.startEditingOrder({...activeOrder, total}));
 				dispatch(actions.deactivateOrder());
 				navigation.pop();
 				navigation.navigate('OrdersList');
 			} else {
+				const branchId = user.restaurantId;
+				const branchName = user.restaurantName;
+				
+				let newOrder  = activeOrder;
+				
+				newOrder = {
+					...newOrder,
+					['branch']: { 
+						branchId,
+						branchName,
+					},
+					['user']: user 
+				};
+				
 				dispatch(actions.startAddingOrder({...activeOrder, total}));
 				dispatch(actions.deactivateNewOrder());
 				navigation.popToTop();
