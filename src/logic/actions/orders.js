@@ -25,6 +25,8 @@ export const startAddingOrder = order => ({
     payload: order
 });
 
+
+
 export const completeAddingOrder = order => ({
     type: types.ORDER_ADD_COMPLETED,
     payload: order,
@@ -40,6 +42,11 @@ export const failAddingOrder = error => ({
 export const startEditingOrder = order => ({
     type: types.ORDER_EDIT_STARTED,
     payload: order
+});
+
+export const startEditingOrderStatus = (order,orderStatus,invoiceInfo) => ({
+    type: types.ORDER_EDIT_STATUS_STARTED,
+    payload: {order,orderStatus,invoiceInfo}
 });
 
 export const completeEditingOrder = order => ({
