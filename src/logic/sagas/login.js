@@ -10,9 +10,7 @@ import { suscribeFirebase } from '../../../config';
 function* loginStarted(action) {
     try {
         yield AsyncStorage.setItem('userCheckpoint', JSON.stringify(action.payload));
-        if(suscribeFirebase){
-            yield suscribeToFirebase()
-        }
+
         
     } catch (error) {
         console.log(error)

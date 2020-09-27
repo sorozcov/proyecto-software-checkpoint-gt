@@ -76,7 +76,7 @@ function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrder
 			</View>
 			{finishOrderButton && !onlyDetail && 
 					<Button
-					disabled={false}
+					disabled={total==0}
 					theme={{roundness:0}}
 					color={'#000000'}
 					icon={"arrow-right-bold"}

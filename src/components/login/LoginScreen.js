@@ -1,5 +1,6 @@
 import * as firebase from "firebase";
 import React, { useState } from 'react';
+
 import {
     ActivityIndicator,
     Alert,
@@ -74,7 +75,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
   async function login(email, pass) {
     Keyboard.dismiss();
     console.log("started");
-    // await createDatesDocuments({})
+    // await createDatesDocuments({});
     setmodalVisibleIndicatorLogin(true);
      try {
          
@@ -308,7 +309,9 @@ export default connect(
       try{
         const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
         dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-
+        if(suscribeFirebase){
+          await suscribeToFirebase()
+        }
         if(userLoggedIn.data().userTypeId==1){
           navigation.replace('HomeAdmin');
         }else{
