@@ -331,9 +331,9 @@ export default connect(
 		}
 		return {
 		initialValues:initialValues,
-		initialImage: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
-		ingredients: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductIngredients(state):[],
-		additionals: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} ? selectors.getSelectedProductAdditionals(state):[],
+		initialImage: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} && selectors.getSelectedProduct(state).productId!=undefined ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId).image:null,
+		ingredients: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} && selectors.getSelectedProduct(state).productId!=undefined ? selectors.getSelectedProductIngredients(state):[],
+		additionals: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state)!={} && selectors.getSelectedProduct(state).productId!=undefined ? selectors.getSelectedProductAdditionals(state):[],
 		categories: selectors.getCategories(state),
 		additionalsPrice: additionalsPrice
 		// valuesIngredients:  selector(state,'additionals0')

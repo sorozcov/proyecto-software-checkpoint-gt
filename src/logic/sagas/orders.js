@@ -50,6 +50,13 @@ function* editOrder(action) {
     }
 }
 
+export function* watchEditOrderStarted() {
+    yield takeEvery(
+        types.ORDER_EDIT_STARTED,
+        editOrder,
+    );
+}
+
 function* editOrderStatus(action) {
     try {
         const {order,orderStatus,invoiceInfo} = action.payload;

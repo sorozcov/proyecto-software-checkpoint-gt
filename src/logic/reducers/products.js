@@ -2,6 +2,7 @@ import omit from 'lodash/omit';
 import union from 'lodash/union';
 import { combineReducers } from 'redux';
 import * as types from '../types/products';
+import { addIngredient } from '../actions/products';
 
 
 
@@ -80,10 +81,16 @@ const productSelected = (state = null, action) => {
         case types.PRODUCT_INGREDIENT_ADDED:
             {
                 const newIngredient = action.payload.Ingredient;
-
+                
+                let newState={...state}
+                if(state==null){
+                    newState.ingredients=[]
+                }else{
+                    newState.ingredients = newState.ingredients
+                }
                 return {
-                    ...state,
-                    ingredients: [...state.ingredients, newIngredient]
+                    ...newState,
+                    ingredients: [...newState.ingredients, newIngredient]
                 };
             }
         case types.PRODUCT_INGREDIENT_REMOVED:
@@ -112,7 +119,10 @@ const productSelected = (state = null, action) => {
         case types.PRODUCT_ADDITIONAL_ADDED:
             {
                 const newAdditional = action.payload.Additional;
-
+                // let additionals =[]
+                // let newState ={...state}
+                // additionals=newState.additionals==null || newState.additionals==undefined ? []: newState.additionals
+                
                 return {
                     ...state,
                     additionals: [...state.additionals, newAdditional]

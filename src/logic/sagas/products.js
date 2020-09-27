@@ -29,7 +29,7 @@ export function* watchProductsFetchStarted() {
 
 function* addProduct(action) {
     try {
-        const product = action.payload;
+        const newProduct = action.payload;
 
         const response = yield updateProduct(newProduct);
         if (response.error == null)

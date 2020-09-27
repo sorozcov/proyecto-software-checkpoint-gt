@@ -21,7 +21,8 @@ import * as actionsProducts from '../../logic/actions/products';
 import ImagePicker from '../../components/general/ImagePickerProduct';
 
 
- 
+var hasLoaded = false;
+
 function EditProductScreen({
 	theme,
 	navigation,
@@ -43,10 +44,12 @@ function EditProductScreen({
 }) {
 	const { colors, roundness } = theme;
 	
-	const isNew = initialValues == null;
-
+	let isNew = initialValues == null || initialValues.productId==undefined;
+	
 	const [ingredientModal, setIngredientModal] = useState(false);
 	const [additionalModal, setAdditionalModal] = useState(false);
+	
+	
 	
 	if(!isNew) {
 		navigation.setOptions({title: 'EDITAR PRODUCTO'});
@@ -162,7 +165,7 @@ function EditProductScreen({
 						</View>
 
 						<FlatList
-							data={isNew ?
+							data={isNew && ingredients.length<0 ?
 								[] :
 								ingredients.map((ingredient, i) => ({...ingredient, id: i}))
 							}
@@ -227,7 +230,7 @@ function EditProductScreen({
 						</View>
 
 						<FlatList
-							data={isNew ?
+							data={isNew && additionals.length<0 ?
 								[] :
 								additionals.map((additional, i) => ({ ...additional, id: i }))
 							}

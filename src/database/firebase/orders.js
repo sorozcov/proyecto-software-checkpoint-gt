@@ -8,6 +8,12 @@ const db = firebaseFirestore;
 const collection = "orders";
 const collectionSales = "salesByDate";
 
+// Order Status
+// 1 Creado
+// 2 Entregado
+// 2> Cobrado
+// 3 No facturado
+// 4 Facturado 
 // Funcion para crear o hacer update de un pedido
 // Si es nuevo enviar orderId = null o no enviar
 export const updateOrder = async(newOrder) => {
