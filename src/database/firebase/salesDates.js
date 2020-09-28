@@ -47,13 +47,18 @@ export const createDatesDocuments = async({ startDate=null,endDate=null }) => {
                 byTime:hoursDict,
                 byBranch:{
                     total:0,
+                    totalTip:0,
                 },
                 byWaiter:{
                     total:0,
+                    totalTip:0,
                 },
                 totalWithInvoice:0,
                 totalWithoutInvoice:0,
+                totalWithoutTip:0,
                 total:0,
+                totalTip:0,
+                
                 products:[],
             };
             let docExists = (await dateSaleDoc.get()).exists

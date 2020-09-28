@@ -8554,6 +8554,11 @@ react-native-multiple-select@^0.5.5:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-option-picker@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-option-picker/-/react-native-option-picker-1.1.2.tgz#0cc77b67a2ab16a104bf33f9ce8a05721e0e69cc"
+  integrity sha512-OcMVqYJc5m1z901owjn7Izb/fIt5+2WME9SnkhAkwRK10UAZSdD2Owjadvp5rTNGilwzUXU8OLzJANDdHIS9RA==
+
 react-native-paper@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-3.8.0.tgz#94d9b50b945ce91c90491cce34d1c27845503990"

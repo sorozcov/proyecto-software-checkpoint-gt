@@ -99,13 +99,14 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
             let productsOrder = nOrder.products
             let totalWithInvoice=0
             let totalWithoutInvoice=0
-            let {byBranch,byTime,byWaiter,products} = documentSaleInfo
+            let {byBranch,byTime,byWaiter,products,totalTip,totalWithoutTip} = documentSaleInfo
             //Check if it doesnt exist total by branch and byWaiter
             if(byBranch[branch.branchId]==undefined){
                 byBranch[branch.branchId]={
                     total:0,
                     totalWithInvoice:0,
                     totalWithoutInvoice:0,
+                    totalTip:0,
                 }
             }
             if(byWaiter[user.uid]==undefined){
@@ -113,6 +114,7 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
                     total:0,
                     totalWithInvoice:0,
                     totalWithoutInvoice:0,
+                    totalTip:0,
                 }
             }
             //Update by branch and by waiter
@@ -127,9 +129,11 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
             byTime[hours].totalWithInvoice=byTime[hours].totalWithInvoice+(nOrder.status==3?nOrder.total:0)
             byTime[hours].totalWithoutInvoice=byTime[hours].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
             //Update general totals
-            total=total+nOrder.total
-            totalWithInvoice=totalWithoutInvoice+(nOrder.status==3?nOrder.total:0)
-            totalWithoutInvoice=totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            total=total+nOrder.total+nOrder.tip
+            totalWithoutTip=totalWithoutTip+nOrder.total
+            totalTip=totalTip+nOrder.total
+            totalWithInvoice=totalWithoutInvoice+(nOrder.status==3?nOrder.total+nOrder.tip:0)
+            totalWithoutInvoice=totalWithoutInvoice+(nOrder.status==4?nOrder.total+nOrder.tip:0)
             productsOrder.forEach(prod=>products.push(prod))
             console.log(documentSaleInfo)
             let updatedDocumentSaleInfo={
@@ -138,6 +142,8 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
                 byWaiter:{...byWaiter},
                 byTime:{...byTime},
                 total:total,
+                totalWithoutTip: totalWithoutTip,
+                totalTip:totalTip,
                 totalWithInvoice:totalWithInvoice,
                 totalWithoutInvoice:totalWithoutInvoice,  
                 products:products             
