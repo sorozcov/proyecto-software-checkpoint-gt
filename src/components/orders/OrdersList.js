@@ -55,8 +55,8 @@ function OrdersList ({
                (
                     <Container width={width}>
                         <SegmentedControlTab
-                            values={[ "Creados", "Entregados", "Cobrados"]}
-                            activeTabStyle={{backgroundColor:colors.primary}}
+                            values={[ "Procesando", "Entregados", "Cobrados"]}
+                            activeTabStyle={{backgroundColor:'black'}}
                             tabsContainerStyle={{paddingTop:10,paddingBottom:10,marginRight:"10%",marginLeft:"10%"}}
                             tabTextStyle={{fontFamily:'dosis-semi-bold',color:'black'}}
                             tabStyle={{borderColor:'black'}}
@@ -72,7 +72,9 @@ function OrdersList ({
                                             color='black'
                                             size={50}
                                         />
-                                        <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Aún no hay ordenes</Text>
+                                        {indexShowTab==0 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Por el momento no hay órdenes procesando.</Text>}
+                                        {indexShowTab==1 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Por el momento no hay órdenes entregadas.</Text>}
+                                        {indexShowTab==2 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Por el momento no hay órdenes cobradas.</Text>}
                                 </View>
                             )
                         }
@@ -208,7 +210,7 @@ function OrdersList ({
                                                     color={'black'}
                                                     size={30}
                                                 />
-                                                <Text style={styles.backTextWhite}>Creado</Text>  
+                                                <Text style={{...styles.backTextWhite,fontSize:12}}>Procesando</Text>  
                                             </TouchableOpacity>                                            
                                             <TouchableOpacity
                                                 style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent}]}
@@ -219,7 +221,7 @@ function OrdersList ({
                                                     color={'black'}
                                                     size={30}
                                                 />
-                                                <Text style={styles.backTextWhite}>Cobrar</Text>  
+                                                <Text style={{...styles.backTextWhite,fontSize:12}}>Cobrar</Text>  
                                             </TouchableOpacity>
 
                                         </View>
@@ -306,7 +308,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingLeft: 15,
+        paddingLeft: 20,
       
     },
     rowFront: {        
