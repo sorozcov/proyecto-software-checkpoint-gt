@@ -78,11 +78,19 @@ function OrderInformationScreen({
 			},
 	];
 
-	const [tip, setTip] = useState(dataTip[1]);
-	const [discount, setDiscount] = useState(dataTip[1]);
-	const [invoice, setInvoice] = useState(chargeView ? activeOrder.invoice : false);
-	const [discounts, setDiscounts] = useState(chargeView ? activeOrder.discount : false);
-	const [tips, setTips] = useState(chargeView ? activeOrder.tip : true);
+	const [tip, setTip] = useState({
+		id: 10,
+		title: '10%',
+		selected: true,
+	});
+	const [discount, setDiscount] = useState({
+		id: 10,
+		title: '10%',
+		selected: true,
+	});
+	const [invoice, setInvoice] = useState(false);
+	const [discounts, setDiscounts] = useState(false);
+	const [tips, setTips] = useState(true);
 	
 	//Se calcula el total
 	var total = 0
@@ -119,21 +127,23 @@ function OrderInformationScreen({
 				<FinishOrder navigation={navigation} onlyDetail={onlyDetail} newOrder={newOrder}/>
 				{(charge || chargeView) && <View>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={tips} onCheck={(check)=>setTips(check)} disabled={chargeView}/>
-					{tips && (chargeView ? 
+					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.tip!==false : tips} onCheck={(check)=>setTips(check)} disabled={chargeView}/>
+					{chargeView && activeOrder.tip!==false &&
 					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
 						{activeOrder.tip}  
-					</Text> :
-					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setTip(elem)}/>)}
+					</Text> }
+					{ charge && tips &&
+					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setTip(elem)}/>}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={invoice} onCheck={(check)=>setInvoice(check)} disabled={chargeView}/>
+					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.status===5 : invoice} onCheck={(check)=>setInvoice(check)} disabled={chargeView}/>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/>
-					{discounts && (chargeView ? 
+					<MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.discount!==false : discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/>
+					{chargeView && activeOrder.discount!==false && 
 					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
 						{activeOrder.discount}  
-					</Text> :
-					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>)}
+					</Text> }
+					{charge && discounts &&
+					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
 					
 					

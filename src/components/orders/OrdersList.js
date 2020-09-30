@@ -18,6 +18,7 @@ import { suscribeFirebase } from '../../../config';
 const width = Dimensions.get('window').width; // full width
 
 function OrdersList ({
+    route,
     deleteOrder,
     theme,
     onLoad,
@@ -38,7 +39,7 @@ function OrdersList ({
     const [modalOrder, setModalOrder] = useState(false);
     const [indexShowTab, changeIndexShowTab] = useState(0);
     useEffect(onLoad, []);
-
+    
     const renderSectionHeader = ({ section }) => (
         <ListItem   style={{backgroundColor:'black'}} itemDivider icon>
             <Left>
