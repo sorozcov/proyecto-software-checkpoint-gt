@@ -139,7 +139,7 @@ function EditProductScreen({
 						<View style={{ marginTop: 8, marginBottom: 8 }}>
 							<Button
 								theme={roundness}
-								color={colors.accent }
+								color={colors.accent}
 								icon={"plus"}
 								height={50}
 								mode="contained"

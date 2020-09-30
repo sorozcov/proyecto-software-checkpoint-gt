@@ -135,9 +135,6 @@ const isEditing = (state = false, action) => {
                 return true;
             }
         case types.USER_EDIT_COMPLETED:
-            {
-                return false;
-            }
         case types.USER_EDIT_FAILED:
             {
                 return false;
@@ -193,54 +190,20 @@ const addStatus = (state = null, action) => {
 
 const error = (state = null, action) => {
     switch (action.type) {
-        //fetch
-        case types.USERS_FETCH_FAILED:
+        case types.USERS_FETCH_FAILED: //FETCH
+        case types.USER_ADD_FAILED: //ADD
+        case types.USER_EDIT_FAILED: //EDIT
+        case types.USER_REMOVE_FAILED: //REMOVE
             {
                 return action.payload.error;
             }
         case types.USERS_FETCH_STARTED:
-            {
-                return null;
-            }
         case types.USERS_FETCH_COMPLETED:
-            {
-                return null;
-            }
-            //add
-        case types.USER_ADD_FAILED:
-            {
-                return action.payload.error;
-            }
         case types.USER_ADD_STARTED:
-            {
-                return null;
-            }
         case types.USER_ADD_COMPLETED:
-            {
-                return null;
-            }
-            //edit
-        case types.USER_EDIT_FAILED:
-            {
-                return action.payload.error;
-            }
         case types.USER_EDIT_STARTED:
-            {
-                return null;
-            }
         case types.USER_EDIT_COMPLETED:
-            {
-                return null;
-            }
-            //remove
-        case types.USER_REMOVE_FAILED:
-            {
-                return action.payload.error;
-            }
         case types.USER_REMOVE_STARTED:
-            {
-                return null;
-            }
         case types.USER_REMOVE_COMPLETED:
             {
                 return null;

@@ -25,8 +25,6 @@ function BranchSelectionModal({
 	editLoggedUser
 }) {
 
-	console.log("initialValues: ", initialValues);
-
 	const isNew = initialValues == null;
 
     const { colors, roundness } = theme;
@@ -34,12 +32,9 @@ function BranchSelectionModal({
 		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
 		closeModal();
 		
-		console.log("values.restaurantId: ", values.restaurantId[0]);
-		console.log("Branches: \n", branches);
 		values = {...initialValues};
         values.restaurantName = selectedBranch.name;
         values.restaurantId = selectedBranch.id;
-		console.log("Values: \n", values);
         editLoggedUser(navigation, values);
 	}
 	
