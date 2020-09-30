@@ -24,6 +24,7 @@ function OrdersList ({
     onRefresh,
     createdOrders,
     deliveredOrders,
+    completedOrders,
     chargedOrders,
     isLoading,
     navigation,
@@ -55,7 +56,7 @@ function OrdersList ({
                (
                     <Container width={width}>
                         <SegmentedControlTab
-                            values={[ "Procesando", "Entregados", "Cobrados"]}
+                            values={[ "Procesando", "Entregados", "Completados", "Cobrados"]}
                             activeTabStyle={{backgroundColor:'black'}}
                             tabsContainerStyle={{paddingTop:10,paddingBottom:10,marginRight:"10%",marginLeft:"10%"}}
                             tabTextStyle={{fontFamily:'dosis-semi-bold',color:'black'}}
@@ -65,16 +66,17 @@ function OrdersList ({
                             tabBadgeContainerStyle={{backgroundColor:'black'}}
                         />
                         {
-                            !isLoading && (indexShowTab==0 ? createdOrders.length <= 0 : indexShowTab==1 ? deliveredOrders.length <= 0 : chargedOrders.length <= 0) && (
+                            !isLoading && (indexShowTab==0 ? createdOrders.length <= 0 : indexShowTab==1 ? deliveredOrders.length <= 0 : indexShowTab==2 ? completedOrders.length <= 0 : chargedOrders.length <= 0) && (
                                 <View style={{flex:0.1, alignItems:'center', paddingTop:10}}>
                                         <MaterialCommunityIcons
                                             name="information"
                                             color='black'
                                             size={50}
                                         />
-                                        {indexShowTab==0 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Por el momento no hay órdenes procesando.</Text>}
-                                        {indexShowTab==1 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Por el momento no hay órdenes entregadas.</Text>}
-                                        {indexShowTab==2 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', alignSelf:'center'}}>Por el momento no hay órdenes cobradas.</Text>}
+                                        {indexShowTab==0 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', textAlign:'center'}}>Por el momento no hay órdenes procesando.</Text>}
+                                        {indexShowTab==1 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', textAlign:'center'}}>Por el momento no hay órdenes entregadas.</Text>}
+                                        {indexShowTab==2 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', textAlign:"center"}}>Por el momento no hay órdenes completadas.</Text>}
+                                        {indexShowTab==3 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', textAlign:'center'}}>Por el momento no hay órdenes cobradas.</Text>}
                                 </View>
                             )
                         }
@@ -221,7 +223,7 @@ function OrdersList ({
                                                     color={'black'}
                                                     size={30}
                                                 />
-                                                <Text style={{...styles.backTextWhite,fontSize:12}}>Cobrar</Text>  
+                                                <Text style={{...styles.backTextWhite,fontSize:12}}>Completar</Text>  
                                             </TouchableOpacity>
 
                                         </View>
@@ -234,6 +236,38 @@ function OrdersList ({
                             />
                         }
                         {indexShowTab==2 &&
+                            <SwipeListView
+                                style={{marginTop:0}}
+                                data={completedOrders}
+                                useSectionList
+                                sections={completedOrders}
+                                renderSectionHeader={renderSectionHeader}
+                                renderItem={ (order, rowMap) => (
+                                    <OrderItem
+                                        onPress={() => {setModalOrder(true);viewOrder(order.item);}}
+                                        style={styles.rowFront}
+                                        key={order.item.orderId}
+                                        name={`${order.item.orderName}`}
+                                        date={order.item.date.toDate().toString()}
+                                        total={order.item.total} image={order.item.image}
+                                        order={order.item}
+                                        navigation={navigation}
+                                        theme={theme}
+                                    />
+                                )}
+                                refreshing={isLoading}
+                                onRefresh={()=>onRefresh()}
+                                disableRightSwipe={true}
+                                disableLeftSwipe={true}
+                                keyExtractor={(order, index) => (index)}
+                                leftOpenValue={0}
+                                renderHiddenItem={() => (<></>)}
+                                rightOpenValue={0}
+                                
+                                previewOpenDelay={1000}
+                            />
+                        }
+                        {indexShowTab==3 &&
                             <SwipeListView
                                 style={{marginTop:0}}
                                 data={chargedOrders}
@@ -264,8 +298,7 @@ function OrdersList ({
                                 
                                 previewOpenDelay={1000}
                             />
-                        }
-                                  
+                        }         
                     </Container>
                 )
             }
@@ -346,6 +379,7 @@ export default connect(
     state => ({
         createdOrders: selectors.getCreatedOrdersByTable(state),
         deliveredOrders: selectors.getDeliveredOrdersByTable(state),
+        completedOrders: selectors.getCompletedOrdersByTable(state),
         chargedOrders: selectors.getChargedOrdersByTable(state),
         isLoading: selectors.isFetchingOrders(state),
         isAdding: selectors.isAddingOrders(state),

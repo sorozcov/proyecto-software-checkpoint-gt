@@ -33,21 +33,56 @@ function OrderInformationScreen({
 	onlyDetail=false, 
 	newOrder, 
 	user,
+	editOrderStatus,
 	showPrintButton=false,
-	charge=false,
 	}) {
+
+	const charge = activeOrder.status == 3; 
+	const chargeView = activeOrder.status >=4; 
+
 	const { colors, roundness } = theme;
-	const [tip, setTip] = useState({
-		id: 10,
-		title: '10%',
-	  });
-	const [discount, setDiscount] = useState({
-		id: 10,
-		title: '10%',
-	  });
-	const [invoice, setInvoice] = useState(false);
-	const [discounts, setDiscounts] = useState(false);
-	const [tips, setTips] = useState(true);
+	
+	const dataTip = [
+		{
+			id: 15,
+			title: '15%',
+			selected: false,
+		},
+		{
+			id: 10,
+			title: '10%',
+			selected: true,
+		},
+		{
+			id: 5,
+			title: '5%',
+			selected: false,
+		},
+		
+		// {
+		// 	id: -1,
+		// 	title: 'Otro',
+		// 	selected: false,
+		// },
+	];
+	const dataInvoice = [
+		{
+			id: true,
+			title: 'Factura',
+			selected: true,
+		},
+		{
+			id: false,
+			title: 'Sin Factura',
+			selected: false,
+			},
+	];
+
+	const [tip, setTip] = useState(dataTip[1]);
+	const [discount, setDiscount] = useState(dataTip[1]);
+	const [invoice, setInvoice] = useState(chargeView ? activeOrder.invoice : false);
+	const [discounts, setDiscounts] = useState(chargeView ? activeOrder.discount : false);
+	const [tips, setTips] = useState(chargeView ? activeOrder.tip : true);
 	
 	//Se calcula el total
 	var total = 0
@@ -60,47 +95,7 @@ function OrderInformationScreen({
 	if(charge && tips){
 		total=total+(total*tip.id/100)
 	}
-	
-	const dataTip = [
-		{
-			id: 15,
-			title: '15%',
-			selected: false,
-		},
-		{
-		  id: 10,
-		  title: '10%',
-		  selected: true,
-		},
-		{
-		  id: 5,
-		  title: '5%',
-		  selected: false,
-		},
-		
-		// {
-		// 	id: -1,
-		// 	title: 'Otro',
-		// 	selected: false,
-		// },
-		
 
-	  ];
-	  const dataInvoice = [
-		{
-		  id: true,
-		  title: 'Factura',
-		  selected: true,
-		},
-		{
-			id: false,
-			title: 'Sin Factura',
-			selected: false,
-		  },
-		
-
-	  ];
-	
 	return (
 		<Modal
 			transparent={true}
@@ -122,20 +117,23 @@ function OrderInformationScreen({
 		>
 			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'6%'}}>
 				<FinishOrder navigation={navigation} onlyDetail={onlyDetail} newOrder={newOrder}/>
-				{charge && <View>
+				{(charge || chargeView) && <View>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={tips} onCheck={(check)=>setTips(check)}/>
-					
-					
-					{tips && <OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setTip(elem)}/>}
+					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={tips} onCheck={(check)=>setTips(check)} disabled={chargeView}/>
+					{tips && (chargeView ? 
+					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
+						{activeOrder.tip}  
+					</Text> :
+					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setTip(elem)}/>)}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={invoice} onCheck={(check)=>setInvoice(check)}/>
+					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={invoice} onCheck={(check)=>setInvoice(check)} disabled={chargeView}/>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={discounts} onCheck={(check)=>setDiscounts(check)}/>
-					
-					
-					{discounts && <OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>}
+					<MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/>
+					{discounts && (chargeView ? 
+					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
+						{activeOrder.discount}  
+					</Text> :
+					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>)}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
 					
 					
@@ -249,7 +247,7 @@ function OrderInformationScreen({
 					
 					onPress={() =>{ 
 						closeModal();
-						sendOrder(activeOrder, total, user);
+						editOrderStatus(activeOrder, { tip, tips, invoice, discounts, discount});
 						}}>
 					{( 'COBRAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
 					</Button>
@@ -386,10 +384,6 @@ export default connect(
 						branchName,
 					},
 					['user']: user ,
-					tipPecent:0.10,
-					invoice:true,
-					discounts:0,
-
 				};
 				
 				dispatch(actions.startAddingOrder({...newOrder, total}));
@@ -397,17 +391,11 @@ export default connect(
 				navigation.popToTop();
 				navigation.navigate('Orders');
 			}
+		},
+        editOrderStatus(order,invoiceInfo) {
+			order.discount = invoiceInfo.discounts ? invoiceInfo.discount.title : false;
+			order.tip = invoiceInfo.tips ? invoiceInfo.tip.title : false;
+			dispatch(actions.startEditingOrderStatus(order, invoiceInfo.invoice ? 5 : 4, null));
         },
 	}),
-  )(reduxForm({
-	form: 'editProductForm',
-	enableReinitialize : true,
-	validate: (values) => {
-	  const errors = {};
-	  errors.productName = !values.productName ? 'Este campo es obligatorio' : undefined;
-	  errors.description = !values.description ? 'Este campo es obligatorio' : undefined;
-	  errors.category = values.category && values.category.length === 0 ? 'Este campo es obligatorio' : undefined;
-	  errors.price = !values.price ? 'Este campo es obligatorio' : isNaN(parseFloat(values.price)) ? 'Ingresa un número correcto' : undefined;
-	  return errors;
-	}
-  })(withTheme(OrderInformationScreen)));
+  )(withTheme(OrderInformationScreen));

@@ -86,7 +86,8 @@ export const getOrdersByTable = (state, orderStatus) => {
 };
 export const getCreatedOrdersByTable = state => getOrdersByTable(state , [1]);
 export const getDeliveredOrdersByTable = state => getOrdersByTable(state, [2]);
-export const getChargedOrdersByTable = state => getOrdersByTable(state, [3, 4]);
+export const getCompletedOrdersByTable = state => getOrdersByTable(state, [3]);
+export const getChargedOrdersByTable = state => getOrdersByTable(state, [4, 5]);
 export const getSelectedOrder = state => ordersSelectors.getSelectedOrder(state.orders);
 
 export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrderProducts(state.orders);

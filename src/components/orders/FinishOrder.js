@@ -77,12 +77,12 @@ function FinishOrder({
                         product={category.item}
                         navigation={navigation}
                         onlyView={true}
-                        onPress={onlyDetail?null:()=>{setModalProduct(true);selectProductInformation(category.item);}} 
+                        onPress={onlyDetail?() => (null):()=>{setModalProduct(true);selectProductInformation(category.item);}} 
                         
                     />
                 )}
                 renderHiddenItem= {
-                    onlyDetail?null: (product, rowMap) => (
+                    onlyDetail?() => (<></>): (product, rowMap) => (
                         <View style={styles.rowBack}>
                             <TouchableOpacity
                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
