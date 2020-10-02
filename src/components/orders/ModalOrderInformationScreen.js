@@ -224,10 +224,8 @@ export default connect(
 				
 				newOrder = {
 					...newOrder,
-					['branch']: { 
-						branchId,
-						branchName,
-					},
+					['branchId']: branchId,
+					['branchName']: branchName,
 					['user']: user 
 				};
 				
