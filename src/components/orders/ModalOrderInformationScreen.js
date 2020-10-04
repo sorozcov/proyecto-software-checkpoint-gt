@@ -1,23 +1,145 @@
-
 import 'firebase/firestore';
-import { Field, reduxForm, submit } from 'redux-form';
-import { Button, withTheme,IconButton } from 'react-native-paper';
-import Modal from 'react-native-modal';
+import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
+
 import { Text } from 'native-base';
-import React,{useState,useEffect} from 'react';
-import { KeyboardAvoidingView, StyleSheet, View ,FlatList, Dimensions, Platform} from 'react-native';
+import Modal from 'react-native-modal';
+import { Field, reduxForm, submit } from 'redux-form';
 import { Card, Divider } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
-import { connect } from 'react-redux';
-import ImagePicker from '../../components/general/ImagePickerProduct';
-import * as actionsProducts from '../../logic/actions/products';
-import * as selectors from '../../logic/reducers';
-import MyCheckbox from '../general/checkbox';
+import { Button, withTheme, IconButton } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { 
+	KeyboardAvoidingView, 
+	StyleSheet, 
+	View,
+	FlatList,
+	Dimensions, 
+	Platform
+} from 'react-native';
+
 import FinishOrder from './FinishOrder';
+import MyCheckbox from '../general/checkbox';
+import ImagePicker from '../../components/general/ImagePickerProduct';
+
+import * as selectors from '../../logic/reducers';
+import * as actionsProducts from '../../logic/actions/products';
 import * as actions from '../../logic/actions/orders';
 
-function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrderButton=true,sendOrder,orderProducts,activeOrder, onlyDetail=false, newOrder, user }) {
+const createAndSavePDF = async (activeOrder) => {
+	const items = activeOrder.products.map(item => ({
+		name: item.productName,
+		quantity: item.quantity,
+		totalPrice: item.totalPrice
+	}))
+
+	const total = parseFloat(activeOrder.total).toFixed(2)
+
+	const d = new Date(activeOrder.date.seconds * 1000);
+
+	const length = activeOrder.products.length
+	const date = d.toLocaleDateString('en-GB')
+	const time = d.toLocaleTimeString('en-US')
+	
+	console.log(activeOrder)
+
+	let rows = ''
+	items.map(item => rows += `<div><p class="name"> ${item.quantity}  ${item.name}</p> <p class="price">Q${item.totalPrice}</p></div>`)
+
+	const html = 
+		`
+			<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>'Resumen de la Orden'</title>
+				<style>
+					div {
+						display: flex;
+						flex-direction: row;
+					}
+					h2 {
+						text-align: center;
+						margin: 4px;
+						margin-top: 12px;
+						font-size: 12px;
+					}
+					body {
+						font-family: Arial, Helvetica, sans-serif;
+                		font-size: 10px;
+                		color: rgb(0, 0, 0);
+            		}
+					body .info {
+						text-align: center;
+						font-size: 8px;
+						margin: 4px;
+					}
+					body .price {
+						flex: 1;
+						text-align: right;
+						margin: 4px;
+						margin-right: 16px;
+					}
+					body .name {
+						flex: 1;
+						text-align: left;
+						margin: 4px;
+						margin-left: 16px;
+					}
+					body .divisor {
+						text-align: center;
+					}
+					.header {
+						font-size: 8px;
+						margin: 8px 0px;
+					}
+        		</style>
+    		</head>
+    		<body>
+				<h2>Orden #1</h2>
+				<p class="info">${date} - ${time}</p>
+				<p class="info">Mesero: ${activeOrder.user.name} ${activeOrder.user.lastName}</p>
+				<p class="info">Mesa ${activeOrder.table}</p>
+		`
+		+
+		`
+				<div>
+					<p class="name header">DESCRIPCION</p>
+					<p class="price header">PRECIO</p>
+				</div>
+        		${rows}
+				<div></div>
+				<div>
+					<p class="name header">TOTAL</p>
+					<p class="price header">Q ${total}</p>
+				</div>
+    		</body>
+    		</html>
+		`
+
+	try {
+    	const { uri } = await Print.printToFileAsync({ 
+			html,
+			width: 250, //306, 200
+			height: length * 30 + 100
+		});
+    
+		if (Platform.OS === "ios"){
+			await Sharing.shareAsync(uri);
+    	} else {	
+			console.log("Falta opción para Android")
+		}
+	} catch (error) {
+    	console.error(error);
+  	}
+};
+
+
+function OrderInformationScreen({ theme, navigation, closeModal, modal, finishOrderButton=true, sendOrder, orderProducts, activeOrder, onlyDetail=false, newOrder, user }) {
 	const { colors, roundness } = theme;
 	const [quantity, setQuantity] = useState(0);
 	
@@ -35,47 +157,66 @@ function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrder
 			animationIn={"slideInUp"}
 			animationOut={"slideOutDown"}
 			coverScreen={true}
-			onBackButtonPress={()=>closeModal()}
-			onBackdropPress={()=>closeModal()}
+			onBackButtonPress={() => closeModal()}
+			onBackdropPress={() => closeModal()}
 			style={styles.modalB}
 			animationInTiming={0}
 			deviceWidth={Dimensions.get("window").width}
 			deviceHeight={Dimensions.get("window").height}
-			// onSwipeComplete={()=>closeModal()}
-			// swipeDirection={['right']}
-			// propagateSwipe={false}
 		>
-			<View style={{ flex: 1,backgroundColor:'white',flexDirection:'column',marginBottom:'6%'}}>
+			<View style={{ flex: 1, backgroundColor: 'white', flexDirection: 'column', marginBottom: '6%' }}>
 				<FinishOrder navigation={navigation} onlyDetail={onlyDetail} newOrder={newOrder}/>
-				<View style={{marginTop:'1%',marginBottom:'10%'}}>
-					{ <Button
-					//   disabled={!isAdmin && (quantity==0 || quantity==undefined)}
-					theme={roundness}
-					color={colors.accent}
-					icon={"backburger"}
-					height={50}
-					mode="contained"
-					labelStyle={{
-						fontFamily: "dosis-bold",
-						fontSize: 15,
-					}}
-					style={{
-						fontFamily: 'dosis',
-						marginLeft: '5%',
-						marginRight: '5%',
-						justifyContent: 'center',
-					}}
-					
-					onPress={()=>closeModal()}>
-					REGRESAR
-					</Button>}
-					
+				<View style={{ marginTop: '1%', marginBottom: '5%'}}>
+					<Button
+						theme={roundness}
+						color={colors.accent}
+						icon={"backburger"}
+						height={50}
+						mode="contained"
+						labelStyle={{
+							fontFamily: "dosis-bold",
+							fontSize: 15,
+						}}
+						style={{
+							fontFamily: 'dosis',
+							marginLeft: '5%',
+							marginRight: '5%',
+							justifyContent: 'center',
+						}}
+
+						onPress={() => closeModal()}
+					>
+						REGRESAR
+					</Button>
+
+					<Button
+						theme={roundness}
+						color={colors.accent}
+						icon={"printer"}
+						height={50}
+						mode="contained"
+						labelStyle={{
+							fontFamily: "dosis-bold",
+							fontSize: 15,
+						}}
+						style={{
+							fontFamily: 'dosis',
+							marginLeft: '5%',
+							marginRight: '5%',
+							justifyContent: 'center',
+							marginTop: 12,
+						}}
+
+						onPress={() => createAndSavePDF(activeOrder)}
+					>
+						IMPRIMIR ORDEN
+					</Button>
 				</View>
-				<IconButton testID={'close-button'}  icon="close"  size={30} style={{top:20,right:3,position:'absolute',backgroundColor:'#D8D8D8'}} mode="contained" onPress={()=>closeModal()}  />
+				<IconButton testID={'close-button'}  icon="close"  size={30} style={{ top: 20, right: 3, position: 'absolute', backgroundColor: '#D8D8D8'}} mode="contained" onPress={() => closeModal()}/>
 				
 			</View>
 			{finishOrderButton && !onlyDetail && 
-					<Button
+				<Button
 					disabled={false}
 					theme={{roundness:0}}
 					color={'#000000'}
@@ -98,11 +239,10 @@ function OrderInformationScreen({ theme,navigation,closeModal, modal,finishOrder
 					onPress={() =>{ 
 						closeModal();
 						sendOrder(activeOrder, total, user);
-						}}>
+						}}
+				>
 					{(!newOrder ? 'Actualizar' : 'PROCESAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
-					</Button>
-				
-				}
+				</Button>}
 		</Modal>
 	);
 }

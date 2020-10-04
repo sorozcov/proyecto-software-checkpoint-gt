@@ -235,6 +235,9 @@ const navigation = { navigate: jest.fn() };
 
 
 describe('<ProductsList />', () => {
+    beforeEach(() => {
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
     
     it('Categories sectioned correctly. Has 5', () => {
 
@@ -248,11 +251,8 @@ describe('<ProductsList />', () => {
         
         expect(productList.sections.length).toBe(5)
         
-  });
-});
+    });
 
-describe('<ProductsList />', () => {
-    
     it('Products of Bebidas Category. Has 2', () => {
 
         const rendered = render(
@@ -265,11 +265,8 @@ describe('<ProductsList />', () => {
         
         expect(productList.sections.find(section=>section.title=='Bebidas').data.length).toBe(2)
         
-  });
-});
+    });
 
-describe('<ProductsList />', () => {
-    
     it('Products of Bebidas Category. Has 2', () => {
 
         const rendered = render(
@@ -281,11 +278,8 @@ describe('<ProductsList />', () => {
         
         expect(productList.sections.find(section=>section.title=='Bebidas').data.length).toBe(2)
         
-  });
-});
+    });
 
-describe('<ProductsList />', () => {
-    
     it('Categories sectioned total products correctly. Has 7', () => {
 
         const rendered = render(
@@ -297,11 +291,8 @@ describe('<ProductsList />', () => {
         
         expect(productList.sections.reduce((accumulator,current)=>accumulator+current.data.length,0)).toBe(7)
         
-  });
-});
+    });
 
-describe('<ProductsList />', () => {
-    
     it('Swipe List View rendered correctly.', () => {
 
         const rendered = render(
@@ -314,11 +305,8 @@ describe('<ProductsList />', () => {
         
         expect(generalComponent.findAllByType(SwipeListView).length).toBe(1)
         
-  });
-});
+    });
 
-describe('<ProductsList />', () => {
-    
     it('Select Product Button Actions work correctly.', () => {
         const originalError = console.warn;
         console.warn = jest.fn();
@@ -331,10 +319,5 @@ describe('<ProductsList />', () => {
      
         expect(actions.pop().type).toBe('PRODUCT_SELECTED');
         console.warn = originalError;
-        
-        
-        
-       
-        
-  });
+    });
 });
