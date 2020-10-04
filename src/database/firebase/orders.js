@@ -118,25 +118,20 @@ export const suscribeOrders = () => {
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {
-                    // console.log("New order: ", change.doc∂.data());
 
                     let id = change.doc.id;
                     let docSaved = selectors.getOrder(store.getState(), id);
                     if (docSaved !== null && docSaved !== undefined) {
                         console.log("Retrieve order again.");
                     } else {
-                        //console.log("New product: ", change.doc.data());
                         store.dispatch(actions.completeAddingOrder({...change.doc.data(), id: change.doc.id }));
                     }
                 }
                 if (change.type === "modified") {
                     store.dispatch(actions.completeEditingOrder({...change.doc.data(), id: change.doc.id }));
-                    // console.log("Modified order: ", change.doc.data());
                 }
                 if (change.type === "removed") {
                     store.dispatch(actions.completeRemovingOrder(change.doc.id));
-                    // console.log(change.doc.id)
-                    // console.log("Removed order: ", change.doc.data());
                 }
             });
         });

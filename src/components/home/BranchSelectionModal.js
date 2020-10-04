@@ -156,6 +156,7 @@ export default connect(
 		},
 		clearOrders () {
 			unsuscribeOrders();
+			dispatch(orderActions.clearOrders());
 			suscribeOrders();
 		}
 	}),
