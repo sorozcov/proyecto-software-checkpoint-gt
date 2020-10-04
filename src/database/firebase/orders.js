@@ -107,6 +107,7 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
                 byBranch[branch.branchId]={
                     total:0,
                     totalWithInvoice:0,
+                    totalWithoutTip:0,
                     totalWithoutInvoice:0,
                     totalTip:0,
                 }
@@ -115,30 +116,35 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
                 byWaiter[user.uid]={
                     total:0,
                     totalWithInvoice:0,
+                    totalWithoutTip:0,
                     totalWithoutInvoice:0,
                     totalTip:0,
                 }
             }
             //Update by branch and by waiter
-            byBranch[branch.branchId].total=byBranch[branch.branchId].total+nOrder.total
-            byBranch[branch.branchId].totalWithInvoice=byBranch[branch.branchId].totalWithInvoice+(nOrder.status==5?nOrder.total:0)
-            byBranch[branch.branchId].totalWithoutInvoice=byBranch[branch.branchId].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            let totalWithTip=nOrder.total + nOrder.tip
+            byBranch[branch.branchId].total=byBranch[branch.branchId].total+totalWithTip
+            byBranch[branch.branchId].totalWithoutTip=byBranch[branch.branchId].totalWithoutTip+nOrder.total
+            byBranch[branch.branchId].totalWithInvoice=byBranch[branch.branchId].totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            byBranch[branch.branchId].totalWithoutInvoice=byBranch[branch.branchId].totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
             byBranch[branch.branchId].totalTip=byBranch[branch.branchId].totalTip+nOrder.tip
-            byWaiter[user.uid].total=byWaiter[user.uid].total+nOrder.total
-            byWaiter[user.uid].totalWithInvoice=byWaiter[user.uid].totalWithInvoice+(nOrder.status==5?nOrder.total:0)
-            byWaiter[user.uid].totalWithoutInvoice=byWaiter[user.uid].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            byWaiter[user.uid].total=byWaiter[user.uid].total+totalWithTip
+            byWaiter[user.uid].totalWithoutTip=byWaiter[user.uid].totalWithoutTip+nOrder.total
+            byWaiter[user.uid].totalWithInvoice=byWaiter[user.uid].totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            byWaiter[user.uid].totalWithoutInvoice=byWaiter[user.uid].totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
             byWaiter[user.uid].totalTip=byWaiter[user.uid].totalTip+nOrder.tip
             //Update by time
-            byTime[hours].total=byTime[hours].total+nOrder.total
-            byTime[hours].totalWithInvoice=byTime[hours].totalWithInvoice+(nOrder.status==5?nOrder.total:0)
-            byTime[hours].totalWithoutInvoice=byTime[hours].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            byTime[hours].total=byTime[hours].total+totalWithTip
+            byTime[hours].totalWithoutTip=byTime[hours].totalWithoutTip+nOrder.total
+            byTime[hours].totalWithInvoice=byTime[hours].totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            byTime[hours].totalWithoutInvoice=byTime[hours].totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
             byTime[hours].totalTip=byTime[hours].totalTip+nOrder.tip
             //Update general totals
-            total=totalDoc+nOrder.total+nOrder.tip
+            total=totalDoc+totalWithTip
             totalWithoutTip=totalWithoutTip+nOrder.total
             totalTip=totalTip+nOrder.tip
-            totalWithInvoice=totalWithInvoice+(nOrder.status==5?nOrder.total+nOrder.tip:0)
-            totalWithoutInvoice=totalWithoutInvoice+(nOrder.status==4?nOrder.total+nOrder.tip:0)
+            totalWithInvoice=totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            totalWithoutInvoice=totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
             productsOrder.forEach(prod=>products.push(prod))
             
             let updatedDocumentSaleInfo={

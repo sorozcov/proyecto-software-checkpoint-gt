@@ -24,6 +24,8 @@ export const createDatesDocuments = async({ startDate=null,endDate=null }) => {
                 total:0,
                 totalWithInvoice:0,
                 totalWithoutInvoice:0,
+                totalWithoutTip:0,
+                totalTip:0,
             }
         }
         //Days to create
