@@ -1,6 +1,6 @@
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Caption, Drawer, Title, withTheme } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import default_pic from '../../assets/resources/default.png';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 import * as selectors from '../../logic/reducers';
+import BranchSelectionModal from './BranchSelectionModal';
 
 
 import NewOrdersStackScreen from '../orders/NewOrderStackScreen';
@@ -21,164 +22,190 @@ const Tab = createMaterialBottomTabNavigator();
 
 
 function DrawerContent(props) {
-  const {navigation, user, logOff, toggleAppMode, isAdminMode} = props;
-  const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
+    const {navigation, user, logOff, toggleAppMode, isAdminMode} = props;
+    const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
 
-  return (
-    <DrawerContentScrollView {...props}>
-    {user.name!==undefined && <View
-      style={
-        styles.drawerContent
-      }
-    >
-   
-      <View style={styles.userInfoSection}>
-        {image!=18 && <Avatar.Image
-          source={{
-            uri:
-              image,
-          }}
-          size={140}
-          style={{marginTop:10}}
-        />}
-        {image==18 && <Avatar.Image
-          source={
-              image
-          }
-          size={140}
-          style={{marginTop:10}}
-        />}
-        <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
-        <Caption style={styles.caption}>{user.restaurantName}</Caption>
-       
-      </View>
-      <Drawer.Section style={styles.drawerSection}>
-         
-      {
-            user.userTypeId == 1 && (
-                <DrawerItem
-                icon={({ color, size }) => (
-                    <MaterialCommunityIcons
-                    name="account-arrow-right"
-                    color={color}
-                    size={size}
+    const [branchModal, setBranchModal] = useState(false);
+
+    return (
+        <DrawerContentScrollView {...props}>
+        {
+        user.name!==undefined && (
+            <View style={styles.drawerContent}>
+                <View style={styles.userInfoSection}>
+                    {
+                        image!=18 && (
+                            <Avatar.Image
+                                source={{
+                                    uri:
+                                    image,
+                                }}
+                                size={140}
+                                style={{marginTop:10}}
+                            />
+                        )
+                    }
+                    {
+                        image==18 && (
+                            <Avatar.Image
+                                source={
+                                    image
+                                }
+                                size={140}
+                                style={{marginTop:10}}
+                            />
+                        )
+                    }
+                    <Title style={styles.title}>{user.name + " " + user.lastName}</Title>
+                    <Caption style={styles.caption}>{user.restaurantName}</Caption>
+                </View>
+
+                <Drawer.Section style={styles.drawerSection}>
+                    <DrawerItem
+                        icon={({ color, size }) => (
+                            <MaterialCommunityIcons
+                                name="logout"
+                                color={color}
+                                size={size}
+                            />
+                        )}
+                        label="Cerrar sesión"
+                        labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                        onPress={() => logOff(navigation)}
                     />
-                )}
-                label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
-                labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-                onPress={() => toggleAppMode(navigation)}
-                />
-            )
-          }
-        <DrawerItem
-          icon={({ color, size }) => (
-            <MaterialCommunityIcons
-              name="logout"
-              color={color}
-              size={size}
-            />
-          )}
-          label="Cerrar sesión"
-          labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-          onPress={() => logOff(navigation)}
-        />
 
-       
-        
-      </Drawer.Section>
-      <View style={styles.footer}>
-      <Image
-            source={ require('../../assets/images/checkpoint.jpg') }
-            style={styles.logoImage}
-          />
-          <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
-      </View>
-     
-    </View>}
-  </DrawerContentScrollView>
-  );
+                    {
+                        user.userTypeId == 1 && (
+                            <DrawerItem
+                                icon={({ color, size }) => (
+                                    <MaterialCommunityIcons
+                                    name="account-convert"
+                                    color={color}
+                                    size={size}
+                                    />
+                                )}
+                                label={`Cambiar a modo ${isAdminMode ? "mesero": "administrador"}`}
+                                labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                                onPress={() => toggleAppMode(navigation)}
+                            />
+                        )
+                    }
+                    {
+                        user.userTypeId == 1 && user.canChangeBranch == 1 && (
+                            <DrawerItem
+                                icon={({ color, size }) => (
+                                    <MaterialCommunityIcons
+                                    name="store"
+                                    color={color}
+                                    size={size}
+                                    />
+                                )}
+                                label={`Cambiar sucursal`}
+                                labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                                onPress={() => setBranchModal(true)}
+                            />
+                        )
+                    }
+                </Drawer.Section>
+
+                <View style={styles.footer}>
+                    <Image
+                        source={ require('../../assets/images/checkpoint.jpg') }
+                        style={styles.logoImage}
+                    />
+                    <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
+                </View>
+
+                <BranchSelectionModal
+                    navigation={navigation}
+                    modal={branchModal}
+                    closeModal={()=>setBranchModal(false)}
+                />
+            </View>
+        )}
+        </DrawerContentScrollView>
+    );
 }
 
 
-function RootNavigator({theme,navigation,user,logOff, toggleAppMode, isAdminMode}) {
-  return (
-    <DrawerR.Navigator drawerContent={() => (
-        <DrawerContent
-            navigation={navigation}
-            user={user}
-            logOff={logOff}
-            toggleAppMode={toggleAppMode}
-            isAdminMode={isAdminMode}
-        />
-    )}>
-      <DrawerR.Screen name="Main" component={Main} />
-    </DrawerR.Navigator>
-  );
+function RootNavigator({theme, navigation, user, logOff, toggleAppMode, isAdminMode}) {
+
+    return (
+        <DrawerR.Navigator drawerContent={() => (
+            <DrawerContent
+                navigation={navigation}
+                user={user}
+                logOff={logOff}
+                toggleAppMode={toggleAppMode}
+                isAdminMode={isAdminMode}
+            />
+        )}>
+            <DrawerR.Screen name="Main" component={Main} />
+        </DrawerR.Navigator>
+    );
 };
 
 
 function Main({theme, navigation}) {
-  const {colors} = theme;
-  return (
-    
-      <Tab.Navigator
-        initialRouteName="Home"
-        activeColor="#f0edf6"
-        inactiveColor="#000000"
-       
-        shifting={false}
-        barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
-      >
-       
-        <Tab.Screen name="NewOrder"  component={NewOrdersStackScreen}
+    const {colors} = theme;
+
+    return (
+        <Tab.Navigator
+            initialRouteName="Home"
+            activeColor="#f0edf6"
+            inactiveColor="#000000"
+            shifting={false}
+            barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
+        >
+        
+            <Tab.Screen name="NewOrder"  component={NewOrdersStackScreen}
                 options={{
-                  tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> NUEVO PEDIDO </Text>,
-                  
-                  
-                  tabBarIcon: ({ color }) => (
+                tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> NUEVO PEDIDO </Text>,
+                
+                tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="food" color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }} />
-                  ),
-                }} />
-        <Tab.Screen name="Orders" component={OrderStackScreen} options={{
-                   tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> PEDIDOS </Text>,
-                  tabBarIcon: ({ color }) => (
+                ),
+                }}
+            />
+            <Tab.Screen name="Orders" component={OrderStackScreen} options={{
+                tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> PEDIDOS </Text>,
+                tabBarIcon: ({ color }) => (
                     <MaterialCommunityIcons name="format-list-numbered" color={color} size={25}
                     style={{ marginTop: 0,paddingBottom:8 }}/>
-                  ),
-                }} />
-        
-             
-      </Tab.Navigator>
-    
-  );
+                ),
+                }}
+            />
+        </Tab.Navigator>
+
+    );
 }
 
 
 const styles = StyleSheet.create({
-  container: {
+container: {
     flex: 1,
     flexDirection: 'column',
     backgroundColor: '#fff',
     fontFamily: 'dosis-regular',
-  },
-  topContainer: {
+},
+topContainer: {
     flex: 0.8,
-  },
-  bottomContainer: {
+},
+bottomContainer: {
     position: 'absolute',
     bottom: 50,
     left: 0,
     right: 0,
     alignItems: 'center',
-  },
-  inputContainerStyle: {
+},
+inputContainerStyle: {
     margin: 8,
-  },
-  imageContainer: {
+},
+imageContainer: {
     alignItems: 'center'
-  },
-  logoImage: {
+},
+logoImage: {
     width: 120,
     height: 120,
     resizeMode: 'contain',
@@ -186,99 +213,99 @@ const styles = StyleSheet.create({
     bottom:0,
     position:'relative',
     
-  
-  },
-  footer:{
+
+},
+footer:{
     flex:1,
     flexDirection:'column',
     alignSelf:'center'
     
-  },
-  inputContainerStyle: {
+},
+inputContainerStyle: {
     paddingLeft: 20,
     paddingRight: 20,
     paddingBottom: 10,
-  },
-  textStyle:{
+},
+textStyle:{
     textAlign: 'center', 
     fontFamily: 'dosis-semi-bold',
     fontSize:16,
     
-  },
-  drawerContent: {
+},
+drawerContent: {
     flex: 1,
     flexDirection:'column',
-  },
-  userInfoSection: {
+},
+userInfoSection: {
     paddingLeft: 20,
     backgroundColor:'black',
     marginBottom:10,
     paddingBottom:10,
     paddingTop:10,
-  },
-  checkpointInfo: {
+},
+checkpointInfo: {
     paddingLeft: 20,
     backgroundColor:'red',
     marginBottom:10,
     paddingBottom:10,
     paddingTop:10,
-  },
-  title: {
+},
+title: {
     marginTop: 20,
     fontWeight: 'bold',
     fontFamily:'dosis-bold',
     color:'white'
-  },
-  caption: {
+},
+caption: {
     fontSize: 14,
     lineHeight: 14,
     fontFamily:'dosis-bold',
     color:'white'
-  },
-  restaurantName: {
+},
+restaurantName: {
     fontSize: 14,
     lineHeight: 14,
     fontFamily:'dosis-bold',
     color:'black',
 
-  },
-  row: {
+},
+row: {
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  section: {
+},
+section: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 15,
-  },
-  
-  drawerSection: {
+},
+
+drawerSection: {
     marginTop: 15,
-  },
-  preference: {
+},
+preference: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
-  },
+},
 });
 
 Main = withTheme(Main);
 export default connect(
-  state => ({
+state => ({
     user: selectors.getLoggedUser(state),
     isAdminMode: selectors.getIsAdminMode(state),
-  }),
-  dispatch => ({
-      logOff:(navigation) => {
+}),
+dispatch => ({
+    logOff:(navigation) => {
         //Hacemos dispatch de loggoff
         navigation.replace('Login')
         dispatch(actionsLoggedUser.logout());
-      },
-      toggleAppMode:(navigation) => {
+    },
+    toggleAppMode:(navigation) => {
         dispatch(actionsLoggedUser.toggleAdminAppMode());
         navigation.replace('HomeAdmin');
-      },
-  }),
+    },
+}),
 )(withTheme(RootNavigator));

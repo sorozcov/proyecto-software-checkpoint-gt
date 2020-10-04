@@ -68,18 +68,18 @@ function DrawerContent(props) {
 
                 {image!=18 && (
                     <Avatar.Image
-                    source={{
-                        uri: image,
-                    }}
-                    size={140}
-                    style={{marginTop:10}}
+                        source={{
+                            uri: image,
+                        }}
+                        size={140}
+                        style={{marginTop:10}}
                     />
                 )}
                 {image==18 && (
                     <Avatar.Image
-                    source={image}
-                    size={140}
-                    style={{marginTop:10}}
+                        source={image}
+                        size={140}
+                        style={{marginTop:10}}
                     />
                 )}
                 <Title style={styles.title}>{user.name + " "+ user.lastName}</Title>
@@ -92,7 +92,7 @@ function DrawerContent(props) {
                         <DrawerItem
                             icon={({ color, size }) => (
                                 <MaterialCommunityIcons
-                                name="account-arrow-right"
+                                name="account-convert"
                                 color={color}
                                 size={size}
                                 />
@@ -213,131 +213,133 @@ function Main({theme, navigation}) {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#fff',
-    fontFamily: 'dosis-regular',
-  },
-  topContainer: {
-    flex: 0.8,
-  },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 50,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  inputContainerStyle: {
-    margin: 8,
-  },
-  imageContainer: {
-    alignItems: 'center'
-  },
-  logoImage: {
-    width: 120,
-    height: 120,
-    resizeMode: 'contain',
-    alignSelf:'center',
-    bottom:0,
-    position:'relative',
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        fontFamily: 'dosis-regular',
+    },
+    topContainer: {
+        flex: 0.8,
+    },
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 50,
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+    },
+    inputContainerStyle: {
+        margin: 8,
+    },
+    imageContainer: {
+        alignItems: 'center'
+    },
+    logoImage: {
+        width: 120,
+        height: 120,
+        resizeMode: 'contain',
+        alignSelf:'center',
+        bottom:0,
+        position:'relative',
+        
     
-  
-  },
-  footer:{
-    flex:1,
-    flexDirection:'column',
-    alignSelf:'center'
-    
-  },
-  inputContainerStyle: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 10,
-  },
-  textStyle:{
-    textAlign: 'center', 
-    fontFamily: 'dosis-semi-bold',
-    fontSize:16,
-    
-  },
-  drawerContent: {
-    flex: 1,
-    flexDirection:'column',
-  },
-  userInfoSection: {
-    paddingLeft: 20,
-    backgroundColor:'black',
-    marginBottom:10,
-    paddingBottom:10,
-    paddingTop:10,
-  },
-  checkpointInfo: {
-    paddingLeft: 20,
-    backgroundColor:'red',
-    marginBottom:10,
-    paddingBottom:10,
-    paddingTop:10,
-  },
-  title: {
-    marginTop: 20,
-    fontWeight: 'bold',
-    fontFamily:'dosis-bold',
-    color:'white'
-  },
-  caption: {
-    fontSize: 14,
-    lineHeight: 14,
-    fontFamily:'dosis-bold',
-    color:'white'
-  },
-  restaurantName: {
-    fontSize: 14,
-    lineHeight: 14,
-    fontFamily:'dosis-bold',
-    color:'black',
+    },
+    footer:{
+        flex:1,
+        flexDirection:'column',
+        alignSelf:'center'
+        
+    },
+    inputContainerStyle: {
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 10,
+    },
+    textStyle:{
+        textAlign: 'center', 
+        fontFamily: 'dosis-semi-bold',
+        fontSize:16,
+        
+    },
+    drawerContent: {
+        flex: 1,
+        flexDirection:'column',
+    },
+    userInfoSection: {
+        paddingLeft: 20,
+        backgroundColor:'black',
+        marginBottom:10,
+        paddingBottom:10,
+        paddingTop:10,
+    },
+    checkpointInfo: {
+        paddingLeft: 20,
+        backgroundColor:'red',
+        marginBottom:10,
+        paddingBottom:10,
+        paddingTop:10,
+    },
+    title: {
+        marginTop: 20,
+        fontWeight: 'bold',
+        fontFamily:'dosis-bold',
+        color:'white'
+    },
+    caption: {
+        fontSize: 14,
+        lineHeight: 14,
+        fontFamily:'dosis-bold',
+        color:'white'
+    },
+    restaurantName: {
+        fontSize: 14,
+        lineHeight: 14,
+        fontFamily:'dosis-bold',
+        color:'black',
 
-  },
-  row: {
-    marginTop: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  section: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  
-  drawerSection: {
-    marginTop: 15,
-  },
-  preference: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
+    },
+    row: {
+        marginTop: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    section: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 15,
+    },
+    
+    drawerSection: {
+        marginTop: 15,
+    },
+    preference: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+    },
 });
+
 Main = withTheme(Main);
+
 export default connect(
-  state => ({
-    user: selectors.getLoggedUser(state),
-    isAdminMode: selectors.getIsAdminMode(state),
-  }),
-  dispatch => ({
-    logOff:(navigation)=>{
-  
-      //Hacemos dispatch de loggoff
-      navigation.replace('Login')
-      dispatch(actionsLoggedUser.logout());
-      
-    },
-    toggleAppMode:(navigation)=>{
-      dispatch(actionsLoggedUser.toggleAdminAppMode());
-      navigation.replace('HomeWaiters');
-  
-    },
-  }),
+    state => ({
+        user: selectors.getLoggedUser(state),
+        isAdminMode: selectors.getIsAdminMode(state),
+    }),
+    dispatch => ({
+        logOff:(navigation)=>{
+    
+        //Hacemos dispatch de loggoff
+        navigation.replace('Login')
+        dispatch(actionsLoggedUser.logout());
+        
+        },
+        toggleAppMode:(navigation)=>{
+        dispatch(actionsLoggedUser.toggleAdminAppMode());
+        navigation.replace('HomeWaiters');
+    
+        },
+    }),
 )(withTheme(RootNavigator));
