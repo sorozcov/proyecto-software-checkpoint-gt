@@ -1,6 +1,10 @@
 import * as types from '../types/orders';
 
 
+export const clearOrders = () => ({
+    type: types.ORDERS_CLEARED,
+});
+
 export const startFetchingOrders = () => ({
     type: types.ORDERS_FETCH_STARTED,
 });

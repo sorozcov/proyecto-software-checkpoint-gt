@@ -6,11 +6,13 @@ import { Button, withTheme } from 'react-native-paper';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import MyTextInput from '../general/textInput';
+import { suscribeOrders,unsuscribeOrders } from '../../database/firebase/orders';
 
 import PickerInput from '../../components/general/PickerInput';
 
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/users';
+import * as orderActions from '../../logic/actions/orders';
 
 function BranchSelectionModal({
     navigation,
@@ -22,7 +24,8 @@ function BranchSelectionModal({
 	modal,
 	branches,
 	initialValues,
-	editLoggedUser
+	editLoggedUser,
+	clearOrders
 }) {
 
 	const isNew = initialValues == null;
@@ -30,12 +33,13 @@ function BranchSelectionModal({
     const { colors, roundness } = theme;
     const editLoggedUserBranchForm = values => {
 		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
-		closeModal();
-		
 		values = {...initialValues};
         values.restaurantName = selectedBranch.name;
         values.restaurantId = selectedBranch.id;
-        editLoggedUser(navigation, values);
+		editLoggedUser(navigation, values);
+		clearOrders();
+		
+		closeModal();
 	}
 	
 	return (
@@ -148,8 +152,13 @@ export default connect(
 
 	dispatch => ({
         editLoggedUser (navigation, values) {
-            dispatch(actions.startEditingUser(values));
+			dispatch(actions.startEditingUser(values));
 		},
+		clearOrders () {
+			unsuscribeOrders();
+			dispatch(orderActions.clearOrders());
+			suscribeOrders();
+		}
 	}),
 )(reduxForm({
 	form: 'editLoggedUserBranchForm',

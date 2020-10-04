@@ -173,7 +173,6 @@ export const deleteUser = async({ uid }) => {
             uid: null
         }
     }
-
 }
 
 //Suscribe to user changes
