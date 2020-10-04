@@ -114,7 +114,7 @@ export const deleteOrder = async({ orderId }) => {
 export const suscribeOrders = () => {
     let userBranch = selectors.getLoggedUser(store.getState());
 
-    return unsuscribeOrders = db.collection(collection).where('branchId', '==', `${userBranch.restaurantId}`)
+    db.collection(collection).where('branchId', '==', `${userBranch.restaurantId}`)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {
@@ -140,7 +140,5 @@ export const suscribeOrders = () => {
 //Unsuscribe to Orders changes
 export const unsuscribeOrders = () => {
     db.collection(collection)
-        .onSnapshot(function(snapshot) {
-            store.dispatch(actions.clearOrders());
-        });
+        .onSnapshot(function(snapshot) {});
 }

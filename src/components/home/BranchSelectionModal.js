@@ -37,7 +37,9 @@ function BranchSelectionModal({
         values.restaurantName = selectedBranch.name;
         values.restaurantId = selectedBranch.id;
 		editLoggedUser(navigation, values);
+		unsuscribeOrders();
 		clearOrders();
+		suscribeOrders();
 		
 		closeModal();
 	}
@@ -73,49 +75,50 @@ function BranchSelectionModal({
 							selectedItems={!isNew ? [initialValues.restaurantId]:[]}
 						/>
 					</View>
-
-					<Button
-						disabled={!dirty}
-						theme={roundness}
-						color={'#000000'}
-						icon={"plus"}
-						height={50}
-						mode="contained"
-						labelStyle={{
-							fontFamily: "dosis-bold",
-							fontSize: 15,
-						}}
-						style={{
-							fontFamily: 'dosis',
-							marginLeft: '5%',
-							marginRight: '5%',
-							justifyContent: 'center'
-						}}
-						onPress={handleSubmit(editLoggedUserBranchForm)}
-					>
-						{'Agregar'}
-					</Button>
-					
-					<Button
-						theme={roundness}
-						color={'red'}
-						height={50}
-						mode="contained"
-						labelStyle={{
-							fontFamily: "dosis-bold",
-							fontSize: 15,
-						}}
-						style={{
-							fontFamily: 'dosis',
-							marginLeft: '5%',
-							marginRight: '5%',
-							marginTop: 1,
-							justifyContent: 'center',
-						}}
-						onPress={()=>closeModal()}
-					>
-						{'Cancelar'}
-					</Button>
+					<View>
+						<Button
+							disabled={!dirty}
+							theme={roundness}
+							color={'#000000'}
+							icon={"check"}
+							height={50}
+							mode="contained"
+							labelStyle={{
+								fontFamily: "dosis-bold",
+								fontSize: 15,
+							}}
+							style={{
+								fontFamily: 'dosis',
+								marginLeft: '5%',
+								marginRight: '5%',
+								justifyContent: 'center'
+							}}
+							onPress={handleSubmit(editLoggedUserBranchForm)}
+						>
+							{'Confirmar'}
+						</Button>
+						
+						<Button
+							theme={roundness}
+							color={'red'}
+							height={50}
+							mode="contained"
+							labelStyle={{
+								fontFamily: "dosis-bold",
+								fontSize: 15,
+							}}
+							style={{
+								fontFamily: 'dosis',
+								marginLeft: '5%',
+								marginRight: '5%',
+								marginTop: 10,
+								justifyContent: 'center',
+							}}
+							onPress={()=>closeModal()}
+						>
+							{'Cancelar'}
+						</Button>
+					</View>
 				</View>
 			</View>
 		</Modal>
@@ -155,9 +158,7 @@ export default connect(
 			dispatch(actions.startEditingUser(values));
 		},
 		clearOrders () {
-			unsuscribeOrders();
 			dispatch(orderActions.clearOrders());
-			suscribeOrders();
 		}
 	}),
 )(reduxForm({
