@@ -87,9 +87,10 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
         
         await orderDoc.update(orderInfo);
         const nOrder = (await db.collection(collection).doc(orderId).get()).data()
-        if(orderStatus>2){
-            
-            let saleDateId = moment.unix(nOrder.date.seconds);
+        if(orderStatus>3){
+            console.log("Date")
+            console.log(nOrder.date)
+            let saleDateId = moment.unix(nOrder.date.seconds).local();
             let hours = saleDateId.hours()
             saleDateId= saleDateId.format("YYYY-MM-DD")
             console.log(saleDateId)
@@ -99,7 +100,8 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
             let productsOrder = nOrder.products
             let totalWithInvoice=0
             let totalWithoutInvoice=0
-            let {byBranch,byTime,byWaiter,products,totalTip,totalWithoutTip} = documentSaleInfo
+            let {byBranch,byTime,byWaiter,products,totalTip,totalWithoutTip,} = documentSaleInfo
+            let totalDoc = documentSaleInfo.total
             //Check if it doesnt exist total by branch and byWaiter
             if(byBranch[branch.branchId]==undefined){
                 byBranch[branch.branchId]={
@@ -119,23 +121,26 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
             }
             //Update by branch and by waiter
             byBranch[branch.branchId].total=byBranch[branch.branchId].total+nOrder.total
-            byBranch[branch.branchId].totalWithInvoice=byBranch[branch.branchId].totalWithInvoice+(nOrder.status==3?nOrder.total:0)
+            byBranch[branch.branchId].totalWithInvoice=byBranch[branch.branchId].totalWithInvoice+(nOrder.status==5?nOrder.total:0)
             byBranch[branch.branchId].totalWithoutInvoice=byBranch[branch.branchId].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            byBranch[branch.branchId].totalTip=byBranch[branch.branchId].totalTip+nOrder.tip
             byWaiter[user.uid].total=byWaiter[user.uid].total+nOrder.total
-            byWaiter[user.uid].totalWithInvoice=byWaiter[user.uid].totalWithInvoice+(nOrder.status==3?nOrder.total:0)
+            byWaiter[user.uid].totalWithInvoice=byWaiter[user.uid].totalWithInvoice+(nOrder.status==5?nOrder.total:0)
             byWaiter[user.uid].totalWithoutInvoice=byWaiter[user.uid].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            byWaiter[user.uid].totalTip=byWaiter[user.uid].totalTip+nOrder.tip
             //Update by time
             byTime[hours].total=byTime[hours].total+nOrder.total
-            byTime[hours].totalWithInvoice=byTime[hours].totalWithInvoice+(nOrder.status==3?nOrder.total:0)
+            byTime[hours].totalWithInvoice=byTime[hours].totalWithInvoice+(nOrder.status==5?nOrder.total:0)
             byTime[hours].totalWithoutInvoice=byTime[hours].totalWithoutInvoice+(nOrder.status==4?nOrder.total:0)
+            byTime[hours].totalTip=byTime[hours].totalTip+nOrder.tip
             //Update general totals
-            total=total+nOrder.total+nOrder.tip
+            total=totalDoc+nOrder.total+nOrder.tip
             totalWithoutTip=totalWithoutTip+nOrder.total
-            totalTip=totalTip+nOrder.total
-            totalWithInvoice=totalWithoutInvoice+(nOrder.status==3?nOrder.total+nOrder.tip:0)
+            totalTip=totalTip+nOrder.tip
+            totalWithInvoice=totalWithInvoice+(nOrder.status==5?nOrder.total+nOrder.tip:0)
             totalWithoutInvoice=totalWithoutInvoice+(nOrder.status==4?nOrder.total+nOrder.tip:0)
             productsOrder.forEach(prod=>products.push(prod))
-            console.log(documentSaleInfo)
+            
             let updatedDocumentSaleInfo={
                 ...documentSaleInfo,
                 byBranch:{...byBranch},
@@ -172,7 +177,7 @@ export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
 export const getOrders = async() => {
     try {
         var date = new Date();
-        date.setUTCHours(-18,0)
+        date.setHours(0,0,0)
         const orders = await db.collection(collection).where("date", ">=", date).get();
         let ordersArray = [];
         orders.docs.forEach(order => {
@@ -226,7 +231,7 @@ export const deleteOrder = async({ orderId }) => {
 //Suscribe to Orders changes
 export const suscribeOrders = async ()=>{
     var date = new Date();
-    date.setUTCHours(-18,0)
+    date.setHours(0,0,0)
     db.collection(collection).where("date", ">=", date)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {

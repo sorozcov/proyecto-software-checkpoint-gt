@@ -34,6 +34,7 @@ function OrderInformationScreen({
 	newOrder, 
 	user,
 	editOrderStatus,
+	editOrderStatusCompleted,
 	showPrintButton=false,
 	}) {
 
@@ -78,18 +79,37 @@ function OrderInformationScreen({
 			},
 	];
 
-	const [tip, setTip] = useState({
-		id: 10,
-		title: '10%',
-		selected: true,
-	});
+	const [tip, setTip] = useState(
+		{
+			id: 10,
+			title: '10%',
+			selected: true,
+		}
+	);
 	const [discount, setDiscount] = useState({
 		id: 10,
 		title: '10%',
 		selected: true,
 	});
+	useEffect(()=>{
+		console.log(dataTip)
+		dataTip.forEach((type,index)=>{
+			if(activeOrder.hasTip && type.id==activeOrder.tipType.id){
+				dataTip[index]=activeOrder.tipType
+			}else{
+				if(activeOrder.hasTip){
+					dataTip[index]={...type,selected:false}
+				}else{
+					dataTip[index]={...type}
+				}
+				
+			}
+		})
+			
+	},[activeOrder])
 	const [invoice, setInvoice] = useState(false);
 	const [discounts, setDiscounts] = useState(false);
+	const [closeOrder, setCloseOrder] = useState(false);
 	const [tips, setTips] = useState(true);
 	
 	//Se calcula el total
@@ -127,24 +147,27 @@ function OrderInformationScreen({
 				<FinishOrder navigation={navigation} onlyDetail={onlyDetail} newOrder={newOrder}/>
 				{(charge || chargeView) && <View>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.tip!==false : tips} onCheck={(check)=>setTips(check)} disabled={chargeView}/>
-					{chargeView && activeOrder.tip!==false &&
+					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.hasTip!==false : tips} onCheck={(check)=>setTips(check)} disabled={chargeView}/>
+					{chargeView && activeOrder.hasTip!==false &&
 					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
-						{activeOrder.tip}  
+						Q.{(parseFloat(activeOrder.tip).toFixed(2))}  
 					</Text> }
 					{ charge && tips &&
 					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setTip(elem)}/>}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
 					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.status===5 : invoice} onCheck={(check)=>setInvoice(check)} disabled={chargeView}/>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.discount!==false : discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/>
-					{chargeView && activeOrder.discount!==false && 
+					{/* <MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.discount!==false : discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/> */}
+					<MyCheckbox name={'closeOrder'} disabled={false}  label='CERRAR CUENTA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.closeOrder!==false : closeOrder} onCheck={(check)=>setCloseOrder(check)} disabled={chargeView}/>
+					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
+					
+					{/* {chargeView && activeOrder.discount!==false && 
 					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
 						{activeOrder.discount}  
 					</Text> }
 					{charge && discounts &&
 					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>}
-					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
+					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} /> */}
 					
 					
 					
@@ -233,7 +256,38 @@ function OrderInformationScreen({
 					</Button>
 				
 				}
-				{charge &&
+				{charge && !closeOrder &&
+					<Button
+					disabled={total==0}
+					theme={{roundness:0}}
+					color={'#000000'}
+					icon={"cash-register"}
+					height={Platform.OS=='ios' ? 80 : 65}
+					mode="contained"
+					labelStyle={{
+						fontFamily: "dosis-bold",
+						fontSize: 15,
+						
+					}}
+					style={{
+						fontFamily: 'dosis',
+						bottom: '0%',
+						width:'100%',
+						
+						justifyContent: 'center',
+						
+						position:'absolute',
+					}}
+					
+					onPress={() =>{ 
+						closeModal();
+						editOrderStatusCompleted(activeOrder, { tip, tips, invoice, discounts, discount,closeOrder});
+						}}>
+					{( 'COBRAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
+					</Button>
+				
+				}
+				{charge && closeOrder &&
 					<Button
 					disabled={total==0}
 					theme={{roundness:0}}
@@ -257,9 +311,9 @@ function OrderInformationScreen({
 					
 					onPress={() =>{ 
 						closeModal();
-						editOrderStatus(activeOrder, { tip, tips, invoice, discounts, discount});
+						editOrderStatus(activeOrder, { tip, tips, invoice, discounts, discount,closeOrder});
 						}}>
-					{( 'COBRAR') + ` ORDEN POR Q${parseFloat(total).toFixed(2)}`}
+					{( 'COBRAR Y CERRAR CUENTA') + ` POR Q${parseFloat(total).toFixed(2)}`}
 					</Button>
 				
 				}
@@ -404,8 +458,22 @@ export default connect(
 		},
         editOrderStatus(order,invoiceInfo) {
 			order.discount = invoiceInfo.discounts ? invoiceInfo.discount.title : false;
-			order.tip = invoiceInfo.tips ? invoiceInfo.tip.title : false;
+			order.tip = invoiceInfo.tips ? (invoiceInfo.tip.id/100)*order.total : 0;
+			order.hasTip = invoiceInfo.tips
+			order.tipType = invoiceInfo.tips ? invoiceInfo.tip : null
+			order.status = invoiceInfo.invoice ? 5 : 4;
+			// dispatch(actions.startEditingOrderStatus(order, invoiceInfo.invoice ? 5 : 4, null));
 			dispatch(actions.startEditingOrderStatus(order, invoiceInfo.invoice ? 5 : 4, null));
+		},
+		editOrderStatusCompleted(order,invoiceInfo) {
+			order.discount = invoiceInfo.discounts ? invoiceInfo.discount.id/100 : 0;
+			order.tip = invoiceInfo.tips ? (invoiceInfo.tip.id/100)*order.total : 0;
+			order.hasTip = invoiceInfo.tips
+			order.tipType = invoiceInfo.tips ? invoiceInfo.tip : null
+			order.status = 3;
+			order.closeOrder = invoiceInfo.closeOrder
+			// dispatch(actions.startEditingOrderStatus(order, invoiceInfo.invoice ? 5 : 4, null));
+			dispatch(actions.startEditingOrderStatus(order, 3, null));
         },
 	}),
   )(withTheme(OrderInformationScreen));

@@ -156,8 +156,8 @@ function OrdersList ({
                                             </TouchableOpacity>
                                             
                                             <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent}]}
-                                                onPress={() => editOrderStatus(order.item, 2, null)}
+                                                style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent,borderRadius:0}]}
+                                                onPress={() => {editOrderStatus(order.item, 2, null);changeIndexShowTab(1)}}
                                             >
                                                 <MaterialCommunityIcons
                                                     name="check-circle"
@@ -205,8 +205,8 @@ function OrdersList ({
                                     (order, rowMap) => (
                                         <View style={styles.rowBack}>
                                             <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnMiddle, {borderWidth: 3, borderColor: 'red', backgroundColor: 'white'}]}
-                                                onPress={() => editOrderStatus(order.item, 1, null)}
+                                                style={[styles.backRightBtn, styles.backRightBtnMiddle, {borderWidth: 3, borderColor: colors.accent,borderRadius:0,backgroundColor:'white'}]}
+                                                onPress={() => {editOrderStatus(order.item, 1, null);changeIndexShowTab(0)}}
                                             >
                                                 <MaterialCommunityIcons
                                                     name="close-circle"
@@ -216,8 +216,8 @@ function OrdersList ({
                                                 <Text style={{...styles.backTextWhite,fontSize:12}}>Procesando</Text>  
                                             </TouchableOpacity>                                            
                                             <TouchableOpacity
-                                                style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent}]}
-                                                onPress={() => editOrderStatus(order.item, 3, null)}
+                                                style={[styles.backRightBtn, styles.backRightBtnRight, {borderWidth: 3, borderColor: colors.accent,borderRadius:0}]}
+                                                onPress={() => {editOrderStatus(order.item, 3, null);changeIndexShowTab(2)}}
                                             >
                                                 <MaterialCommunityIcons
                                                     name="check-circle"
