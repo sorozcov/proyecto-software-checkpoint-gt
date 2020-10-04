@@ -60,7 +60,7 @@ function DrawerContent(props) {
     <DrawerContentScrollView {...props}>
        {user.name!==undefined  && <View
             style={
-            styles.drawerContent
+              styles.drawerContent
             }
         >
 

@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot User List Item snapshot 1`] = `
+<View
+  accessible={true}
+  focusable={false}
+  isTVSelectable={true}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={null}
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "transparent",
+          "borderBottomWidth": null,
+          "borderColor": "#c9c9c9",
+          "flexDirection": "row",
+          "marginLeft": 16,
+          "paddingBottom": null,
+          "paddingRight": null,
+          "paddingTop": null,
+        },
+        Object {},
+      ]
+    }
+    thumbnail={true}
+  >
+    <View
+      style={
+        Object {
+          "alignItems": "flex-start",
+          "alignSelf": "center",
+          "flex": 0,
+          "flexDirection": "row",
+        }
+      }
+    >
+      <Image
+        circle={true}
+        source={1}
+        style={
+          Object {
+            "borderRadius": 28,
+            "height": 56,
+            "width": 56,
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "alignItems": null,
+          "alignSelf": null,
+          "borderBottomWidth": 0.5,
+          "borderColor": "#c9c9c9",
+          "flex": 1,
+          "marginLeft": 15,
+          "paddingBottom": 18,
+          "paddingTop": 18,
+        }
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#000",
+              "fontFamily": "System",
+              "fontSize": 16,
+              "marginLeft": null,
+              "marginRight": 10,
+            },
+            Object {
+              "fontFamily": "dosis-semi-bold",
+              "fontSize": 18,
+            },
+          ]
+        }
+        uppercase={false}
+      />
+      <Text
+        note={true}
+        numberOfLines={1}
+        style={
+          Array [
+            Object {
+              "color": "#808080",
+              "fontFamily": "System",
+              "fontSize": 14,
+              "fontWeight": "200",
+              "marginLeft": null,
+              "marginRight": 10,
+            },
+            Object {
+              "fontFamily": "dosis-semi-bold",
+              "fontSize": 15,
+            },
+          ]
+        }
+        uppercase={false}
+      />
+    </View>
+  </View>
+</View>
+`;

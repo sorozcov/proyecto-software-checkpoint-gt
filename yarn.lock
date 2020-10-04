@@ -4369,6 +4369,16 @@ expo-permissions@~8.1.0:
   resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-8.1.0.tgz#a7f2ee91ba76ce3a467e7b10adaa9ca5201b226f"
   integrity sha512-QBHD+1J9+sGFnhoEGzMRchPweeEE0OJ9ehG/0l1BMRBA7qsLS9vRC1FTJ55NwjI0Kr4RTha9r6ZX1kZHT09f/w==
 
+expo-print@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/expo-print/-/expo-print-9.1.0.tgz#b5ed2285af5ebc049a0cff8e669ca098577ce44a"
+  integrity sha512-yMUQ9MQAKTQ8NcQZOqS0Ecf5CbZlF44LmUQnXvBojvMavnfqMxDwzhLj0MA8E+vH6xWoqlWw/kXJjX8r+e1diQ==
+
+expo-sharing@^8.4.1:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-8.4.1.tgz#250e537d970af861a45fd194bd804e9389fdc25a"
+  integrity sha512-Qg6CJQPwE00lm3cZrq4spJT+ahsZa8z1g1FwItQ5FFIUTfli97P6i6g5q12jL5KWaGycbw+La/5/vgT40I9Oxg==
+
 expo-sqlite@~8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-8.1.0.tgz#858eb28e1143db281de8a49c99b4a953a81d0834"

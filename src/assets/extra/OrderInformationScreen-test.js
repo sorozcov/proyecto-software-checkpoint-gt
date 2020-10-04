@@ -298,6 +298,10 @@ const store = mockStore({
 })
 
 describe("Snapshot", () => {
+    beforeEach(() => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+    
     it('Order Information Screen snapshot', () => {
         const component = render(
             <Provider store={store}><OrderInformationScreen /></Provider>
