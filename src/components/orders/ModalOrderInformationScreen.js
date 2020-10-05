@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import OptionPicker from '../../components/general/OptionPicker';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
-import MyCheckbox from '../general/checkbox';
+import MyCheckbox from '../general/checkboxNoReduxForm';
 import FinishOrder from './FinishOrder';
 
 
@@ -152,7 +152,7 @@ function OrderInformationScreen({
 	user,
 	editOrderStatus,
 	editOrderStatusCompleted,
-	showPrintButton=false,
+	showPrintButton=true,
 	}) {
 	const { colors, roundness } = theme;
 	const charge = activeOrder.status == 3; 
@@ -270,8 +270,8 @@ function OrderInformationScreen({
 					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.status===5 : invoice} onCheck={(check)=>setInvoice(check)} disabled={chargeView}/>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
 					{/* <MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.discount!==false : discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/> */}
-					<MyCheckbox name={'closeOrder'} disabled={false}  label='CERRAR CUENTA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.closeOrder!==false : closeOrder} onCheck={(check)=>setCloseOrder(check)} disabled={chargeView}/>
-					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
+					{!chargeView && <MyCheckbox name={'closeOrder'} disabled={false}  label='CERRAR CUENTA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={!chargeView ? chargeView : closeOrder} onCheck={(check)=>setCloseOrder(check)} disabled={chargeView}/>}
+					{!chargeView && <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />}
 					
 					{/* {chargeView && activeOrder.discount!==false && 
 					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>

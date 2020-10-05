@@ -61,18 +61,7 @@ function DrawerContent(props) {
                 </View>
 
                 <Drawer.Section style={styles.drawerSection}>
-                    <DrawerItem
-                        icon={({ color, size }) => (
-                            <MaterialCommunityIcons
-                                name="logout"
-                                color={color}
-                                size={size}
-                            />
-                        )}
-                        label="Cerrar sesión"
-                        labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
-                        onPress={() => logOff(navigation)}
-                    />
+                    
 
                     {
                         user.userTypeId == 1 && (
@@ -91,7 +80,7 @@ function DrawerContent(props) {
                         )
                     }
                     {
-                        user.userTypeId == 1 && user.canChangeBranch == 1 && (
+                        (user.userTypeId == 1 || user.canChangeBranch == true) && (
                             <DrawerItem
                                 icon={({ color, size }) => (
                                     <MaterialCommunityIcons
@@ -106,6 +95,18 @@ function DrawerContent(props) {
                             />
                         )
                     }
+                    <DrawerItem
+                        icon={({ color, size }) => (
+                            <MaterialCommunityIcons
+                                name="logout"
+                                color={color}
+                                size={size}
+                            />
+                        )}
+                        label="Cerrar sesión"
+                        labelStyle={{ fontSize: 16,fontFamily:'dosis-bold' }}
+                        onPress={() => logOff(navigation)}
+                    />
                 </Drawer.Section>
 
                 <View style={styles.footer}>

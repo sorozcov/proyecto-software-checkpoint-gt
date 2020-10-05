@@ -147,7 +147,7 @@ function ProductsList ({
                 </View>
             </Modal>
             { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false} newOrder={newOrder} />}
-            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} newOrder={newOrder} />}
+            { <ModalOrderInformationScreen modal={modalOrder} closeModal={()=>setModalOrder(false)}  navigation={navigation} isAdmin={false} newOrder={newOrder} showPrintButton={false}/>}
         </View>
     )
 }

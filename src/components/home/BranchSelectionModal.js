@@ -31,15 +31,15 @@ function BranchSelectionModal({
 	const isNew = initialValues == null;
 
     const { colors, roundness } = theme;
-    const editLoggedUserBranchForm = values => {
+    const  editLoggedUserBranchForm = async(values) => {
 		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
 		values = {...initialValues};
         values.restaurantName = selectedBranch.name;
         values.restaurantId = selectedBranch.id;
-		editLoggedUser(navigation, values);
-		unsuscribeOrders();
-		clearOrders();
-		suscribeOrders();
+		await editLoggedUser(navigation, values);
+		await unsuscribeOrders();
+		await clearOrders();
+		await suscribeOrders();
 		
 		closeModal();
 	}

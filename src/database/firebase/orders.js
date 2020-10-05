@@ -241,7 +241,8 @@ export const suscribeOrders = async ()=>{
     var date = new Date();
     date.setHours(0,0,0)
     let userBranch = selectors.getLoggedUser(store.getState());
-    suscribeFunction = db.collection(collection).where("date", ">=", date).where('branchId', '==', `${userBranch.restaurantId}`)
+    console.log(userBranch)
+    suscribeFunction = db.collection(collection).where("date", ">=", date)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {
@@ -251,6 +252,7 @@ export const suscribeOrders = async ()=>{
                     if (docSaved !== null && docSaved !== undefined) {
                         console.log("Retrieve order again.");
                     } else {
+                        console.log(docSaved)
                         store.dispatch(actions.completeAddingOrder({...change.doc.data(), id: change.doc.id }));
                     }
                 }
