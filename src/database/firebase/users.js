@@ -10,6 +10,8 @@ import * as actions from '../../logic/actions/users';
 import { store } from '../../../App'
 import * as selectors from '../../logic/reducers';
 
+import uuid from 'react-native-uuid';
+
 
 const db = firebaseFirestore;
 const collection = "users";
@@ -61,6 +63,8 @@ export const updateUser = async({
         let userDoc = null;
         let userData = null;
         let isNew = uid == null;
+        let test = uuid.v1()
+        
         if (isNew) {
             //Create Random Password for User to change with the email confirmation
             let password = randomString();
@@ -70,6 +74,8 @@ export const updateUser = async({
         }
         userDoc = firebaseFirestore.collection(collection).doc(uid);
         uid = userDoc.id;
+        let idk = await firebaseFirestore.collection(collection).doc(uid).get()
+        idk = idk.data()
 
         let dateModified = new Date();
         dateModified = dateModified.getTime();
@@ -109,14 +115,15 @@ export const updateUser = async({
             //Vemos si necesita subir una imagen
             image = image !== undefined ? image : null;
             if (image !== null) {
-                if (!image.includes(uid)) {
-                    let uploadImg = await uploadImageToFirebase(image, uid, "UserImages");
+                if (!image.includes(idk.image)) {
+                    console.log('need to update img')
+                    let uploadImg = await uploadImageToFirebase(image, test, "UserImages");
                     if (!uploadImg.uploaded) {
                         //Error subiendo imagen
                         console.log(uploadImg.error);
                     }
                 }
-                image = uid;
+                image = test;
             }
 
             //Hacemos update al documento del usuario
@@ -139,7 +146,7 @@ export const updateUser = async({
         return { user: userData, error: null, errorMessage: null }
 
     } catch (error) {
-        console.log(error.toString());
+        console.log('ERROR UPDATE USER --> ', error.toString());
         let errorMessage = ""
         switch (error.toString()) {
             case "Error: The email address is already in use by other account.":
