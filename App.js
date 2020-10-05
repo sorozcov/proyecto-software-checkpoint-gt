@@ -19,11 +19,12 @@ import configureStore from './src/logic/store';
 //Mute warnings
 console.disableYellowBox = true;
 
+console.warn = () => {};
 
 
 //Se crea el store
 export const store = configureStore();
-export const suscribeFirebase = true;
+
 // store.subscribe(() => console.log(store.getState()))
 
 //Se configura el tema 

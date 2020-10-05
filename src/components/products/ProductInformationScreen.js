@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
 
 export default connect(
     state => ({
-        initialValues: selectors.getProduct(state,selectors.getSelectedProduct(state).productId),
+        initialValues: selectors.getSelectedProduct(state)!=null && selectors.getSelectedProduct(state).productId!=undefined ? selectors.getProduct(state,selectors.getSelectedProduct(state).productId) : null,
         ingredients: selectors.getSelectedProductIngredients(state),
             additionals: selectors.getSelectedProductAdditionals(state),
         categories: selectors.getCategories(state),

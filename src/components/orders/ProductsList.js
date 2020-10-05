@@ -12,7 +12,7 @@ import * as actionsOrders from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import ProductListItem from '../products/ProductListItem';
 import { SearchBar } from 'react-native-elements';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 const width = Dimensions.get('window').width; // full width
 import ModalProductInformationScreen from '../products/ModalProductInformationScreen'
@@ -102,7 +102,7 @@ function ProductsList ({
                         leftOpenValue={0}
                         rightOpenValue={-150}
                         previewRowKey={'0'}
-                        
+                        renderHiddenItem={() => (<></>)}
                         previewOpenDelay={1000}
                     />
                 

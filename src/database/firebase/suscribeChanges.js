@@ -19,6 +19,7 @@ export const suscribeToFirebase = async() => {
     await suscribeCategories();
     await suscribeBranches();
     await suscribeOrders();
+    return await true
 }
 
 export const unsuscribeToFirebase = async() => {

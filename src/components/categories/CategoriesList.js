@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../logic/actions/categories';
 import * as selectors from '../../logic/reducers';
 import CategoryListItem from './CategoryListItem';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 

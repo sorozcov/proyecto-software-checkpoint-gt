@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native';
 import { takeEvery } from 'redux-saga/effects';
 import * as types from '../types/loggedUser';
 import { suscribeToFirebase,unsuscribeToFirebase } from '../../database/firebase/suscribeChanges';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 
@@ -10,12 +10,12 @@ import { suscribeFirebase } from '../../../App';
 function* loginStarted(action) {
     try {
         yield AsyncStorage.setItem('userCheckpoint', JSON.stringify(action.payload));
-        if(suscribeFirebase){
-            yield suscribeToFirebase()
-        }
+
         
     } catch (error) {
+        console.log(error)
         console.log("Error async storage setting userCheckpoint")
+        
         
     }
 }
@@ -39,6 +39,7 @@ function* logoffStarted(action) {
             console.log("unsuscribed")
         }
     } catch (error) {
+        console.log(error)
         console.log("Error async storage setting userCheckpoint")
         
     }

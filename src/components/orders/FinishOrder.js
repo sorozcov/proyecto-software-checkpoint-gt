@@ -48,13 +48,13 @@ function FinishOrder({
 
     return (
         <View style={styles.container}>
-            {activeOrder.table!==undefined && <View style={{flex:0.05,direction:'row',alignItems:'center',}}>
+            {activeOrder.table!==undefined && <View style={{height:25,direction:'row',alignItems:'center',}}>
                 <Text style={{ fontFamily:'dosis-semi-bold',fontSize:19,}}>
                      {'ORDEN' +' MESA '+activeOrder.table+ " " +activeOrder.orderName}  
                 </Text>
             </View>}
             <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-            <View style={{flex:0.04}}>
+            <View style={{height:20}}>
                 
                 <Text style={{paddingLeft: 18,fontFamily:'dosis-light',fontSize:18}}>
                     {'Detalle'}  
@@ -77,12 +77,12 @@ function FinishOrder({
                         product={category.item}
                         navigation={navigation}
                         onlyView={true}
-                        onPress={onlyDetail?null:()=>{setModalProduct(true);selectProductInformation(category.item);}} 
+                        onPress={onlyDetail?() => (null):()=>{setModalProduct(true);selectProductInformation(category.item);}} 
                         
                     />
                 )}
                 renderHiddenItem= {
-                    onlyDetail?null: (product, rowMap) => (
+                    onlyDetail?() => (<></>): (product, rowMap) => (
                         <View style={styles.rowBack}>
                             <TouchableOpacity
                                 style={[styles.backRightBtn, styles.backRightBtnRight]}
@@ -127,9 +127,7 @@ function FinishOrder({
                 
                 previewOpenDelay={1000}
             />
-            <View style={styles.totalContainer}>
-                <Text  style={{fontFamily:'dosis-light',fontSize:20}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
-            </View>
+           
            
             { <ModalProductInformationScreen modal={modalProduct} closeModal={()=>setModalProduct(false)}  isAdmin={false} onlyDetail={onlyDetail} newOrder={newOrder} />}
         </View>

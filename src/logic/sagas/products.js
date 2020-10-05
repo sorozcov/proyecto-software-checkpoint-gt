@@ -3,7 +3,7 @@ import { deleteProduct, getProducts, updateProduct } from '../../database/fireba
 import * as actions from '../../logic/actions/products';
 import * as selectors from '../../logic/reducers';
 import * as types from '../types/products';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 
@@ -29,7 +29,7 @@ export function* watchProductsFetchStarted() {
 
 function* addProduct(action) {
     try {
-        const product = action.payload;
+        const newProduct = action.payload;
 
         const response = yield updateProduct(newProduct);
         if (response.error == null)

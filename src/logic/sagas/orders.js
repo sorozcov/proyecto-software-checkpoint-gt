@@ -1,8 +1,8 @@
 import { put, takeEvery } from 'redux-saga/effects';
 
 
-import { suscribeFirebase } from '../../../App';
-import { getOrders, updateOrder, deleteOrder } from '../../database/firebase/orders';
+import { suscribeFirebase } from '../../../config';
+import { getOrders, updateOrder, deleteOrder,updateOrderStatus } from '../../database/firebase/orders';
 import * as actions from '../../logic/actions/orders';
 import * as types from '../types/orders';
 
@@ -54,6 +54,31 @@ export function* watchEditOrderStarted() {
     yield takeEvery(
         types.ORDER_EDIT_STARTED,
         editOrder,
+    );
+}
+
+function* editOrderStatus(action) {
+    try {
+        const {order,orderStatus,invoiceInfo} = action.payload;
+        const response = yield updateOrderStatus(order,orderStatus,invoiceInfo);
+
+        if (response.error == null) {
+            if(!suscribeFirebase){
+                yield put(actions.completeEditingOrder(response.order));
+            }
+        } else {
+            yield put(actions.failEditingOrder(response.error));
+        }
+    } catch (error) {
+        console.log(error);
+        yield put(actions.failAddingOrder('Falló la creación del pedido'));
+    }
+}
+
+export function* watchEditOrderStatusStarted() {
+    yield takeEvery(
+        types.ORDER_EDIT_STATUS_STARTED,
+        editOrderStatus,
     );
 }
 

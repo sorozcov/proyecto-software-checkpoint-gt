@@ -11,7 +11,7 @@ import BranchItem from './BranchItem';
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/branches';
 import * as actionsUsers from '../../logic/actions/users';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 const width = Dimensions.get('window').width; // full width
 

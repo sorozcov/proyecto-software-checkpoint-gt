@@ -7,7 +7,7 @@ import { Field, reduxForm } from 'redux-form';
 import { Divider } from 'react-native-elements';
 import { Button, withTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import { formValueSelector } from 'redux-form' // ES6
 import omit from 'lodash/omit';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -21,7 +21,8 @@ import * as actionsProducts from '../../logic/actions/products';
 import ImagePicker from '../../components/general/ImagePickerProduct';
 
 
- 
+var hasLoaded = false;
+
 function EditProductScreen({
 	theme,
 	navigation,
@@ -39,14 +40,17 @@ function EditProductScreen({
 	removeIngredient,
 	removeAdditional,
 	changeIngredientDefault,
+	formValuesEdit,
 	changeAdditionalDefault
 }) {
 	const { colors, roundness } = theme;
 	
-	const isNew = initialValues == null;
-
+	let isNew = initialValues == null || initialValues.productId==undefined;
+	
 	const [ingredientModal, setIngredientModal] = useState(false);
 	const [additionalModal, setAdditionalModal] = useState(false);
+	
+	
 	
 	if(!isNew) {
 		navigation.setOptions({title: 'EDITAR PRODUCTO'});
@@ -101,6 +105,7 @@ function EditProductScreen({
 							placeholder='Ingresa el precio que tendrá el producto'
 							keyboardType='numeric'
 						/>
+						
 						<Field
 							name={'category'}
 							component={PickerInput}
@@ -162,7 +167,7 @@ function EditProductScreen({
 						</View>
 
 						<FlatList
-							data={isNew ?
+							data={isNew && ingredients.length<0 ?
 								[] :
 								ingredients.map((ingredient, i) => ({...ingredient, id: i}))
 							}
@@ -227,7 +232,7 @@ function EditProductScreen({
 						</View>
 
 						<FlatList
-							data={isNew ?
+							data={isNew && additionals.length<0 ?
 								[] :
 								additionals.map((additional, i) => ({ ...additional, id: i }))
 							}
@@ -291,13 +296,13 @@ function EditProductScreen({
 			<ModalIngredients
 				modal={ingredientModal}
 				closeModal={()=>setIngredientModal(false)}
-				submitFunction={(values)=>addIngredient(values)}
+				submitFunction={(values)=>addIngredient(values,formValuesEdit)}
 			/>
 
 			<ModalAdditional
 				modal={additionalModal}
 				closeModal={()=>setAdditionalModal(false)}
-				submitFunction={(values)=>addAdditional(values)}
+				submitFunction={(values)=>addAdditional(values,formValuesEdit)}
 			/>
 		</KeyboardAvoidingView>
 	);
@@ -362,14 +367,18 @@ const styles = StyleSheet.create({
 });
 
 export default connect(
-	state => ({
+	
+	state => {
+		const selector = formValueSelector('editProductForm')
+		return {
 		initialValues: selectors.getSelectedProduct(state),
 		ingredients: selectors.getSelectedProductIngredients(state),
 		additionals: selectors.getSelectedProductAdditionals(state),
 		categories: selectors.getCategories(state),
-	}),
+		formValuesEdit : selector(state, 'image', 'productName','description','price','category','categoryId')
+		}},
 
-	dispatch => ({
+	(dispatch) => ({
 		createProduct(navigation, values) {
 			const product = omit(values, ['additional', 'additionalCost']);
 			dispatch(actionsProducts.startAddingProduct(product));
@@ -381,23 +390,24 @@ export default connect(
 			navigation.navigate('Menu');
 		},
 
-		addIngredient(values) {
+		addIngredient(values,formValuesEdit) {
 			const ingredientInfo = {
 				name: values.additional,
 				default: true
 			};
-
-			dispatch(actionsProducts.addIngredient(ingredientInfo));
+			
+			console.log(formValuesEdit)
+			dispatch(actionsProducts.addIngredient(ingredientInfo,formValuesEdit));
 		},
 
-		addAdditional(values) {
+		addAdditional(values,formValuesEdit) {
 			const additionalInfo = {
 				name: values.additional,
 				default: false,
 				cost: parseFloat(values.additionalCost).toFixed(2),
 			}
 
-			dispatch(actionsProducts.addAdditional(additionalInfo));
+			dispatch(actionsProducts.addAdditional(additionalInfo,formValuesEdit));
 		},
 
 		removeIngredient(idx){
@@ -421,6 +431,7 @@ export default connect(
 )(reduxForm({
 	form: 'editProductForm',
 	enableReinitialize : true,
+	destroyOnUnmount :true,
 	validate: (values) => {
 		const errors = {};
 		errors.productName = !values.productName ? 'Este campo es obligatorio' : undefined;

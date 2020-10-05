@@ -8585,6 +8585,11 @@ react-native-multiple-select@^0.5.5:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-option-picker@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-option-picker/-/react-native-option-picker-1.1.2.tgz#0cc77b67a2ab16a104bf33f9ce8a05721e0e69cc"
+  integrity sha512-OcMVqYJc5m1z901owjn7Izb/fIt5+2WME9SnkhAkwRK10UAZSdD2Owjadvp5rTNGilwzUXU8OLzJANDdHIS9RA==
+
 react-native-paper@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-3.8.0.tgz#94d9b50b945ce91c90491cce34d1c27845503990"
@@ -8630,6 +8635,11 @@ react-native-sectioned-multi-select@^0.7.7:
   version "0.7.7"
   resolved "https://registry.yarnpkg.com/react-native-sectioned-multi-select/-/react-native-sectioned-multi-select-0.7.7.tgz#81b3dbfb50c72eb27e095b0e4f1c6ae34f9bf669"
   integrity sha512-+34+PgQ7K4nfdn6dAFIfInj1dXpaLOcSSaNqQeNpByQUPoFcF29YeeNpw/h+vI7aYUFnmjuD6O7DBO9eihjC8A==
+
+react-native-segmented-control-tab@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-segmented-control-tab/-/react-native-segmented-control-tab-3.4.1.tgz#b6e54b8975ce8092315c9b0a1ab58b834d8ccf8e"
+  integrity sha512-BNPdlE9Unr0Xabewn8W+FhBMLjssXy9Ey7S7AY0hXlrKrEKFdC9z0yT+eEWd5dLam4T6T4IuGL8b7ZF4uGyWNw==
 
 react-native-status-bar-height@^2.2.0:
   version "2.5.0"

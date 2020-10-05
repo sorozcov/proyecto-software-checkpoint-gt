@@ -2,7 +2,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 import { deleteUser, getUsers, updateUser } from '../../database/firebase/users';
 import * as actions from '../../logic/actions/users';
 import * as types from '../types/users';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 

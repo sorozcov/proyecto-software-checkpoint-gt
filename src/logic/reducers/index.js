@@ -9,7 +9,7 @@ import users, * as usersSelectors from './users';
 import * as types from '../types/loggedUser'
 import _ from 'lodash'
 
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 const reducer = combineReducers({
@@ -77,13 +77,17 @@ export const getAddStatus = state => usersSelectors.getAddStatus(state.users);
 //Orders
 export const getOrder = (state, id) => ordersSelectors.getOrder(state.orders, id);
 export const getOrders = state => ordersSelectors.getOrders(state.orders);
-export const getOrdersByDate = state => ordersSelectors.getOrders(state.orders).sort((o1, o2) => o1.date < o2.date);;
-export const getOrdersByTable = state => {
-    let orders = getOrdersByDate(state);
+export const getOrdersByDate = state => ordersSelectors.getOrders(state.orders).sort((o1, o2) => o1.date < o2.date);
+export const getOrdersByTable = (state, orderStatus) => {
+    let orders = getOrdersByDate(state).filter(order => orderStatus.includes(order.status));
     let ordersByTables = _.chain(orders).groupBy('table').map((value, key) => ({ title: `Mesa ${key}`, data: value, tableNumber: key })).value().sort((table1, table2) => table1.tableNumber > table2.tableNumber)
 
     return ordersByTables;
 };
+export const getCreatedOrdersByTable = state => getOrdersByTable(state , [1]);
+export const getDeliveredOrdersByTable = state => getOrdersByTable(state, [2]);
+export const getCompletedOrdersByTable = state => getOrdersByTable(state, [3]);
+export const getChargedOrdersByTable = state => getOrdersByTable(state, [4, 5]);
 export const getSelectedOrder = state => ordersSelectors.getSelectedOrder(state.orders);
 
 export const getSelectedOrderProducts = state => ordersSelectors.getSelectedOrderProducts(state.orders);

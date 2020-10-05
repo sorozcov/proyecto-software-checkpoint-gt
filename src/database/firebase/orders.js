@@ -1,10 +1,19 @@
 import { firebase, firebaseFirestore } from '.';
+
 import * as actions from '../../logic/actions/orders';
 import { store } from '../../../App'
 import * as selectors from '../../logic/reducers';
+import moment from "moment";
 const db = firebaseFirestore;
 const collection = "orders";
+const collectionSales = "salesByDate";
 
+// Order Status
+// 1 Creado
+// 2 Entregado
+// 2> Cobrado
+// 3 No facturado
+// 4 Facturado 
 // Funcion para crear o hacer update de un pedido
 // Si es nuevo enviar orderId = null o no enviar
 export const updateOrder = async(newOrder) => {
@@ -26,10 +35,11 @@ export const updateOrder = async(newOrder) => {
         }
 
         let dateModified = new Date();
-        dateModified = dateModified.getTime();
+        
 
         let orderInfo = {
             ...newOrder,
+            status:1,
             orderId,
             dateModified,
         };
@@ -39,16 +49,128 @@ export const updateOrder = async(newOrder) => {
         } else {
             await orderDoc.update(orderInfo);
         }
-        const order = (await db.collection(collection).doc(orderId).get()).data()
+        const nOrder = (await db.collection(collection).doc(orderId).get()).data()
         return {
-            order: order,
+            order: nOrder,
             error: null,
             errorMessage: null
         }
 
     } catch (error) {
         console.log("ERROR" + error.toString());
-        let errorMessage = "No se pudo guardar el producto."
+        let errorMessage = "No se pudo guardar la orden."
+        return {
+            errorMessage: errorMessage,
+            error,
+            order: null
+        }
+    }
+}
+
+// Function to update order status
+export const updateOrderStatus = async(order,orderStatus,invoiceInfo={}) => {
+    try {
+        let { orderId } = order;
+        let orderDoc = null;        
+        orderDoc = firebase.firestore().collection(collection).doc(orderId);
+        orderId = orderDoc.id;
+    
+        let dateModified = new Date();
+       
+        let orderInfo = {
+            ...order,
+            status:orderStatus,
+            orderId,
+            dateModified,
+        };
+
+        
+        await orderDoc.update(orderInfo);
+        const nOrder = (await db.collection(collection).doc(orderId).get()).data()
+        if(orderStatus>3){
+            console.log("Date")
+            console.log(nOrder.date)
+            let saleDateId = moment.unix(nOrder.date.seconds).local();
+            let hours = saleDateId.hours()
+            saleDateId= saleDateId.format("YYYY-MM-DD")
+            console.log(saleDateId)
+            let documentSale = await db.collection(collectionSales).doc(saleDateId);
+            let documentSaleInfo = (await documentSale.get()).data()
+            let {total,branch,user} = nOrder
+            let productsOrder = nOrder.products
+            let totalWithInvoice=0
+            let totalWithoutInvoice=0
+            let {byBranch,byTime,byWaiter,products,totalTip,totalWithoutTip,} = documentSaleInfo
+            let totalDoc = documentSaleInfo.total
+            //Check if it doesnt exist total by branch and byWaiter
+            if(byBranch[branch.branchId]==undefined){
+                byBranch[branch.branchId]={
+                    total:0,
+                    totalWithInvoice:0,
+                    totalWithoutTip:0,
+                    totalWithoutInvoice:0,
+                    totalTip:0,
+                }
+            }
+            if(byWaiter[user.uid]==undefined){
+                byWaiter[user.uid]={
+                    total:0,
+                    totalWithInvoice:0,
+                    totalWithoutTip:0,
+                    totalWithoutInvoice:0,
+                    totalTip:0,
+                }
+            }
+            //Update by branch and by waiter
+            let totalWithTip=nOrder.total + nOrder.tip
+            byBranch[branch.branchId].total=byBranch[branch.branchId].total+totalWithTip
+            byBranch[branch.branchId].totalWithoutTip=byBranch[branch.branchId].totalWithoutTip+nOrder.total
+            byBranch[branch.branchId].totalWithInvoice=byBranch[branch.branchId].totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            byBranch[branch.branchId].totalWithoutInvoice=byBranch[branch.branchId].totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
+            byBranch[branch.branchId].totalTip=byBranch[branch.branchId].totalTip+nOrder.tip
+            byWaiter[user.uid].total=byWaiter[user.uid].total+totalWithTip
+            byWaiter[user.uid].totalWithoutTip=byWaiter[user.uid].totalWithoutTip+nOrder.total
+            byWaiter[user.uid].totalWithInvoice=byWaiter[user.uid].totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            byWaiter[user.uid].totalWithoutInvoice=byWaiter[user.uid].totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
+            byWaiter[user.uid].totalTip=byWaiter[user.uid].totalTip+nOrder.tip
+            //Update by time
+            byTime[hours].total=byTime[hours].total+totalWithTip
+            byTime[hours].totalWithoutTip=byTime[hours].totalWithoutTip+nOrder.total
+            byTime[hours].totalWithInvoice=byTime[hours].totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            byTime[hours].totalWithoutInvoice=byTime[hours].totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
+            byTime[hours].totalTip=byTime[hours].totalTip+nOrder.tip
+            //Update general totals
+            total=totalDoc+totalWithTip
+            totalWithoutTip=totalWithoutTip+nOrder.total
+            totalTip=totalTip+nOrder.tip
+            totalWithInvoice=totalWithInvoice+(nOrder.status==5?totalWithTip:0)
+            totalWithoutInvoice=totalWithoutInvoice+(nOrder.status==4?totalWithTip:0)
+            productsOrder.forEach(prod=>products.push(prod))
+            
+            let updatedDocumentSaleInfo={
+                ...documentSaleInfo,
+                byBranch:{...byBranch},
+                byWaiter:{...byWaiter},
+                byTime:{...byTime},
+                total:total,
+                totalWithoutTip: totalWithoutTip,
+                totalTip:totalTip,
+                totalWithInvoice:totalWithInvoice,
+                totalWithoutInvoice:totalWithoutInvoice,  
+                products:products             
+            }
+            documentSale.update(updatedDocumentSaleInfo)
+        }
+        
+        return {
+            order: nOrder,
+            error: null,
+            errorMessage: null
+        }
+
+    } catch (error) {
+        console.log("ERROR" + error.toString());
+        let errorMessage = "No se pudo actualizar el estado de la orden."
         return {
             errorMessage: errorMessage,
             error,
@@ -60,7 +182,9 @@ export const updateOrder = async(newOrder) => {
 //Función para obtener ordenes de Firebase
 export const getOrders = async() => {
     try {
-        const orders = await db.collection(collection).get();
+        var date = new Date();
+        date.setHours(0,0,0)
+        const orders = await db.collection(collection).where("date", ">=", date).get();
         let ordersArray = [];
         orders.docs.forEach(order => {
             order.data().date = order.data().date.toDate();
@@ -111,10 +235,12 @@ export const deleteOrder = async({ orderId }) => {
 
 
 //Suscribe to Orders changes
-export const suscribeOrders = () => {
-    let userBranch = selectors.getLoggedUser(store.getState());
 
-    db.collection(collection).where('branchId', '==', `${userBranch.restaurantId}`)
+export const suscribeOrders = async ()=>{
+    var date = new Date();
+    date.setHours(0,0,0)
+    let userBranch = selectors.getLoggedUser(store.getState());
+    db.collection(collection).where("date", ">=", date).where('branchId', '==', `${userBranch.restaurantId}`)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {

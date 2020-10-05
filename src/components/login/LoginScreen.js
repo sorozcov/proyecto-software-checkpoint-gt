@@ -1,5 +1,6 @@
 import * as firebase from "firebase";
 import React, { useState } from 'react';
+
 import {
     ActivityIndicator,
     Alert,
@@ -20,7 +21,7 @@ import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 
 import {createDatesDocuments} from '../../database/firebase/salesDates'
 import { suscribeToFirebase } from '../../database/firebase/suscribeChanges';
-import { suscribeFirebase } from '../../../App';
+import { suscribeFirebase } from '../../../config';
 
 
 const resetAction = StackActions.reset({
@@ -74,7 +75,7 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
   async function login(email, pass) {
     Keyboard.dismiss();
     console.log("started");
-    // await createDatesDocuments({})
+    // await createDatesDocuments({});
     setmodalVisibleIndicatorLogin(true);
      try {
          
@@ -308,7 +309,9 @@ export default connect(
       try{
         const userLoggedIn = await firebase.firestore().collection('users').doc(user.uid).get();
         dispatch(actionsLoggedUser.login(userLoggedIn.data()));
-
+        if(suscribeFirebase){
+          await suscribeToFirebase()
+        }
         if(userLoggedIn.data().userTypeId==1){
           navigation.replace('HomeAdmin');
         }else{
