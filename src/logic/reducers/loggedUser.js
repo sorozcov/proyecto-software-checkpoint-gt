@@ -19,6 +19,7 @@ const user = (state = {}, action) => {
         case userTypes.USER_EDIT_COMPLETED:
             {
                 const edited = action.payload;
+
                 if (state.uid === edited.uid) {
                     return {
                         ...state,

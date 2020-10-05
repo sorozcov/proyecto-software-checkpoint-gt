@@ -9,6 +9,8 @@ class UserListItem extends Component{
         super();
         this.image = (props.image != null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${props.image}_400x400.jpg?alt=media` : null);
         this.style = props.style;
+
+        console.log('IMAGE URL --> ', this.image)
     }
 
     render(){ 

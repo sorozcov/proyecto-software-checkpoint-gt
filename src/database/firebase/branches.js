@@ -111,7 +111,6 @@ export const suscribeBranches = async ()=>{
                     if(docSaved!==null && docSaved!==undefined){
                       console.log("Retrieve branch again.")
                     }else{
-                      
                       store.dispatch(actions.completeAddingBranch({...change.doc.data(),id:change.doc.id}))
                     }
                    

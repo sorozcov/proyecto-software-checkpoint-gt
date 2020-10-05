@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { Container } from 'native-base';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { FloatingAction } from "react-native-floating-action";
@@ -19,17 +19,15 @@ import { suscribeFirebase } from '../../../config';
 const width = Dimensions.get('window').width; // full width
 
 
-function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, activeUser, checkLoggedInUser }) {
+function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, activeUser, checkLoggedInUser, selectedUser }) {
     const { colors, roundness } = theme;
-    
-    useEffect(onLoad, []);
 
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             {
                 (
                     <Container  width={width}>
-                             {
+                            {
                                 users.length <= 0 && !isLoading && (
                                     <View style={{flex:0.1,alignItems:'center',paddingTop:10}}>
                                             <MaterialCommunityIcons name="information" color='black' size={50} />
@@ -46,6 +44,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 disableRightSwipe={true}
                                 refreshing={isLoading}
                                 onRefresh={()=>onRefresh()}
+                                // shouldItemUpdate={() => selectedUser !== null}
                                 keyExtractor={user => user.uid}
                                 renderHiddenItem={
                                     (user, rowMap) => (
@@ -191,6 +190,7 @@ export default connect(
         isLoading: selectors.isFetchingUsers(state),
         isAdding: selectors.isAddingUsers(state),
         isEditing: selectors.isEditingUsers(state),
+        selectedUser: selectors.getSelectedUser(state),
     }),
     dispatch => ({
         onLoad() {

@@ -6,11 +6,13 @@ import { Button, withTheme } from 'react-native-paper';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import MyTextInput from '../general/textInput';
+import { suscribeOrders,unsuscribeOrders } from '../../database/firebase/orders';
 
 import PickerInput from '../../components/general/PickerInput';
 
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/users';
+import * as orderActions from '../../logic/actions/orders';
 
 function BranchSelectionModal({
     navigation,
@@ -22,7 +24,8 @@ function BranchSelectionModal({
 	modal,
 	branches,
 	initialValues,
-	editLoggedUser
+	editLoggedUser,
+	clearOrders
 }) {
 
 	const isNew = initialValues == null;
@@ -30,12 +33,15 @@ function BranchSelectionModal({
     const { colors, roundness } = theme;
     const editLoggedUserBranchForm = values => {
 		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
-		closeModal();
-		
 		values = {...initialValues};
         values.restaurantName = selectedBranch.name;
         values.restaurantId = selectedBranch.id;
-        editLoggedUser(navigation, values);
+		editLoggedUser(navigation, values);
+		unsuscribeOrders();
+		clearOrders();
+		suscribeOrders();
+		
+		closeModal();
 	}
 	
 	return (
@@ -69,49 +75,50 @@ function BranchSelectionModal({
 							selectedItems={!isNew ? [initialValues.restaurantId]:[]}
 						/>
 					</View>
-
-					<Button
-						disabled={!dirty}
-						theme={roundness}
-						color={'#000000'}
-						icon={"plus"}
-						height={50}
-						mode="contained"
-						labelStyle={{
-							fontFamily: "dosis-bold",
-							fontSize: 15,
-						}}
-						style={{
-							fontFamily: 'dosis',
-							marginLeft: '5%',
-							marginRight: '5%',
-							justifyContent: 'center'
-						}}
-						onPress={handleSubmit(editLoggedUserBranchForm)}
-					>
-						{'Agregar'}
-					</Button>
-					
-					<Button
-						theme={roundness}
-						color={'red'}
-						height={50}
-						mode="contained"
-						labelStyle={{
-							fontFamily: "dosis-bold",
-							fontSize: 15,
-						}}
-						style={{
-							fontFamily: 'dosis',
-							marginLeft: '5%',
-							marginRight: '5%',
-							marginTop: 1,
-							justifyContent: 'center',
-						}}
-						onPress={()=>closeModal()}
-					>
-						{'Cancelar'}
-					</Button>
+					<View>
+						<Button
+							disabled={!dirty}
+							theme={roundness}
+							color={'#000000'}
+							icon={"check"}
+							height={50}
+							mode="contained"
+							labelStyle={{
+								fontFamily: "dosis-bold",
+								fontSize: 15,
+							}}
+							style={{
+								fontFamily: 'dosis',
+								marginLeft: '5%',
+								marginRight: '5%',
+								justifyContent: 'center'
+							}}
+							onPress={handleSubmit(editLoggedUserBranchForm)}
+						>
+							{'Confirmar'}
+						</Button>
+						
+						<Button
+							theme={roundness}
+							color={'red'}
+							height={50}
+							mode="contained"
+							labelStyle={{
+								fontFamily: "dosis-bold",
+								fontSize: 15,
+							}}
+							style={{
+								fontFamily: 'dosis',
+								marginLeft: '5%',
+								marginRight: '5%',
+								marginTop: 10,
+								justifyContent: 'center',
+							}}
+							onPress={()=>closeModal()}
+						>
+							{'Cancelar'}
+						</Button>
+					</View>
 				</View>
 			</View>
 		</Modal>
@@ -148,8 +155,11 @@ export default connect(
 
 	dispatch => ({
         editLoggedUser (navigation, values) {
-            dispatch(actions.startEditingUser(values));
+			dispatch(actions.startEditingUser(values));
 		},
+		clearOrders () {
+			dispatch(orderActions.clearOrders());
+		}
 	}),
 )(reduxForm({
 	form: 'editLoggedUserBranchForm',

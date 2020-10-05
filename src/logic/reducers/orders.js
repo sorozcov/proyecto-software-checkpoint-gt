@@ -46,6 +46,11 @@ const byId = (state = {}, action) => {
                 return omit(state, action.payload.orderId);
             }
 
+        case types.ORDERS_CLEARED:
+            {
+                return {};
+            }
+
         default:
             {
                 return state;
@@ -67,6 +72,10 @@ const order = (state = [], action) => {
             {
                 return state.filter(id => id !== action.payload.orderId);
             }
+        case types.ORDERS_CLEARED:
+            {
+                return [];
+            }
         default:
             {
                 return state;
@@ -79,9 +88,9 @@ const selectedOrder = (state = {}, action) => {
         case types.ORDER_ACTIVATED:
             {
                 return {
-                    products:[],
+                    products: [],
                     ...action.payload,
-                    
+
                 };
             }
         case types.ORDER_DEACTIVATED:
@@ -89,15 +98,15 @@ const selectedOrder = (state = {}, action) => {
 
         case types.ORDER_PRODUCT_ADDED:
             {
-                const index = state.products.length===0 ? 0 : state.products[state.products.length - 1].index + 1 
-                return {...state, 
+                const index = state.products.length === 0 ? 0 : state.products[state.products.length - 1].index + 1
+                return {...state,
                     products: [
                         ...state.products,
                         {
                             ...action.payload,
-                            index:index,
+                            index: index,
                         }
-                    ] 
+                    ]
                 };
             }
 
@@ -127,9 +136,9 @@ const newOrder = (state = {}, action) => {
         case types.NEW_ORDER_ACTIVATED:
             {
                 return {
-                    products:[],
+                    products: [],
                     ...action.payload,
-                    
+
                 };
             }
         case types.NEW_ORDER_DEACTIVATED:
@@ -137,15 +146,15 @@ const newOrder = (state = {}, action) => {
 
         case types.NEW_ORDER_PRODUCT_ADDED:
             {
-                const index = state.products.length===0 ? 0 : state.products[state.products.length - 1].index + 1 
-                return {...state, 
+                const index = state.products.length === 0 ? 0 : state.products[state.products.length - 1].index + 1
+                return {...state,
                     products: [
                         ...state.products,
                         {
                             ...action.payload,
-                            index:index,
+                            index: index,
                         }
-                    ] 
+                    ]
                 };
             }
 
