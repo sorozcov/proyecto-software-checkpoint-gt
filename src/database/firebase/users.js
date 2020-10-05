@@ -15,6 +15,7 @@ import uuid from 'react-native-uuid';
 
 const db = firebaseFirestore;
 const collection = "users";
+var suscribeFunction = null;
 
 //Obtener usuarios de firebase
 export const getUsers = async() => {
@@ -184,7 +185,7 @@ export const deleteUser = async({ uid }) => {
 
 //Suscribe to user changes
 export const suscribeUsers = async() => {
-    db.collection(collection)
+    suscribeFunction = db.collection(collection)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {
@@ -212,8 +213,12 @@ export const suscribeUsers = async() => {
 
 //Unsuscribe to users changes
 export const unsuscribeUsers = async() => {
-    db.collection(collection)
-        .onSnapshot(function(snapshot) {
-            //Nothing
-        });
+    // db.collection(collection)
+    //     .onSnapshot(function(snapshot) {
+    //         //Nothing
+    //     });
+    if(suscribeFunction!=null){
+        suscribeFunction()
+        suscribeFunction=null
+    }
 }

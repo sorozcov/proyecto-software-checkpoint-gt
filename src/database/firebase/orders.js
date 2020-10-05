@@ -4,10 +4,11 @@ import * as actions from '../../logic/actions/orders';
 import { store } from '../../../App'
 import * as selectors from '../../logic/reducers';
 import moment from "moment";
+import { suscribeFirebase } from '../../../config';
 const db = firebaseFirestore;
 const collection = "orders";
 const collectionSales = "salesByDate";
-
+var suscribeFunction = null;
 // Order Status
 // 1 Creado
 // 2 Entregado
@@ -240,7 +241,7 @@ export const suscribeOrders = async ()=>{
     var date = new Date();
     date.setHours(0,0,0)
     let userBranch = selectors.getLoggedUser(store.getState());
-    db.collection(collection).where("date", ">=", date).where('branchId', '==', `${userBranch.restaurantId}`)
+    suscribeFunction = db.collection(collection).where("date", ">=", date).where('branchId', '==', `${userBranch.restaurantId}`)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {
@@ -265,6 +266,10 @@ export const suscribeOrders = async ()=>{
 
 //Unsuscribe to Orders changes
 export const unsuscribeOrders = () => {
-    db.collection(collection)
-        .onSnapshot(function(snapshot) {});
+    if(suscribeFunction!=null){
+        suscribeFunction()
+        suscribeFunction=null
+    }
+    // db.collection(collection)
+    //     .onSnapshot(function(snapshot) {});
 }

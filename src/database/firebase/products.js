@@ -10,6 +10,7 @@ import {store} from '../../../App'
 import * as selectors from '../../logic/reducers';
 const db = firebaseFirestore;
 const collection = "products";
+var suscribeFunction = null;
 
 //Funcion para obtener Products de Firebase
 export const getProducts= async () =>{
@@ -116,7 +117,7 @@ export const deleteProduct = async ({productId})=>{
 
 //Suscribe to Products changes
 export const suscribeProducts = async ()=>{
-  db.collection(collection)
+  suscribeFunction = db.collection(collection)
       .onSnapshot(function(snapshot) {
           snapshot.docChanges().forEach(function(change) {
               if (change.type === "added") {
@@ -147,8 +148,12 @@ export const suscribeProducts = async ()=>{
 
 //Unsuscribe to Products changes
 export const unsuscribeProducts = async ()=>{
-  db.collection(collection)
-    .onSnapshot(function() {
-      //Nothing
-    });
+  // db.collection(collection)
+  //   .onSnapshot(function() {
+  //     //Nothing
+  //   });
+  if(suscribeFunction!=null){
+    suscribeFunction()
+    suscribeFunction=null
+  }
 }

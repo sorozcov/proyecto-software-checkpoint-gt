@@ -1,40 +1,29 @@
-import 'firebase/firestore';
-import { connect } from 'react-redux';
-import React, { useState, useEffect } from 'react';
-
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-
+import 'firebase/firestore';
 import { Text } from 'native-base';
-import Modal from 'react-native-modal';
-import { Field, reduxForm, submit } from 'redux-form';
-import { Card, Divider } from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
-import { connect } from 'react-redux';
-import ImagePicker from '../../components/general/ImagePickerProduct';
-import {Picker} from 'react-native-option-picker';
-import OptionPicker from '../../components/general/OptionPicker'
-import * as actionsProducts from '../../logic/actions/products';
-import * as selectors from '../../logic/reducers';
-import { Button, withTheme, IconButton } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { 
-	KeyboardAvoidingView, 
-	StyleSheet, 
-	View,
-	FlatList,
-	Dimensions, 
-	Platform
+import React, { useEffect, useState } from 'react';
+import {
+	Dimensions,
+	Platform, StyleSheet,
+	View
 } from 'react-native';
-
-import FinishOrder from './FinishOrder';
-import MyCheckbox from '../general/checkbox';
-import ImagePicker from '../../components/general/ImagePickerProduct';
-
-import * as selectors from '../../logic/reducers';
-import * as actionsProducts from '../../logic/actions/products';
+import { Divider } from 'react-native-elements';
+import Modal from 'react-native-modal';
+import { Button, IconButton, withTheme } from 'react-native-paper';
+import { connect } from 'react-redux';
+import OptionPicker from '../../components/general/OptionPicker';
 import * as actions from '../../logic/actions/orders';
-import MyCheckbox from '../general/checkboxNoReduxForm';
+import * as selectors from '../../logic/reducers';
+import MyCheckbox from '../general/checkbox';
+import FinishOrder from './FinishOrder';
+
+
+
+
+
+
+
 
 
 

@@ -5,7 +5,7 @@ import {store} from '../../../App'
 import * as selectors from '../../logic/reducers';
 const db = firebaseFirestore;
 const collection = "branches";
-
+var suscribeFunction = null;
 
 //Función para obtener Branches de Firebase
 export const getBranches = async() => {
@@ -100,7 +100,7 @@ export const deleteBranch = async({ id }) => {
 
 //Suscribe to branches changes
 export const suscribeBranches = async ()=>{
-    db.collection(collection)
+    suscribeFunction = db.collection(collection)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {
@@ -131,8 +131,12 @@ export const suscribeBranches = async ()=>{
 
 //Unsuscribe to branches changes
 export const unsuscribeBranches = async ()=>{
-  db.collection(collection)
-    .onSnapshot(function(snapshot) {
-       //Nothing
-    });
+//   db.collection(collection)
+//     .onSnapshot(function(snapshot) {
+//        //Nothing
+//     });
+    if(suscribeFunction!=null){
+        suscribeFunction()
+        suscribeFunction=null
+    }
 }

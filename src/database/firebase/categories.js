@@ -11,6 +11,7 @@ import * as selectors from '../../logic/reducers';
 
 const db = firebaseFirestore;
 const collection = "categories";
+var suscribeFunction = null;
 
 //Funcion para obtener Categories de Firebase
 export const getCategories= async () =>{
@@ -115,7 +116,7 @@ export const deleteCategory = async ({categoryId})=>{
 
 //Suscribe to Categories changes
 export const suscribeCategories = async ()=>{
-  db.collection(collection)
+  suscribeFunction = db.collection(collection)
       .onSnapshot(function(snapshot) {
           snapshot.docChanges().forEach(function(change) {
               if (change.type === "added") {
@@ -146,8 +147,12 @@ export const suscribeCategories = async ()=>{
 
 //Unsuscribe to Categories changes
 export const unsuscribeCategories = async ()=>{
-db.collection(collection)
-  .onSnapshot(function(snapshot) {
-     //Nothing
-  });
+// db.collection(collection)
+//   .onSnapshot(function(snapshot) {
+//      //Nothing
+//   });
+  if(suscribeFunction!=null){
+    suscribeFunction()
+    suscribeFunction=null
+  }
 }
