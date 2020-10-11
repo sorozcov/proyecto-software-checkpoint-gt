@@ -1,11 +1,14 @@
 import { put, takeEvery } from 'redux-saga/effects';
+
+import { suscribeFirebase } from '../../../config';
+
 import {
-    deleteCategory, getCategories,
+    deleteCategory, 
+    getCategories,
     updateCategory
 } from '../../database/firebase/categories';
 import * as actions from '../../logic/actions/categories';
 import * as types from '../types/categories';
-import { suscribeFirebase } from '../../../config';
 
 
 

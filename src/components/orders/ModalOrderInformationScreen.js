@@ -19,16 +19,6 @@ import MyCheckbox from '../general/checkboxNoReduxForm';
 import FinishOrder from './FinishOrder';
 
 
-
-
-
-
-
-
-
-
-	
-
 const createAndSavePDF = async (activeOrder) => {
 	const items = activeOrder.products.map(item => ({
 		name: item.productName,
@@ -138,6 +128,7 @@ const createAndSavePDF = async (activeOrder) => {
   	}
 };
 
+
 function OrderInformationScreen({ 
 	theme,
 	navigation,
@@ -173,13 +164,8 @@ function OrderInformationScreen({
 			title: '5%',
 			selected: false,
 		},
-		
-		// {
-		// 	id: -1,
-		// 	title: 'Otro',
-		// 	selected: false,
-		// },
 	];
+
 	const dataInvoice = [
 		{
 			id: true,
@@ -200,42 +186,48 @@ function OrderInformationScreen({
 			selected: true,
 		}
 	);
+
 	const [discount, setDiscount] = useState({
 		id: 10,
 		title: '10%',
 		selected: true,
 	});
-	useEffect(()=>{
+
+	useEffect(() => {
 		console.log(dataTip)
-		dataTip.forEach((type,index)=>{
-			if(activeOrder.hasTip && type.id==activeOrder.tipType.id){
-				dataTip[index]=activeOrder.tipType
-			}else{
+		dataTip.forEach((type, index) => {
+			if(activeOrder.hasTip && type.id == activeOrder.tipType.id){
+				dataTip[index] = activeOrder.tipType
+			} else{
 				if(activeOrder.hasTip){
-					dataTip[index]={...type,selected:false}
-				}else{
-					dataTip[index]={...type}
+					dataTip[index] = {
+						...type, 
+						selected:false
+					}
+				} else{
+					dataTip[index] = {
+						...type
+					}
 				}
-				
 			}
 		})
-			
 	},[activeOrder])
+
 	const [invoice, setInvoice] = useState(false);
 	const [discounts, setDiscounts] = useState(false);
 	const [closeOrder, setCloseOrder] = useState(false);
 	const [tips, setTips] = useState(true);
 	
-	//Se calcula el total
+	// se calcula el total
 	var total = 0
 	orderProducts.forEach(product => {
 		total = total + parseFloat(product.totalPrice);
 	});
 	if(charge && discounts){
-		total=total-(total*discount.id/100)
+		total = total - (total * discount.id / 100)
 	}
 	if(charge && tips){
-		total=total+(total*tip.id/100)
+		total = total + (total * tip.id / 100)
 	}
 
 	return (
@@ -258,10 +250,10 @@ function OrderInformationScreen({
 				<FinishOrder navigation={navigation} onlyDetail={onlyDetail} newOrder={newOrder}/>
 
 				{(charge || chargeView) && <View>
-					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
-					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.hasTip!==false : tips} onCheck={(check)=>setTips(check)} disabled={chargeView}/>
-					{chargeView && activeOrder.hasTip!==false &&
-					<Text style={{fontFamily:'dosis-semi-bold', fontSize:18, textAlign:'center'}}>
+					<Divider style={{ backgroundColor: colors.accent, marginTop: 10, marginBottom: 10 }} />
+					<MyCheckbox name={'tip'} disabled={false}  label='PROPINA' containerStyle={{ backgroundColor: null, width: '50%', alignSelf: 'center', height: 40 }} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.hasTip !== false : tips} onCheck={(check) => setTips(check)} disabled={chargeView}/>
+					{chargeView && activeOrder.hasTip !== false &&
+					<Text style={{ fontFamily: 'dosis-semi-bold', fontSize: 18, textAlign: 'center' }}>
 						Q.{(parseFloat(activeOrder.tip).toFixed(2))}  
 					</Text> }
 					{ charge && tips &&
@@ -280,17 +272,11 @@ function OrderInformationScreen({
 					{charge && discounts &&
 					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} /> */}
-					
-					
-					
 				</View>}
 				<View style={styles.totalContainer}>
-				
-                	<Text  style={{fontFamily:'dosis-light',fontSize:24}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
+                	<Text  style={{fontFamily: 'dosis-light', fontSize: 24}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
            		</View>
-				
 				<View style={{marginTop:'1%',marginBottom:'8%'}}>
-					
 					{showPrintButton && <Button
 						theme={roundness}
 						color={colors.accent}
@@ -308,7 +294,6 @@ function OrderInformationScreen({
 							justifyContent: 'center',
 							marginTop: 12,
 						}}
-
 						onPress={() => createAndSavePDF(activeOrder)}
 					>
 						IMPRIMIR ORDEN
@@ -334,11 +319,6 @@ function OrderInformationScreen({
 					onPress={()=>closeModal()}>
 					REGRESAR
 					</Button>} */}
-					
-
-
-					
-
 				</View>
 				<IconButton testID={'close-button'}  icon="close"  size={30} style={{ top: 20, right: 3, position: 'absolute', backgroundColor: '#D8D8D8'}} mode="contained" onPress={() => closeModal()}/>
 				
@@ -454,75 +434,73 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'space-around',
 	
-	  },
-	  modal: {
+	},
+	modal: {
 		backgroundColor: '#FFFFFF',
 		height: 350,
 		width: '80%',
 		borderRadius: 10,
-		
 		justifyContent: 'space-around'
-	  },
-	  container: {
+	},
+	container: {
 		flex: 1,
 		flexDirection: 'column',
 		backgroundColor: '#fff',
 		fontFamily: 'dosis-regular',
-	  },
-	  row: {
+	},
+	row: {
 		alignItems: 'center',
 		flex: 1, 
 		
-	  },
-	  contentContainer: {
+	},
+	contentContainer: {
 		paddingTop: 30,
-	  },
-	  inputContainerStyle: {
+	},
+	inputContainerStyle: {
 		margin: 8,
-	  },
-	  inputContainerStyle: {
+	},
+	inputContainerStyle: {
 		paddingLeft: 20,
 		paddingBottom: 10,
 		paddingRight: 20,
-	  },
-	  titleStyle: {
+	},
+	titleStyle: {
 		textAlign: 'center',
 		fontFamily: 'dosis-extra-bold',
 		fontSize: 30,
 		paddingBottom: '6%',
 		paddingTop: '8%',
-	  },
-	  textStyle:{
+	},
+	textStyle:{
 		textAlign: 'center', 
 		fontFamily: 'dosis-semi-bold',
 		fontSize: 16,
 		paddingTop: 20,
 		paddingBottom: 20,
-	  },
-	  btnLeft: {
+	},
+	btnLeft: {
 		backgroundColor: '#B2FFFF',
 		justifyContent:'center',
 		alignItems:'center',
 		height:40,
 		marginRight:10
-	  },
-	  btnRight: {
+	},
+	btnRight: {
 		  backgroundColor: '#00AAE4',
 		  justifyContent:'center',
 		  alignItems:'center',
 		  height:40,
 		  marginLeft:10
-	  },
-	  infoTxt: {
+	},
+	infoTxt: {
 		alignItems: 'center',
 		justifyContent:'center',
 		borderWidth: 2,
 		borderColor: '#00AAE4',
-		width: 40,
-		
+		width: 40,	
 		height:40,
-	  },
-	  infoTxtView: {
+	},
+	infoTxtView: {
 		alignItems: 'center',
 		justifyContent: 'center',
 		position: 'absolute',
@@ -531,12 +509,11 @@ const styles = StyleSheet.create({
 		width: 30,
 		height:30,
 		right: 10,
-	  },
-	  totalContainer: {
+	},
+	totalContainer: {
         marginTop: 5,
         alignItems: 'center'
 	},
-	
 });
 
 export default connect(
@@ -548,7 +525,6 @@ export default connect(
 		user: selectors.getLoggedUser(state)
 	}),
 	(dispatch, { newOrder, navigation }) => ({
-
 		sendOrder(activeOrder, total, user) {
 			if(!newOrder){
 				dispatch(actions.startEditingOrder({...activeOrder, total}));

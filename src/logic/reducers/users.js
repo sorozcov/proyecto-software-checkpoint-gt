@@ -1,8 +1,9 @@
+import { combineReducers } from 'redux';
+
 import omit from 'lodash/omit';
 import union from 'lodash/union';
-import { combineReducers } from 'redux';
-import * as types from '../types/users';
 
+import * as types from '../types/users';
 
 
 const byId = (state = {}, action) => {

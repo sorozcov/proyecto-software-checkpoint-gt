@@ -1,10 +1,11 @@
 import { firebase, firebaseFirestore } from '.';
-
-import * as actions from '../../logic/actions/orders';
-import { store } from '../../../App'
-import * as selectors from '../../logic/reducers';
-import moment from "moment";
 import { suscribeFirebase } from '../../../config';
+
+import moment from "moment";
+import { store } from '../../../App';
+import * as selectors from '../../logic/reducers';
+import * as actions from '../../logic/actions/orders';
+
 const db = firebaseFirestore;
 const collection = "orders";
 const collectionSales = "salesByDate";
