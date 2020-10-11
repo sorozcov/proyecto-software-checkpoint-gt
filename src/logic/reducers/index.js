@@ -1,15 +1,19 @@
 import { combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
-import branches, * as branchSelectors from './branches';
-import categories, * as categoriesSelectors from './categories';
-import loggedUser, * as loggedUserSelectors from './loggedUser';
-import orders, * as ordersSelectors from './orders';
-import products, * as productsSelectors from './products';
-import users, * as usersSelectors from './users';
-import * as types from '../types/loggedUser'
-import _ from 'lodash'
+
+import _ from 'lodash';
 
 import { suscribeFirebase } from '../../../config';
+
+import users, * as usersSelectors from './users';
+import orders, * as ordersSelectors from './orders';
+import reports, * as reportsSelectors from './reports';
+import branches, * as branchSelectors from './branches';
+import products, * as productsSelectors from './products';
+import loggedUser, * as loggedUserSelectors from './loggedUser';
+import categories, * as categoriesSelectors from './categories';
+
+import * as types from '../types/loggedUser';
 
 
 const reducer = combineReducers({
@@ -19,6 +23,7 @@ const reducer = combineReducers({
     products,
     branches,
     orders,
+    reports,
     form: formReducer,
 });
 
@@ -40,6 +45,10 @@ export const getIsAdminMode = state => loggedUserSelectors.getIsAdminMode(state.
 export const isLoggedUser = state => loggedUserSelectors.isLoggedUser(state.loggedUser);
 export const getLoggedUserType = state => loggedUserSelectors.getLoggedUserType(state.loggedUser);
 
+// reports
+export const getReport = (state, id) => reportsSelectors.getReport(state.reports, id);
+export const getReportIsFetching = state => reportsSelectors.getReportIsFetching(state.reports);
+export const getReportError = state => reportsSelectors.getReportError(state.reports);
 
 //Categories 
 export const getCategory = (state, id) => categoriesSelectors.getCategory(state.categories, id);

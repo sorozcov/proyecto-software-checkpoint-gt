@@ -1,9 +1,10 @@
 import { firebaseFirestore } from '.';
 
+import moment from "moment";
+
 
 const db = firebaseFirestore;
 const collection = "salesByDate";
-import moment from "moment";
 
 
 //Function to create all documents by date
