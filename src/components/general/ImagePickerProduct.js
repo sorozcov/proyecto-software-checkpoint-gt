@@ -5,8 +5,7 @@ import * as firebase from "firebase";
 import * as React from 'react';
 import { View } from 'react-native';
 import { ActionPicker } from 'react-native-action-picker';
-import { Avatar } from 'react-native-elements';
-import { Button } from 'react-native-paper';
+import { Avatar, Button } from 'react-native-paper';
 
 
 
@@ -35,9 +34,9 @@ export default class ImagePickerProduct extends React.Component {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         
-        {!image &&  <Avatar rounded size={175} overlayContainerStyle={{backgroundColor: '#E50000'}} icon={{name: 'food', color: 'white',type: 'material-community'}}  />}
+        {!image &&  <Avatar.Icon size={150} icon="food" color="white"  />}
         
-        {image &&  <Avatar rounded size={175} source={{ uri: image }}  />}
+        {image &&  <Avatar.Image style={{alignSelf:'center'}} size={150} source={{ uri: image }}  />}
         {!this.props.showImageOnly && <Button labelStyle={{fontFamily:"dosis-bold"}} onPress={()=>this.setState({ actionPickerVisible: true })} >Cambiar Imagen</Button>}
         <ActionPicker
             style={{fontFamily:"dosis-medium"}}
