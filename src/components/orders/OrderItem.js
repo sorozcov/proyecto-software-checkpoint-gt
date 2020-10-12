@@ -4,7 +4,7 @@ import TimeAgo from 'react-native-timeago';
 import moment from 'moment'
 import { connect } from 'react-redux';
 import default_pic from '../../assets/resources/order.png';
-import { Avatar } from 'react-native-elements';
+import { Avatar } from 'react-native-paper';
 
 class OrderItem extends Component{
     constructor(props){
@@ -20,8 +20,7 @@ class OrderItem extends Component{
         return(
             <ListItem onPress={this.onPress} thumbnail style={{...this.style}}>
                 <Left>
-                    {/* <Thumbnail square source={this.image === null ? default_pic : {uri: this.image}} /> */}
-                    <Avatar testID={'noImageProductComponent'} rounded size={55} overlayContainerStyle={{backgroundColor: '#563400'}} title={this.props.order.table} icon={{name: 'receipt', color: 'black',type: 'material-community'}}  />
+                    <Avatar.Text size={55} label={this.props.order.table} color="white" style={{backgroundColor: '#563400'}} />
                 </Left>
                 <Body>
                     <Text style={{fontFamily:'dosis-semi-bold',fontSize:21}}>{this.props.name}</Text>
