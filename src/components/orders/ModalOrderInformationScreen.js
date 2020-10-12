@@ -87,6 +87,9 @@ const createAndSavePDF = async (activeOrder) => {
 						font-size: 8px;
 						margin: 8px 0px;
 					}
+					.space {
+						margin: 8px 0px;
+					}
         		</style>
     		</head>
     		<body>
@@ -103,7 +106,7 @@ const createAndSavePDF = async (activeOrder) => {
 				</div>
         		${rows}
 				<div></div>
-				<div>
+				<div class="space">
 					<p class="name header">TOTAL</p>
 					<p class="price header">Q ${total}</p>
 				</div>

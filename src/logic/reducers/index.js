@@ -89,7 +89,7 @@ export const getOrders = state => ordersSelectors.getOrders(state.orders);
 export const getOrdersByDate = state => ordersSelectors.getOrders(state.orders).sort((o1, o2) => o1.date < o2.date);
 export const getOrdersByTable = (state, orderStatus) => {
     let orders = getOrdersByDate(state).filter(order => orderStatus.includes(order.status));
-    let ordersByTables = _.chain(orders).groupBy('table').map((value, key) => ({ title: `Mesa ${key}`, data: value, tableNumber: key })).value().sort((table1, table2) => table1.tableNumber > table2.tableNumber)
+    let ordersByTables = _.chain(orders).groupBy('table').map((value, key) => ({ title: `Mesa ${key}`, data: value, tableNumber: key })).value().sort((table1, table2) => parseInt(table1.tableNumber) > parseInt(table2.tableNumber))
 
     return ordersByTables;
 };
@@ -154,7 +154,19 @@ export const getProductsByCategory = state => {
             data: products.filter(product => product.categoryId === category.categoryId)
         }
     })
-    return allCategories.filter(cat => cat.data.length > 0)
+    return allCategories.filter(cat => cat.data.length > 0).sort((cat1, cat) => (cat1.title) > (cat.title))
+};
+
+export const getAllProductsByCategory = state => {
+    let categories = getCategories(state);
+    let products = getProducts(state);
+    let allCategories = categories.map(category => {
+        return {
+            title: category.categoryName,
+            data: products.filter(product => product.categoryId === category.categoryId)
+        }
+    })
+    return allCategories.sort((cat1, cat) => (cat1.title) > (cat.title))
 };
 export const getSearchTextProduct = state => productsSelectors.getSearchTextProduct(state.products);
 
@@ -181,5 +193,5 @@ export const getProductsByCategoryActive = state => {
         }
     });
     filteredSearchProducts = filteredSearchProducts.filter(cat => cat.data.length > 0)
-    return filteredSearchProducts
+    return filteredSearchProducts.sort((cat1, cat) => (cat1.title) > (cat.title))
 };

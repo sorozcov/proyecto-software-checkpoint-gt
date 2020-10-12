@@ -29,7 +29,6 @@ function BranchSelectionModal({
 }) {
 
 	const isNew = initialValues == null;
-
     const { colors, roundness } = theme;
     const  editLoggedUserBranchForm = async(values) => {
 		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
@@ -39,7 +38,7 @@ function BranchSelectionModal({
 		await editLoggedUser(navigation, values);
 		await unsuscribeOrders();
 		await clearOrders();
-		await suscribeOrders();
+		await suscribeOrders({branchId:selectedBranch.id,branchName:selectedBranch.branchName});
 		
 		closeModal();
 	}
