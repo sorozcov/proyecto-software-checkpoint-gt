@@ -17,7 +17,7 @@ import configureStore from './src/logic/store';
 
 
 //Mute warnings
-// console.disableYellowBox = true;
+console.disableYellowBox = true;
 
 console.warn = () => {};
 
@@ -33,6 +33,7 @@ const theme = {
   roundness: 10,
   colors: {
     ...DefaultTheme.colors,
+    red: 'red',
     primary: '#E50000',
     accent: '#0097B5',
   },

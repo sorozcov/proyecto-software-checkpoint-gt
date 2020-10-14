@@ -238,12 +238,17 @@ export const deleteOrder = async({ orderId }) => {
 
 //Suscribe to Orders changes
 
-export const suscribeOrders = async ()=>{
+export const suscribeOrders = async (userBranch=null)=>{
     var date = new Date();
     date.setHours(0,0,0)
-    let userBranch = selectors.getLoggedUser(store.getState());
+    if(userBranch==null){
+        userBranch = selectors.getLoggedUser(store.getState());
+        userBranch.branchId = userBranch.restaurantId;
+        userBranch.branchName=userBranch.restaurantName;
+    }
     console.log(userBranch)
-    suscribeFunction = db.collection(collection).where("date", ">=", date)
+    suscribeFunction = db.collection(collection).where("date", ">=", date).where("branch.branchId","==",userBranch.branchId)
+    // suscribeFunction = db.collection(collection).where("date", ">=", date).where("branch.branchId","==",userBranch.branchId)
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 if (change.type === "added") {

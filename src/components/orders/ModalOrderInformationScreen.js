@@ -20,25 +20,63 @@ import FinishOrder from './FinishOrder';
 
 
 const createAndSavePDF = async (activeOrder) => {
-	const items = activeOrder.products.map(item => ({
+	let length=0
+	const items = activeOrder.products.map(item => {
+		length+=1
+		let itemIngredients=""
+		item.ingredients.map((ingredient, i)=>
+		{
+			if(ingredient.default!=ingredient.selected){
+				let modifyIng = ingredient.selected? 'SI': 'NO';
+				
+				itemIngredients += `<div><p class="ingredient"> ${modifyIng}  ${ingredient.name}</p></div>`
+				length+=0.5;
+			}
+		}
+		)
+		let itemAdditionals=""
+		item.additionals.map((additional, i)=>
+		{
+			if(additional.default!=additional.selected){
+				let modifyIng = additional.selected? 'SI': 'NO';
+				
+				itemAdditionals += `<div><p class="ingredient"> ADICIONAL ${additional.name} (${additional.price})</p></div>`
+				length+=0.5;
+			}
+		}
+		)
+		
+		
+		return ({
 		name: item.productName,
 		quantity: item.quantity,
+		ingredients: itemIngredients,
+		additionals: itemAdditionals,
 		totalPrice: item.totalPrice
-	}))
+		})
+	})
+	let additionalInstructions=""
+	additionalInstructions = activeOrder.additionalInstructions!= null && activeOrder.additionalInstructions!="" ? `<div><p class="name">Instrucciones ad.:  ${activeOrder.additionalInstructions} </p></div>`:''
+	if(additionalInstructions!=''){
+		length+=1;
+	}
+	const subtotal = parseFloat(activeOrder.total).toFixed(2)
+	const tiptotal = parseFloat(activeOrder.hasTip ? activeOrder.tip:0).toFixed(2)
+	const total = parseFloat(parseFloat(subtotal)+parseFloat(tiptotal)).toFixed(2)
 
-	const total = parseFloat(activeOrder.total).toFixed(2)
 
 	const d = new Date(activeOrder.date.seconds * 1000);
 
-	const length = activeOrder.products.length
+	length = length
 	const date = d.toLocaleDateString('en-GB')
 	const time = d.toLocaleTimeString('en-US')
 	
-	console.log(activeOrder)
 
 	let rows = ''
-	items.map(item => rows += `<div><p class="name"> ${item.quantity}  ${item.name}</p> <p class="price">Q${item.totalPrice}</p></div>`)
-
+	items.map(item => rows += (`<div><p class="name"> ${item.quantity}  ${item.name}</p> <p class="price">Q${item.totalPrice}</p></div>` + item.ingredients + item.additionals))
+	
+	
+	
 	const html = 
 		`
 			<!DOCTYPE html>
@@ -73,12 +111,29 @@ const createAndSavePDF = async (activeOrder) => {
 						text-align: right;
 						margin: 4px;
 						margin-right: 16px;
+						font-size: 8px;
+					}
+					body .ingredient {
+						flex: 1;
+						text-align: left;
+						margin: 1px;
+						margin-left: 24px;
+						font-size: 7px;
 					}
 					body .name {
 						flex: 1;
 						text-align: left;
 						margin: 4px;
 						margin-left: 16px;
+						font-size: 8px;
+					}
+					body .total {
+						flex: 1;
+						text-align: left;
+						margin: 4px;
+						margin-left: 16px;
+						font-size: 8px;
+						font-weight: bold;
 					}
 					body .divisor {
 						text-align: center;
@@ -86,27 +141,42 @@ const createAndSavePDF = async (activeOrder) => {
 					.header {
 						font-size: 8px;
 						margin: 8px 0px;
+						font-weight: bold;
+					}
+					.space {
+						margin: 8px 0px;
 					}
         		</style>
     		</head>
-    		<body>
-				<h2>Orden #1</h2>
+			<body>
+				<br>
+				<h2>Orden Mesa ${activeOrder.table} ${activeOrder.orderName}</h2>
 				<p class="info">${date} - ${time}</p>
 				<p class="info">Mesero: ${activeOrder.user.name} ${activeOrder.user.lastName}</p>
 				<p class="info">Mesa ${activeOrder.table}</p>
 		`
 		+
-		`
+		`		<hr>
 				<div>
-					<p class="name header">DESCRIPCION</p>
+					<p class="total header">DESCRIPCIÓN</p>
 					<p class="price header">PRECIO</p>
 				</div>
-        		${rows}
-				<div></div>
+				${rows}
+				${additionalInstructions}
+				<hr>
 				<div>
-					<p class="name header">TOTAL</p>
+					<p class="total header">SUBTOTAL</p>
+					<p class="price header">Q ${subtotal}</p>
+				</div>
+				<div>
+					<p class="total header">PROPINA</p>
+					<p class="price header">Q ${tiptotal}</p>
+				</div>
+				<div>
+					<p class="total header">TOTAL</p>
 					<p class="price header">Q ${total}</p>
 				</div>
+				<br></br>
     		</body>
     		</html>
 		`
@@ -115,7 +185,7 @@ const createAndSavePDF = async (activeOrder) => {
     	const { uri } = await Print.printToFileAsync({ 
 			html,
 			width: 250, //306, 200
-			height: length * 30 + 100
+			height: length * 60 + 100
 		});
     
 		if (Platform.OS === "ios"){
@@ -187,11 +257,7 @@ function OrderInformationScreen({
 		}
 	);
 
-	const [discount, setDiscount] = useState({
-		id: 10,
-		title: '10%',
-		selected: true,
-	});
+	
 
 	useEffect(() => {
 		console.log(dataTip)
@@ -213,21 +279,30 @@ function OrderInformationScreen({
 		})
 	},[activeOrder])
 
+	const [discount, setDiscount] = useState({
+		id: 10,
+		title: '10%',
+		selected: true,
+	});
 	const [invoice, setInvoice] = useState(false);
 	const [discounts, setDiscounts] = useState(false);
 	const [closeOrder, setCloseOrder] = useState(false);
 	const [tips, setTips] = useState(true);
 	
 	// se calcula el total
+	var subtotal = 0
 	var total = 0
+	var tipTotal =0
 	orderProducts.forEach(product => {
 		total = total + parseFloat(product.totalPrice);
+		subtotal = subtotal + parseFloat(product.totalPrice);
 	});
 	if(charge && discounts){
 		total = total - (total * discount.id / 100)
 	}
 	if(charge && tips){
 		total = total + (total * tip.id / 100)
+		tipTotal  =  (total * tip.id / 100)
 	}
 
 	return (

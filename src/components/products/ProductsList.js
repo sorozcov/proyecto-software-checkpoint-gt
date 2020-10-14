@@ -267,7 +267,7 @@ export default connect(
     state => ({
         user: selectors.getLoggedUser(state),
         categories: selectors.getCategories(state),
-        productsByCategories: selectors.getProductsByCategory(state),
+        productsByCategories: selectors.getAllProductsByCategory(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
         isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
         isEditing: selectors.isEditingProducts(state),

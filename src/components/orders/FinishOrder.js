@@ -50,7 +50,7 @@ function FinishOrder({
         <View style={styles.container}>
             {activeOrder.table!==undefined && <View style={{height:25,direction:'row',alignItems:'center',}}>
                 <Text style={{ fontFamily:'dosis-semi-bold',fontSize:19,}}>
-                     {'ORDEN' +' MESA '+activeOrder.table+ " " +activeOrder.orderName}  
+                     {'Orden' +' Mesa '+activeOrder.table+ " " +activeOrder.orderName}  
                 </Text>
             </View>}
             <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
