@@ -11,6 +11,7 @@ import * as selectors from '../../logic/reducers';
 const db = firebaseFirestore;
 const collection = "products";
 var suscribeFunction = null;
+import uuid from 'react-native-uuid';
 
 //Funcion para obtener Products de Firebase
 export const getProducts= async () =>{
@@ -43,6 +44,8 @@ export const updateProduct = async ({productId=null,productName,description,cate
 
         let productDoc = null;
         let isNew = productId==null;
+        let imageUid = uuid.v1()
+        let idk={}
         if(isNew){
           
           productDoc = await firebaseFirestore.collection(collection).doc();
@@ -51,21 +54,34 @@ export const updateProduct = async ({productId=null,productName,description,cate
         } else {
           productDoc = await firebase.firestore().collection(collection).doc(productId);
           productId = productDoc.id;
+          idk = await firebaseFirestore.collection(collection).doc(productId).get()
+          idk = idk.data()
         }
         
         //Vemos si necesita hacer update de la imagen
         //Vemos si necesita subir una imagen
         image = image !== undefined ? image : null;
         if (image !== null){
-          if(!image.includes(productId)){
-            let uploadImg = await uploadImageToFirebase(image,productId,"ProductImages");
+          if(isNew || !image.includes(idk.image)){
+            if(!isNew){
+              try{
+                
+                await firebase.storage().ref("ProductImages/" + idk.image + '.jpg').delete();
+                await firebase.storage().ref("ProductImages/" + idk.image + '_200x200.jpg').delete();
+                await firebase.storage().ref("ProductImages/" + idk.image + '_400x400.jpg').delete();
+                await firebase.storage().ref("ProductImages/" + idk.image + '_600x600.jpg').delete();
+              }catch(error){
+                console.log("Error eliminando imagenes.")
+              }
+            }
+            let uploadImg = await uploadImageToFirebase(image,imageUid,"ProductImages");
             if(!uploadImg.uploaded){
               //Error subiendo imagen
               console.log(uploadImg.error);
             }
             
           }
-          image = productId;
+          image = imageUid;
           
         }
  
@@ -109,6 +125,7 @@ export const deleteProduct = async ({productId})=>{
       } catch (error) {
         console.log("ERROR" + error.toString());
         let errorMessage = "No se pudo eliminar el producto."
+        
         return {errorMessage:errorMessage,error,productId:null}
       }
 

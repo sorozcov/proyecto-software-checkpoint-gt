@@ -41,13 +41,13 @@ function OrdersList ({
     useEffect(onLoad, []);
     
     const renderSectionHeader = ({ section }) => (
-        <ListItem   style={{backgroundColor:'black'}} itemDivider icon>
+        <ListItem   style={{backgroundColor:colors.gray}} itemDivider icon>
             <Left>
-                <Icon active name="receipt"  style={{color:'white'}} type="MaterialCommunityIcons"/>
+                <Icon active name="clipboard-text"  style={{color:colors.white}} type="MaterialCommunityIcons"/>
             </Left>
     
             <Body>
-                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0,color:'white'}}>{section.title}</Text>
+                <Text style={{fontSize:16,fontFamily:'dosis-semi-bold',paddingLeft:0,color:colors.white}}>{section.title}</Text>
             </Body>
          </ListItem>
          );
@@ -58,20 +58,20 @@ function OrdersList ({
                     <Container width={width}>
                         <SegmentedControlTab
                             values={[ "Procesando", "Entregados", "Completados", "Cobrados"]}
-                            activeTabStyle={{backgroundColor:'black'}}
+                            activeTabStyle={{backgroundColor:colors.gray}}
                             tabsContainerStyle={{paddingTop:10,paddingBottom:10,marginRight:"10%",marginLeft:"10%"}}
-                            tabTextStyle={{fontFamily:'dosis-semi-bold',color:'black'}}
-                            tabStyle={{borderColor:'black'}}
+                            tabTextStyle={{fontFamily:'dosis-semi-bold',color:colors.black}}
+                            tabStyle={{borderColor:colors.black}}
                             selectedIndex={indexShowTab}
                             onTabPress={changeIndexShowTab}
-                            tabBadgeContainerStyle={{backgroundColor:'black'}}
+                            tabBadgeContainerStyle={{backgroundColor:colors.black}}
                         />
                         {
                             !isLoading && (indexShowTab==0 ? createdOrders.length <= 0 : indexShowTab==1 ? deliveredOrders.length <= 0 : indexShowTab==2 ? completedOrders.length <= 0 : chargedOrders.length <= 0) && (
                                 <View style={{flex:0.1, alignItems:'center', paddingTop:10}}>
                                         <MaterialCommunityIcons
                                             name="information"
-                                            color='black'
+                                            color={colors.black}
                                             size={50}
                                         />
                                         {indexShowTab==0 && <Text style={{paddingTop:10, fontSize:20, fontFamily:'dosis-bold', textAlign:'center'}}>Por el momento no hay órdenes procesando.</Text>}
@@ -115,7 +115,7 @@ function OrdersList ({
                                             >
                                                 <MaterialCommunityIcons
                                                     name="pencil"
-                                                    color={'black'}
+                                                    color={colors.black}
                                                     size={30}
                                                 />
                                                 <Text style={styles.backTextWhite}>Editar</Text>  
@@ -148,7 +148,7 @@ function OrdersList ({
                                             >
                                                 <MaterialCommunityIcons
                                                     name="delete"
-                                                    color={'black'}
+                                                    color={colors.black}
                                                     size={30}
                                                 />
                                                 <Text style={styles.backTextWhite}>Eliminar</Text>
@@ -161,7 +161,7 @@ function OrdersList ({
                                             >
                                                 <MaterialCommunityIcons
                                                     name="check-circle"
-                                                    color={'black'}
+                                                    color={colors.black}
                                                     size={30}
                                                 />
                                                 <Text style={styles.backTextWhite}>Entregado</Text>  
@@ -210,7 +210,7 @@ function OrdersList ({
                                             >
                                                 <MaterialCommunityIcons
                                                     name="close-circle"
-                                                    color={'black'}
+                                                    color={colors.black}
                                                     size={30}
                                                 />
                                                 <Text style={{...styles.backTextWhite,fontSize:12}}>Procesando</Text>  
@@ -221,7 +221,7 @@ function OrdersList ({
                                             >
                                                 <MaterialCommunityIcons
                                                     name="check-circle"
-                                                    color={'black'}
+                                                    color={colors.black}
                                                     size={30}
                                                 />
                                                 <Text style={{...styles.backTextWhite,fontSize:12}}>Completar</Text>  

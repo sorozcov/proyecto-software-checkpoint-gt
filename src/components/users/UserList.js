@@ -43,6 +43,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 )}
                                 disableRightSwipe={true}
                                 refreshing={isLoading}
+                                closeOnRowPress={true}
                                 onRefresh={()=>onRefresh()}
                                 // shouldItemUpdate={() => selectedUser !== null}
                                 keyExtractor={user => user.uid}
@@ -101,7 +102,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 }
                                 leftOpenValue={0}
                                 rightOpenValue={-150}
-                                previewRowKey={'0'}
+                                
                                 previewOpenDelay={1000}
                             />
                         <FloatingAction

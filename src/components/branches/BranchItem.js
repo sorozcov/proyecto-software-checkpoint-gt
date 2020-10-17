@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import default_pic from '../../assets/resources/checkpoint.jpg';
 import * as actions from '../../logic/actions/branches';
-
+import Image from 'react-native-image-progress';
 
 
 class BranchItem extends Component{
@@ -19,7 +19,8 @@ class BranchItem extends Component{
         return(
             <ListItem onPress={this.onPress} thumbnail style={{...this.style}}>
                 <Left>
-                    <Thumbnail circle source={this.image === null ? default_pic : {uri: this.image}} />
+                     <Image  source={default_pic} imageStyle={{height: 65,width:65,borderRadius:65}} style={{height: 65,width:65,borderRadius:65}}/>
+                    
                 </Left>
                 <Body>
                     <Text style={{fontFamily:'dosis-semi-bold',fontSize:18}}>{this.props.name}</Text>

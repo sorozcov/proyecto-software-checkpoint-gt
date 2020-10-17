@@ -155,11 +155,11 @@ function Main({theme, navigation}) {
 
     <Tab.Navigator
         initialRouteName="Home"
-        activeColor="#f0edf6"
-        inactiveColor="#000000"
+        activeColor={colors.primary}
+        inactiveColor={colors.gray}
         lazy={false}
         shifting={false}
-        barStyle={{ backgroundColor: colors.primary ,paddingBottom:10,paddingTop:12,fontSize:'30px'}}
+        barStyle={{ backgroundColor: colors.white ,paddingBottom:0,paddingTop:3,fontSize:'30px'}}
     > 
         <Tab.Screen
             name="Menu"
