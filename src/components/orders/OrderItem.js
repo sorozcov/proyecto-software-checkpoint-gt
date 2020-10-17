@@ -20,7 +20,7 @@ class OrderItem extends Component{
         return(
             <ListItem onPress={this.onPress} thumbnail style={{...this.style}}>
                 <Left>
-                    <Avatar.Text size={55} label={this.props.order.table} color="white" style={{backgroundColor: '#563400'}} />
+                    <Avatar.Text size={55} label={this.props.order.table} color="white" style={{backgroundColor: this.props.theme.colors.accent}} />
                 </Left>
                 <Body>
                     <Text style={{fontFamily:'dosis-semi-bold',fontSize:21}}>{this.props.name}</Text>

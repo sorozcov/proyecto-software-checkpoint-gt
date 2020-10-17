@@ -28,17 +28,16 @@ function FinishOrder({
     const { roundness,colors } = theme;
     const [modalProduct, setModalProduct] = useState(false);
     // console.log(activeOrder)
-    const renderSectionHeader = ({ section }) => (
-        <ListItem style={{backgroundColor:'red'}} itemDivider icon>
-            <Left> 
-                <Icon active name="restaurant" />   
-            </Left>
-
-            <Body>
-                <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
-            </Body>
-        </ListItem>
-    );
+    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:colors.gray}} itemDivider icon>
+    <Left>
+             
+                <Icon active name="restaurant" style={{color:colors.white}}/>
+             
+    </Left>
+    <Body>
+    <Text style={{fontSize:16,fontFamily:'dosis-semi-bold',paddingLeft:0,color:colors.white}}>{section.title}</Text>
+    </Body>
+     </ListItem>  ;
     
     //Se calcula el total
     var total = 0

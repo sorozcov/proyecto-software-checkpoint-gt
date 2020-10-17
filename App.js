@@ -35,7 +35,10 @@ const theme = {
     ...DefaultTheme.colors,
     red: 'red',
     primary: '#E50000',
-    accent: '#0097B5',
+    black:'black',
+    white:'white',
+    accent: '#00AACC',
+    gray:'#605856'
   },
 };
 

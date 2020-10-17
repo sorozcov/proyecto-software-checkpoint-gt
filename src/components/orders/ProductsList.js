@@ -37,17 +37,16 @@ function ProductsList ({
 
 
     
-    const renderSectionHeader = ({ section }) => (
-    <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
-        <Left>
-            <Icon active name="restaurant" />
-        </Left>
-
-        <Body>
-            <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
-        </Body>
-     </ListItem>
-     );
+    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:colors.gray}} itemDivider icon>
+    <Left>
+             
+                <Icon active name="restaurant" style={{color:colors.white}}/>
+             
+    </Left>
+    <Body>
+    <Text style={{fontSize:16,fontFamily:'dosis-semi-bold',paddingLeft:0,color:colors.white}}>{section.title}</Text>
+    </Body>
+     </ListItem>  ;
 
     useEffect(onLoad, []);
 
@@ -60,7 +59,7 @@ function ProductsList ({
                 value={searchProductText}
                 showCancel={true}
                 showLoading={false}
-                containerStyle={{width:'100%',backgroundColor:'black'}}
+                containerStyle={{width:'100%',backgroundColor:colors.black}}
                 //inputContainerStyle={{backgroundColor:'white',fontFamily:'dosis-light',fontSize:17}}
                 
                 inputStyle={{fontFamily:'dosis-light',fontSize:19}}

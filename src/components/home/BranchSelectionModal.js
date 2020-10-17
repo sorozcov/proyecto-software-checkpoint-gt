@@ -34,7 +34,8 @@ function BranchSelectionModal({
 		const selectedBranch = branches.filter(branch => branch.id == values.restaurantId[0])[0];
 		values = {...initialValues};
         values.restaurantName = selectedBranch.name;
-        values.restaurantId = selectedBranch.id;
+		values.restaurantId = selectedBranch.id;
+		console.log(values)
 		await editLoggedUser(navigation, values);
 		await unsuscribeOrders();
 		await clearOrders();

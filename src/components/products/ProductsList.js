@@ -1,8 +1,8 @@
 import { Body, Container, Icon, Left, ListItem } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View ,ActivityIndicator} from "react-native";
 import { FloatingAction } from "react-native-floating-action";
-import { ActivityIndicator, withTheme } from 'react-native-paper';
+import {  withTheme } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
@@ -43,14 +43,14 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
     };
 
 
-    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:'red'}} itemDivider icon>
+    const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:colors.gray}} itemDivider icon>
     <Left>
              
-                <Icon active name="restaurant" />
+                <Icon active name="restaurant" style={{color:colors.white}}/>
              
     </Left>
     <Body>
-    <Text style={{fontSize:18,fontFamily:'dosis-semi-bold',paddingLeft:0}}>{section.title}</Text>
+    <Text style={{fontSize:16,fontFamily:'dosis-semi-bold',paddingLeft:0,color:colors.white}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
    useEffect(onLoad, []);

@@ -64,7 +64,7 @@ export const updateUser = async({
         let userDoc = null;
         let userData = null;
         let isNew = uid == null;
-        let test = uuid.v1()
+        let imageUid = uuid.v1()
         
         if (isNew) {
             //Create Random Password for User to change with the email confirmation
@@ -85,12 +85,12 @@ export const updateUser = async({
             //Vemos si necesita subir una imagen
             image = image !== undefined ? image : null;
             if (image !== null) {
-                let uploadImg = await uploadImageToFirebase(image, uid, "UserImages");
+                let uploadImg = await uploadImageToFirebase(image, imageUid, "UserImages");
                 if (!uploadImg.uploaded) {
                     //Error subiendo imagen
                     console.log(uploadImg.error);
                 }
-                image = uid;
+                image = imageUid;
             }
             //Creamos el documento del usuario
             userData = {
@@ -117,14 +117,22 @@ export const updateUser = async({
             image = image !== undefined ? image : null;
             if (image !== null) {
                 if (!image.includes(idk.image)) {
-                    console.log('need to update img')
-                    let uploadImg = await uploadImageToFirebase(image, test, "UserImages");
+                    try{
+                
+                        await firebase.storage().ref("UserImages/" + idk.image + '.jpg').delete();
+                        await firebase.storage().ref("UserImages/" + idk.image + '_200x200.jpg').delete();
+                        await firebase.storage().ref("UserImages/" + idk.image + '_400x400.jpg').delete();
+                        await firebase.storage().ref("UserImages/" + image + '_600x600.jpg').delete();
+                      }catch(error){
+                        console.log("Error eliminando imagenes.")
+                      }
+                    let uploadImg = await uploadImageToFirebase(image, imageUid, "UserImages");
                     if (!uploadImg.uploaded) {
                         //Error subiendo imagen
                         console.log(uploadImg.error);
                     }
                 }
-                image = test;
+                image = imageUid;
             }
 
             //Hacemos update al documento del usuario
