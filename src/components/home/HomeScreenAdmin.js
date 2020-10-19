@@ -10,6 +10,7 @@ import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 import * as selectors from '../../logic/reducers';
 import BranchesStackScreen from '../branches/BranchesStackScreen';
 import UsersStackScreen from '../users/UsersStackScreen';
+import ReportsStackScreen from '../reports/ReportsStackScreen';
 import MenuStackScreen from './MenuStackScreen';
 
 
@@ -22,11 +23,9 @@ function HomeScreen() {
   );
 }
 
-function SettingsScreen() {
+function ReportsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
+    <ReportsStackScreen />
   );
 }
 
@@ -196,7 +195,7 @@ function Main({theme, navigation}) {
         />
         <Tab.Screen
             name="Reportes"
-            component={SettingsScreen}
+            component={ReportsScreen}
             options={{
                 tabBarLabel: <Text style={{ fontSize: 12,fontFamily:'dosis-bold' }}> REPORTES </Text>,
                 tabBarIcon: ({ color }) => (
