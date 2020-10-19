@@ -18,6 +18,8 @@ import * as selectors from '../../logic/reducers';
 function ReportScreen({
     theme,
     navigation,
+    reportData,
+    generateReport,
 }) {
     const { colors, roundness } = theme;
     const screenWidth = Dimensions.get("window").width;
@@ -41,23 +43,18 @@ function ReportScreen({
         useShadowColorFromDataset: false // optional
     };
     
-
-    // DATE PICKER EXAMPLE
     const [isInit, setIsInit] = useState(false);
     const [initDate, setInitDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
-    const [show, setShow] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
 
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
     const onEndDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
 
@@ -70,16 +67,19 @@ function ReportScreen({
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                     <View style={styles.formContainer}>
-
-                        <LineChart
-                            style={styles.graphStyle}
-                            data={data}
-                            width={screenWidth}
-                            height={Dimensions.get("window").height * 0.55}
-                            yAxisLabel="Q."
-                            chartConfig={chartConfig}
-                            verticalLabelRotation={35}
-                        />
+                        {reportData ? (
+                            <LineChart
+                                style={styles.graphStyle}
+                                data={data}
+                                width={screenWidth}
+                                height={Dimensions.get("window").height * 0.55}
+                                yAxisLabel="Q."
+                                chartConfig={chartConfig}
+                                verticalLabelRotation={35}
+                            />
+                        ): (
+                            <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
+                        )}
 
                         <Modal
                             style={styles.modalView}
@@ -210,18 +210,18 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		paddingTop: 30,
 	},
-	inputContainerStyle: {
-		margin: 8,
-	},
-	inputContainerStyle: {
-		paddingLeft: 20,
-		paddingBottom: 10,
-		paddingRight: 20,
-	},
 	titleStyle: {
 		textAlign: 'center',
 		fontFamily: 'dosis-regular',
 		fontSize: 30,
+		paddingBottom: '6%',
+		paddingTop: '8%',
+	},
+	warning: {
+		textAlign: 'center',
+		fontFamily: 'dosis-regular',
+        fontSize: 30,
+        color:'#DA482D',
 		paddingBottom: '6%',
 		paddingTop: '8%',
 	},
@@ -275,11 +275,11 @@ const styles = StyleSheet.create({
 
 export default connect(
 	state => ({
-        data: selectors.getOrdersByDate(state),
+        reportData: selectors.getReport(state, 'BY-DATE'),
 	}),
 	dispatch => ({
         // Updata data by dates.
-        getData(initDate, endDate) {
+        generateReport(initDate, endDate) {
             dispatch(actions.startFetchingDateReport(initDate, endDate));
         },
 	}),

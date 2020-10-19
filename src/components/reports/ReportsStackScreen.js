@@ -25,7 +25,7 @@ function ReportsStackScreen({ theme }) {
         >
             <ReportsStack.Screen
                 name="Reports"
-                options={{ title: 'MENU', headerTitleAlign:'center'}}
+                options={{ title: 'REPORTES', headerTitleAlign:'center'}}
                 component={ReportScreen}
             />
 
