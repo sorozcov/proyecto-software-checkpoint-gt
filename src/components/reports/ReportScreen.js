@@ -21,16 +21,11 @@ function ReportScreen({
     reportData,
     generateReport,
 }) {
+    console.log('reportData:', reportData);
     const { colors, roundness } = theme;
+
+    
     const screenWidth = Dimensions.get("window").width;
-    const data = {
-        labels: ["January", "February", "March", "April", "May", "June"],
-        datasets: [
-            {
-            data: [20, 45, 28, 80, 99, 43]
-            }
-        ]
-    };
 
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
@@ -70,12 +65,19 @@ function ReportScreen({
                         {reportData ? (
                             <LineChart
                                 style={styles.graphStyle}
-                                data={data}
+                                data={{
+                                    labels: reportData.sale,
+                                    datasets: [
+                                        {
+                                        data: reportData.sale.map(i => reportData.saleById[i]['total'])
+                                        }
+                                    ]
+                                }}
                                 width={screenWidth}
                                 height={Dimensions.get("window").height * 0.55}
                                 yAxisLabel="Q."
                                 chartConfig={chartConfig}
-                                verticalLabelRotation={35}
+                                verticalLabelRotation={45}
                             />
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
@@ -188,7 +190,7 @@ function ReportScreen({
                                     marginRight: '5%',
                                     justifyContent: 'center',
                                 }}
-                                onPress={()=>{}}
+                                onPress={()=>generateReport(initDate, endDate)}
                             >
                             {'GENERAR REPORTE'}
                             </Button>
@@ -280,6 +282,7 @@ export default connect(
 	dispatch => ({
         // Updata data by dates.
         generateReport(initDate, endDate) {
+            console.log("generateReport!")
             dispatch(actions.startFetchingDateReport(initDate, endDate));
         },
 	}),
