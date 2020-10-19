@@ -21,9 +21,7 @@ function ReportScreen({
     reportData,
     generateReport,
 }) {
-    console.log('reportData:', reportData);
     const { colors, roundness } = theme;
-
     
     const screenWidth = Dimensions.get("window").width;
 
@@ -282,7 +280,6 @@ export default connect(
 	dispatch => ({
         // Updata data by dates.
         generateReport(initDate, endDate) {
-            console.log("generateReport!")
             dispatch(actions.startFetchingDateReport(initDate, endDate));
         },
 	}),
