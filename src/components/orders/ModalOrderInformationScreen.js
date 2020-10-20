@@ -30,7 +30,7 @@ const createAndSavePDF = async (activeOrder) => {
 				let modifyIng = ingredient.selected? 'SI': 'NO';
 				
 				itemIngredients += `<div><p class="ingredient"> ${modifyIng}  ${ingredient.name}</p></div>`
-				length+=0.5;
+				length+=1;
 			}
 		}
 		)
@@ -46,20 +46,22 @@ const createAndSavePDF = async (activeOrder) => {
 		}
 		)
 		
+		let additionalInstructions=""
+		additionalInstructions = item.additionalInstructions!= null && item.additionalInstructions!="" ? `<div><p class="ingredient">Instrucciones ad.:  ${item.additionalInstructions} </p></div>`:''
+		if(additionalInstructions!=''){
+			length+=parseInt(item.additionalInstructions.length/200 +1);
+		}
 		
 		return ({
 		name: item.productName,
 		quantity: item.quantity,
 		ingredients: itemIngredients,
 		additionals: itemAdditionals,
+		additionalInstructions: additionalInstructions,
 		totalPrice: item.totalPrice
 		})
 	})
-	let additionalInstructions=""
-	additionalInstructions = activeOrder.additionalInstructions!= null && activeOrder.additionalInstructions!="" ? `<div><p class="name">Instrucciones ad.:  ${activeOrder.additionalInstructions} </p></div>`:''
-	if(additionalInstructions!=''){
-		length+=1;
-	}
+	
 	const subtotal = parseFloat(activeOrder.total).toFixed(2)
 	const tiptotal = parseFloat(activeOrder.hasTip ? activeOrder.tip:0).toFixed(2)
 	const total = parseFloat(parseFloat(subtotal)+parseFloat(tiptotal)).toFixed(2)
@@ -73,7 +75,7 @@ const createAndSavePDF = async (activeOrder) => {
 	
 
 	let rows = ''
-	items.map(item => rows += (`<div><p class="name"> ${item.quantity}  ${item.name}</p> <p class="price">Q${item.totalPrice}</p></div>` + item.ingredients + item.additionals))
+	items.map(item => rows += (`<div><p class="name"> ${item.quantity}  ${item.name}</p> <p class="price">Q${item.totalPrice}</p></div>` + item.ingredients + item.additionals + item.additionalInstructions))
 	
 	
 	
@@ -162,7 +164,7 @@ const createAndSavePDF = async (activeOrder) => {
 					<p class="price header">PRECIO</p>
 				</div>
 				${rows}
-				${additionalInstructions}
+				
 				<hr>
 				<div>
 					<p class="total header">SUBTOTAL</p>
@@ -337,7 +339,7 @@ function OrderInformationScreen({
 					<MyCheckbox name={'invoice'} disabled={false}  label='FACTURA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.status===5 : invoice} onCheck={(check)=>setInvoice(check)} disabled={chargeView}/>
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />
 					{/* <MyCheckbox name={'discount'} disabled={false}  label='DESCUENTOS' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={chargeView ? activeOrder.discount!==false : discounts} onCheck={(check)=>setDiscounts(check)} disabled={chargeView}/> */}
-					{!chargeView && <MyCheckbox name={'closeOrder'} disabled={false}  label='CERRAR CUENTA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={!chargeView ? chargeView : closeOrder} onCheck={(check)=>setCloseOrder(check)} disabled={chargeView}/>}
+					{!chargeView && <MyCheckbox name={'closeOrder'}   label='CERRAR CUENTA' containerStyle={{backgroundColor:null,width:'50%',alignSelf:'center',height:40}} size={20} checkedColor={theme.colors.accent} center={true} checked={closeOrder} onCheck={(check)=>setCloseOrder(check)} disabled={chargeView}/>}
 					{!chargeView && <Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} />}
 					
 					{/* {chargeView && activeOrder.discount!==false && 
