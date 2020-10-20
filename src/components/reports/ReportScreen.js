@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { Field, reduxForm } from 'redux-form';
-import { BarChart,LineChart } from 'react-native-chart-kit'
+import { BarChart,LineChart } from 'react-native-chart-kit';
+
+import XLSX from 'xlsx';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme } from 'react-native-paper';
@@ -51,9 +55,39 @@ function ReportScreen({
         setEndDate(currentDate);
     };
 
-      const toggleShow = (show) => {
+    const toggleShow = (show) => {
         setShow(!show);
-      };
+    };
+
+    const exportCSV = async(data) => {
+        data = data.saleById;
+        console.log(' works?')
+
+        var ws = await XLSX.utils.json_to_sheet(data);
+        console.log(ws);
+        var wb = await XLSX.utils.book_new();
+
+        await XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+        const wbout = await XLSX.write(wb, {
+            type: 'base64',
+            bookType: 'xlsx',
+        });
+
+        const uri = FileSystem.cacheDirectory + 'report.xlsx';
+
+        console.log(`WRITING TO ${JSON.stringify(uri)} with text: ${wbout}`);
+
+        await FileSystem.writeAsStringAsync(uri, wbout, {
+            encoding: FileSystem.EncodingType.Base64,
+        });
+
+        await Sharing.shareAsync(uri, {
+            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            dialogTitle: 'REPORT DATA',
+            UTI: 'com.microsoft.excel.xlsx',
+        });
+    };
     
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
@@ -193,6 +227,33 @@ function ReportScreen({
                             {'GENERAR REPORTE'}
                             </Button>
                         </View>
+
+                        { 
+                            reportData && (
+                                <View>
+                                    <Button
+                                        theme={roundness}
+                                        color={'#000000'}
+                                        icon={"chart-bar"}
+                                        height={50}
+                                        mode="contained"
+                                        labelStyle={{
+                                            fontFamily: "dosis-bold",
+                                            fontSize: 15,
+                                        }}
+                                        style={{
+                                            fontFamily: 'dosis',
+                                            marginLeft: '5%',
+                                            marginRight: '5%',
+                                            justifyContent: 'center',
+                                        }}
+                                        onPress={ ()=> exportCSV(reportData) }
+                                    >
+                                    {'EXPORTAR DATOS'}
+                                    </Button>
+                                </View>
+                            )
+                        }
                     </View>
                 </ScrollView>
             </View>
