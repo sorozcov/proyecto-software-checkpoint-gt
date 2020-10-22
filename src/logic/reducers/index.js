@@ -12,6 +12,7 @@ import branches, * as branchSelectors from './branches';
 import products, * as productsSelectors from './products';
 import loggedUser, * as loggedUserSelectors from './loggedUser';
 import categories, * as categoriesSelectors from './categories';
+import dashboardSales, * as dashboardSalesSelectors from './dashboardSales';
 
 import * as types from '../types/loggedUser';
 
@@ -24,6 +25,7 @@ const reducer = combineReducers({
     branches,
     orders,
     reports,
+    dashboardSales,
     form: formReducer,
 });
 
@@ -195,3 +197,11 @@ export const getProductsByCategoryActive = state => {
     filteredSearchProducts = filteredSearchProducts.filter(cat => cat.data.length > 0)
     return filteredSearchProducts.sort((cat1, cat) => (cat1.title) > (cat.title))
 };
+
+
+// dashboardSales
+export const getDashboardSalesReport = (state) => dashboardSalesSelectors.getDashboardSalesReport(state.dashboardSales);
+export const getDashboardSalessIsFetching = state => dashboardSalesSelectors.getDashboardSalesReportIsFetching(state.dashboardSales);
+export const getDashboardSalesReportError = state => dashboardSalesSelectors.getDashboardSalesReportError(state.dashboardSales);
+export const getDashboardSalesReportByBranch = state => dashboardSalesSelectors.getDashboardSalesReportByBranch(state.dashboardSales);
+export const getDashboardSalesReportByWaiter = state => dashboardSalesSelectors.getDashboardSalesReportByWaiter(state.dashboardSales);

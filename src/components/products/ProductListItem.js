@@ -10,12 +10,7 @@ import {imageExists} from 'image-exists'
 
 
     function ProductListItemAdmin (props){
-        // constructor(props){
-        //     super();
-        //     props.product.image = (props.product.image != null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${props.product.image}_400x400.jpg?alt=media` : null);
-        //     props.style = props.style;
-        //     console.log(props.name + " " + props.product.image)
-        // }
+       
 
     
         const [imageUrl, setImage] = useState(null);

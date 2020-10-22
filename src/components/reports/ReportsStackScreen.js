@@ -1,10 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { withTheme } from 'react-native-paper';
-import CategoriesList from '../categories/CategoriesList';
-import EditCategoryScreen from '../categories/EditCategoryScreen';
-import EditProductScreen from '../products/EditProductScreen';
 import ReportScreen from './ReportScreen';
+import DashboardScreen from './DashboardScreen';
 
 
 const ReportsStack = createStackNavigator();
@@ -21,11 +19,16 @@ function ReportsStackScreen({ theme }) {
                 },
                 headerMode: 'screen'
             })}
-            initialRouteName="Reports"
+            initialRouteName="Dashboard"
         >
             <ReportsStack.Screen
-                name="Reports"
-                options={{ title: 'REPORTES', headerTitleAlign:'center'}}
+                name="Dashboard"
+                options={{ title: 'DASHBOARD', headerTitleAlign:'center'}}
+                component={DashboardScreen}
+            />
+            <ReportsStack.Screen
+                name="ReportsByDay"
+                options={{ title: 'REPORTE DE VENTAS', headerTitleAlign:'center'}}
                 component={ReportScreen}
             />
 
