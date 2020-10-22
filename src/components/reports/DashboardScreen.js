@@ -80,20 +80,7 @@ function ReportScreen({
                                 title={"Ventas Por Sucursal Gráfica"}
                                 titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
                                 containerStyle={{marginTop:10}}>
-                                    {dashboardData.total!=0 ?<PieChart
-                                    data={dashboardDataBranches.map(branch=>({name:branch.name,
-                                    total: branch.total,
-                                    color: "rgb(0, 0, 255)",
-                                    legendFontColor: "#7F7F7F",
-                                    legendFontSize: 10}))}
-                                    width={screenWidth*0.8}
-                                    height={220}
-                                    chartConfig={chartConfig}
-                                    accessor="total"
-                                    backgroundColor="transparent"
-                                    paddingLeft={screenWidth*0.05}
-                                    hasLegend={true}
-                                    />:
+                                    {dashboardData.total!=0 ?null:
                                     <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>
                                     }
                                     
