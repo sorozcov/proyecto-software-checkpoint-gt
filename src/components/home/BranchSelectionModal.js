@@ -35,7 +35,7 @@ function BranchSelectionModal({
 		values = {...initialValues};
         values.restaurantName = selectedBranch.name;
 		values.restaurantId = selectedBranch.id;
-		console.log(values)
+		
 		await editLoggedUser(navigation, values);
 		await unsuscribeOrders();
 		await clearOrders();

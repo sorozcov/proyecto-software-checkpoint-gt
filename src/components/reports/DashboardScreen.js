@@ -15,7 +15,7 @@ import { Button, withTheme,DataTable } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/dashboardSales';
-import { VictoryTheme,VictoryPie } from "victory-native";
+import { VictoryTheme,VictoryPie,VictoryLabel,VictoryChart,VictoryLegend } from "victory-native";
 import moment from "moment";
 
 
@@ -47,8 +47,13 @@ function ReportScreen({
                         {dashboardData ? (
 
                             <View>
-                            <Card>
-                                    <Text  style={{...styles.saleTitle,color:colors.accent}}>{moment(new Date()).format('LL')}</Text>
+
+                            <Card
+                                    title={"Dashboard Checkpoint"}
+                                    
+                                    titleStyle={{fontFamily:'dosis-bold',fontSize:22}}
+                                    containerStyle={{marginTop:0}}>
+                                     <Text  style={{...styles.saleTitle,color:colors.accent}}>{moment(new Date()).format('LL')}</Text>
                             </Card>
                             <Card
                                     title={"Total Ventas"}
@@ -75,21 +80,74 @@ function ReportScreen({
                                     ))}
                                     
                                 </DataTable>
-                            </Card>
-                            <Card 
-                                title={"Ventas Por Sucursal Gráfica"}
-                                titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
-                                containerStyle={{marginTop:10}}>
-                                    {dashboardData.total!=0 ?null:
-                                    <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>
-                                    }
+                                {dashboardData.total!=0 ?
+                                    <View>
+                    
+                                    <VictoryPie
+                                    data={dashboardDataBranches.filter(branch=>branch.total>0)}
+                                    // theme={VictoryTheme.material}
+                                    // colorScale={["tomato", "orange", "gold", "cyan", "navy" ]}
                                     
+                                    style={{
+                                        data: {
+                                          fillOpacity: 0.9, stroke: colors.accent, strokeWidth: 2,
+                                        },
+                                        labels: {
+                                          fontSize: 12, fill: colors.accent,padding:5
+                                        },
+                                        margin:0,
+                                        
+                                      }}
+                                    x = "name"
+                                    innerRadius={0}
+                                    // labelRadius={}
+                                    // labelComponent={<VictoryLabel angle={45}/>}
+                                    labels={({ datum }) => `${datum.name}`}
+                                    y = "total"
+                                    padding={{ top: 0, bottom: 0,left:screenWidth*0.2 ,right:screenWidth*0.2 }}
+                                    origin={{x:screenWidth*0.42}}
+                                    width={screenWidth*0.8}
+                                    height={250}
+                                    
+                                    />
+                                    </View>
+                                    
+                                    :
+                                    null
+                                    }
                             </Card>
+                            
+                        
                             <Card 
-                                title={"Ventas Por Mesero Gráfica"}
+                                title={"Ventas Por Mesero"}
                                 titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
                                 containerStyle={{marginTop:10}}>
-                                    {dashboardData.total!=0 ?null:
+                                    {dashboardData.total!=0 ?
+                                    <VictoryPie
+                                    data={dashboardDataWaiters.filter(waiter=>waiter.total>0)}
+                                    // theme={VictoryTheme.material}
+                                    // colorScale={["tomato", "orange", "gold", "cyan", "navy" ]}
+                                    
+                                    style={{
+                                        data: {
+                                          fillOpacity: 0.9, stroke: colors.accent, strokeWidth: 2,
+                                        },
+                                        labels: {
+                                            fontSize: 12, fill: colors.accent,padding:5
+                                        },
+                                        margin:0
+                                      }}
+                                    x = "name"
+                                    innerRadius={0}
+                                    labels={({ datum }) => `${datum.name} GTQ${parseFloat(datum.total).toFixed(2)}`}
+                                    y = "total"
+                                    // labelComponent={<VictoryLabel angle={45}/>}
+                                    padding={{ top: 0, bottom: 0,left:screenWidth*0.2 ,right:screenWidth*0.2 }}
+                                    origin={{x:screenWidth*0.42}}
+                                    width={screenWidth*0.8}
+                                    height={225}
+                                    
+                                    />:
                                     <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>
                                     }
                                     

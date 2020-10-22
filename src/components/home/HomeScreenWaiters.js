@@ -1,7 +1,8 @@
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import React, { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image as ImageReact,StyleSheet, Text, View } from 'react-native';
+import Image from 'react-native-image-progress';
+import React, { Component,useEffect, useState } from 'react';
 import { Avatar, Caption, Drawer, Title, withTheme } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
@@ -9,7 +10,7 @@ import default_pic from '../../assets/resources/default.png';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 import * as selectors from '../../logic/reducers';
 import BranchSelectionModal from './BranchSelectionModal';
-
+import * as firebase from "firebase";
 
 import NewOrdersStackScreen from '../orders/NewOrderStackScreen';
 import OrderStackScreen from '../orders/OrdersStackScreen';
@@ -24,7 +25,30 @@ const Tab = createMaterialBottomTabNavigator();
 function DrawerContent(props) {
     const {navigation, user, logOff, toggleAppMode, isAdminMode} = props;
     const image = (user.image!=null ? `https://firebasestorage.googleapis.com/v0/b/software-checkpoint-gt.appspot.com/o/UserImages%2F${user.image}_400x400.jpg?alt=media` : default_pic);
-
+    const [imageUrl, setImage] = useState(null);
+    const [errorLoadingImage, setErrorLoadingImage] = useState(false);
+      useEffect(()=>{async function getImage(){
+          
+          if(!errorLoadingImage){
+          try{
+              
+              if(props.user.image!=null){
+                  let img = await firebase.storage().ref().child(`UserImages/${props.user.image}_400x400.jpg`).getDownloadURL();
+                  
+                  setImage(img);
+                  
+              } 
+          }catch(error){
+              
+              setErrorLoadingImage(true);
+              setTimeout(getImage,500);
+          }
+          }
+      }
+      getImage();
+  
+      },[props.user.image])
+      const userImage = imageUrl === null ? default_pic : {uri: imageUrl, cache:'force-cache'}
     const [branchModal, setBranchModal] = useState(false);
 
     return (
@@ -33,29 +57,7 @@ function DrawerContent(props) {
         user.name!==undefined && (
             <View style={styles.drawerContent}>
                 <View style={styles.userInfoSection}>
-                    {
-                        image!=18 && (
-                            <Avatar.Image
-                                source={{
-                                    uri:
-                                    image,
-                                }}
-                                size={140}
-                                style={{marginTop:10}}
-                            />
-                        )
-                    }
-                    {
-                        image==18 && (
-                            <Avatar.Image
-                                source={
-                                    image
-                                }
-                                size={140}
-                                style={{marginTop:10}}
-                            />
-                        )
-                    }
+                <Image  source={userImage} imageStyle={{height: 130,width:130,borderRadius:130}} style={{height: 130,width:130,borderRadius:130,marginTop:10}}/>
                     <Title style={styles.title}>{user.name + " " + user.lastName}</Title>
                     <Caption style={styles.caption}>{user.restaurantName}</Caption>
                 </View>
@@ -110,7 +112,7 @@ function DrawerContent(props) {
                 </Drawer.Section>
 
                 <View style={styles.footer}>
-                    <Image
+                    <ImageReact
                         source={ require('../../assets/images/checkpoint.jpg') }
                         style={styles.logoImage}
                     />

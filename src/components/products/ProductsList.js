@@ -268,7 +268,7 @@ export default connect(
         user: selectors.getLoggedUser(state),
         categories: selectors.getCategories(state),
         productsByCategories: selectors.getAllProductsByCategory(state),
-        isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
+        isLoading: false,
         isCreating: selectors.isCreatingCategory(state) || selectors.isAddingProducts(state),
         isEditing: selectors.isEditingProducts(state),
         isRemoving: selectors.isRemovingProducts(state),

@@ -183,6 +183,7 @@ export default connect(
         user: selectors.getLoggedUser(state),
         productsByCategories: selectors.getProductsByCategoryActive(state),
         isLoading: selectors.isFetchingCategories(state) || selectors.isFetchingProducts(state),
+        isLoading: false,
         searchProductText:selectors.getSearchTextProduct(state)
     }),
     dispatch => ({

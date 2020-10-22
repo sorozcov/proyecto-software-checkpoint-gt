@@ -79,9 +79,9 @@ export const updateProduct = async ({productId=null,productName,description,cate
               //Error subiendo imagen
               console.log(uploadImg.error);
             }
-            
+            image = imageUid;
           }
-          image = imageUid;
+          
           
         }
  

@@ -118,7 +118,7 @@ export const updateUser = async({
             if (image !== null) {
                 if (!image.includes(idk.image)) {
                     try{
-                
+                        console.log("Eliminando")
                         await firebase.storage().ref("UserImages/" + idk.image + '.jpg').delete();
                         await firebase.storage().ref("UserImages/" + idk.image + '_200x200.jpg').delete();
                         await firebase.storage().ref("UserImages/" + idk.image + '_400x400.jpg').delete();
@@ -131,8 +131,9 @@ export const updateUser = async({
                         //Error subiendo imagen
                         console.log(uploadImg.error);
                     }
+                    image = imageUid;
                 }
-                image = imageUid;
+                
             }
 
             //Hacemos update al documento del usuario

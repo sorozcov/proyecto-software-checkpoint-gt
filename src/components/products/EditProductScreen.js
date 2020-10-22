@@ -60,7 +60,7 @@ function EditProductScreen({
 		var selectedCategory = categories.filter(category => category.categoryId == values.category[0])[0];
 		values.category = selectedCategory;
 		values.categoryId = selectedCategory.categoryId;
-
+		values.image=values.imageName!=null && values.imageName.includes("firebase") ? initialValues.image : values.imageName
 		if(isNew)
 			createProduct(navigation, values);
 	 	else {
@@ -81,7 +81,7 @@ function EditProductScreen({
 				<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 					<View style={styles.formContainer}>
 						<Field
-							name={'image'}
+							name={'imageName'}
 							component={ImagePicker}
 							image={isNew ? null : initialValues.image}
 						/>

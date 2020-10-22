@@ -57,7 +57,7 @@ const signUp = values => {
     var selectedUserType = userTypesArray.filter(userType => userType.value == values.userType[0])[0];
     values.userTypeId = selectedUserType.value;
     values.userTypeName = selectedUserType.label;
-
+    values.image=values.imageName!=null && values.imageName.includes("firebase") ? initialValues.image : values.imageName
 
     if(isNew){
         createUser(values);
@@ -88,7 +88,7 @@ return (
             <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                 <View style={styles.formContainer}>
                     <Field
-                        name={'image'}
+                        name={'imageName'}
                         component={ImagePicker}
                         image={isNew ? null : initialValues.image}
                     />
