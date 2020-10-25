@@ -48,10 +48,12 @@ function ReportScreen({
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
+        setModalVisible(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
     const onEndDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
+        setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
 
@@ -114,7 +116,7 @@ function ReportScreen({
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
                         )}
-
+                        {Platform.OS === 'ios' ?
                         <Modal
                             style={styles.modalView}
                             animationType="fade"
@@ -161,7 +163,26 @@ function ReportScreen({
                             </View>                
                             </TouchableWithoutFeedback>
                         </Modal>
-
+                        :modalVisible && (isInit ? (
+                            <DateTimePicker
+                                style={styles.datePicker}
+                                testID="dateTimePicker"
+                                value={initDate}
+                                mode={'date'}
+                                display="default"
+                                onChange={onInitDateChange}
+                            />
+                            ) : (
+                            <DateTimePicker
+                                style={styles.datePicker}
+                                testID="dateTimePicker"
+                                value={endDate}
+                                mode={'date'}
+                                display="default"
+                                onChange={onEndDateChange}
+                            />
+                        ))               
+                        }
                         <View style={styles.datesStyle}>
                             <Button
                                 theme={roundness}
