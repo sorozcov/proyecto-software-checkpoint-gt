@@ -32,7 +32,7 @@ function ReportScreen({
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "#08130D",
+        backgroundGradientTo: Platform.OS === 'ios' ? "#08130D" : "#FFFFFF",
         backgroundGradientToOpacity: 0.5,
         color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
         strokeWidth: 2, // optional, default 3
