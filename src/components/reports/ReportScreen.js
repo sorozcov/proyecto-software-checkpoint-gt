@@ -2,8 +2,7 @@ import 'firebase/firestore';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
-import { Field, reduxForm } from 'redux-form';
-import { BarChart,LineChart } from 'react-native-chart-kit';
+import { LineChart } from 'react-native-chart-kit';
 
 import XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system';
@@ -26,8 +25,7 @@ function ReportScreen({
     generateReport,
 }) {
     const { colors, roundness } = theme;
-    
-    const screenWidth = Dimensions.get("window").width;
+
 
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
@@ -41,8 +39,8 @@ function ReportScreen({
     };
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
+    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1))); // Yesterday
+    const [endDate, setEndDate] = useState(new Date()); // Today
     const [modalVisible, setModalVisible] = useState(false);
 
 
@@ -63,10 +61,8 @@ function ReportScreen({
 
     const exportCSV = async(data) => {
         data = data.saleById;
-        console.log(' works?')
 
         var ws = await XLSX.utils.json_to_sheet(data);
-        console.log(ws);
         var wb = await XLSX.utils.book_new();
 
         await XLSX.utils.book_append_sheet(wb, ws, 'Report');
@@ -78,7 +74,6 @@ function ReportScreen({
 
         const uri = FileSystem.cacheDirectory + 'report.xlsx';
 
-        console.log(`WRITING TO ${JSON.stringify(uri)} with text: ${wbout}`);
 
         await FileSystem.writeAsStringAsync(uri, wbout, {
             encoding: FileSystem.EncodingType.Base64,
@@ -107,7 +102,7 @@ function ReportScreen({
                                         }
                                     ]
                                 }}
-                                width={screenWidth}
+                                width={Dimensions.get("window").width}
                                 height={Dimensions.get("window").height * 0.55}
                                 yAxisLabel="Q."
                                 chartConfig={chartConfig}
@@ -142,6 +137,7 @@ function ReportScreen({
                                     <Text style={styles.titleStyle}> Selección de fecha </Text>
                                     {isInit ? (
                                         <DateTimePicker
+                                            maximumDate={endDate}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={initDate}
@@ -151,6 +147,8 @@ function ReportScreen({
                                         />
                                         ) : (
                                         <DateTimePicker
+                                            minimumDate={initDate}
+                                            maximumDate={new Date()}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={endDate}
@@ -200,7 +198,7 @@ function ReportScreen({
                                     setModalVisible(true);
                                 }}
                             >
-                                {`${initDate.toDateString()}`}
+                                {`${initDate.toLocaleDateString('es-MX')}`}
                             </Button>
 
                             <Text fontFamily={'dosis-bold'}>a</Text>
@@ -221,13 +219,14 @@ function ReportScreen({
                                     setModalVisible(true);
                                 }}
                             >
-                                {`${endDate.toDateString()}`}
+                                {`${endDate.toLocaleDateString('es-MX')}`}
                             </Button>
 
 					    </View>
 
                         <View style={{marginTop:'4%',marginBottom:'10%'}}>
                             <Button
+                                disabled={!(initDate < endDate)}
                                 theme={roundness}
                                 color={'#000000'}
                                 icon={"chart-bar"}
