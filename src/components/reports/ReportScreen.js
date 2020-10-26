@@ -30,7 +30,7 @@ function ReportScreen({
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "#08130D",
+        backgroundGradientTo: Platform.OS === 'ios' ? "#08130D" : "#FFFFFF",
         backgroundGradientToOpacity: 0.5,
         color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
         strokeWidth: 2, // optional, default 3
@@ -46,10 +46,12 @@ function ReportScreen({
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
+        setModalVisible(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
     const onEndDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
+        setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
 
@@ -109,7 +111,7 @@ function ReportScreen({
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
                         )}
-
+                        {Platform.OS === 'ios' ?
                         <Modal
                             style={styles.modalView}
                             animationType="fade"
@@ -159,7 +161,26 @@ function ReportScreen({
                             </View>                
                             </TouchableWithoutFeedback>
                         </Modal>
-
+                        :modalVisible && (isInit ? (
+                            <DateTimePicker
+                                style={styles.datePicker}
+                                testID="dateTimePicker"
+                                value={initDate}
+                                mode={'date'}
+                                display="default"
+                                onChange={onInitDateChange}
+                            />
+                            ) : (
+                            <DateTimePicker
+                                style={styles.datePicker}
+                                testID="dateTimePicker"
+                                value={endDate}
+                                mode={'date'}
+                                display="default"
+                                onChange={onEndDateChange}
+                            />
+                        ))               
+                        }
                         <View style={styles.datesStyle}>
                             <Button
                                 theme={roundness}
