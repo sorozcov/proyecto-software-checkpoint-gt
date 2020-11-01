@@ -13,6 +13,14 @@ const byId = (state = {}, action) => {
             }
             return newState;
         }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_COMPLETED: 
+        {
+            const newState = {
+                ...state,
+                ['BY-BRANCH']: action.payload.report,
+            }
+            return newState;
+        }
         default: 
         {
             return state;
@@ -34,6 +42,18 @@ const isFetching = (state = false, action) => {
         {
             return false;
         }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_STARTED:
+        {
+            return true;
+        }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_COMPLETED:
+        {
+            return false;
+        }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_FAILED:
+        {
+            return false;
+        }
         default:
         {
             return state;
@@ -52,6 +72,18 @@ const error = (state = null, action) => {
             return null;
         }
         case types.FETCH_SALES_REPORT_BY_DATE_FAILED:
+        {
+            return action.payload.error;
+        }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_STARTED:
+        {
+            return null;
+        }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_COMPLETED:
+        {
+            return null;
+        }
+        case types.FETCH_SALES_REPORT_BY_BRANCH_FAILED:
         {
             return action.payload.error;
         }

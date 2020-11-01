@@ -204,6 +204,17 @@ function ReportScreen({
                     buttonSize:45,
                     color:'#00A8C8'
                     
+                }, {
+                    icon: (
+                        <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
+                    ),
+                    name:'ReportByBranch',
+                    text:'Reporte por Sucursal',
+                    position:1,
+                    textStyle:{fontFamily:'dosis-light'},
+                    buttonSize:45,
+                    color:'#00A8C8'
+                    
                 }]}
             />
     	</KeyboardAvoidingView>

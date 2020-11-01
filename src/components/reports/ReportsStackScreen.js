@@ -3,6 +3,7 @@ import React from 'react';
 import { withTheme } from 'react-native-paper';
 import ReportScreen from './ReportScreen';
 import DashboardScreen from './DashboardScreen';
+import ReportByBranchScreen from './ReportByBranchScreen';
 
 
 const ReportsStack = createStackNavigator();
@@ -30,6 +31,11 @@ function ReportsStackScreen({ theme }) {
                 name="ReportsByDay"
                 options={{ title: 'REPORTE DE VENTAS', headerTitleAlign:'center'}}
                 component={ReportScreen}
+            />
+            <ReportsStack.Screen
+                name="ReportByBranch"
+                options={{ title: 'REPORTE POR SUCURSAL', headerTitleAlign:'center'}}
+                component={ReportByBranchScreen}
             />
 
         </ReportsStack.Navigator>

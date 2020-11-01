@@ -14,7 +14,7 @@ import {
     // watchEditIngredientStarted
 } from './products';
 import { watchAddUsersStarted, watchDeleteUserStarted, watchEditUsersStarted, watchUsersFetchStarted } from './users';
-import { watchGetSalesReportByDate } from './reports';
+import { watchGetSalesReportByDate, watchGetSalesReportByBranch } from './reports';
 import { watchGetDashboardSalesReport } from './dashboardSales';
 
 
@@ -53,6 +53,7 @@ function* mainSaga() {
         fork(watchRemoveOrder),
 
         fork(watchGetSalesReportByDate),
+        fork(watchGetSalesReportByBranch),
 
         fork(watchGetDashboardSalesReport),
 
