@@ -6,7 +6,6 @@ import { Field, reduxForm } from 'redux-form';
 import { BarChart,LineChart,PieChart } from 'react-native-chart-kit';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import {Card} from 'react-native-elements'

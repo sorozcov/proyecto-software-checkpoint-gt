@@ -1,10 +1,10 @@
 import 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+// import RNFetchBlob from 'rn-fetch-blob';
 
-import XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
@@ -43,6 +43,8 @@ function ReportScreen({
     const [endDate, setEndDate] = useState(new Date()); // Today
     const [modalVisible, setModalVisible] = useState(false);
 
+    const graphReference = useRef();
+
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -59,38 +61,85 @@ function ReportScreen({
         setShow(!show);
     };
 
-    const exportCSV = async(data) => {
-        data = data.saleById;
-
-        var ws = await XLSX.utils.json_to_sheet(data);
-        var wb = await XLSX.utils.book_new();
-
-        await XLSX.utils.book_append_sheet(wb, ws, 'Report');
-
-        const wbout = await XLSX.write(wb, {
-            type: 'base64',
-            bookType: 'xlsx',
+    const createPDF = async() => {
+        let snapshot = await captureRef(graphReference, {
+            format: 'jpg',
+            quality: 1,
         });
+        setSnap(snapshot);
 
-        const uri = FileSystem.cacheDirectory + 'report.xlsx';
+        let html = 
+		`
+            <img src="${snapshot}" width="100%" style="border:2px solid black; height:${300}px; width:${300}px;" />
+        `;
+        html += '<p>Hello world</p>'
 
+        try {
+            const { uri } = await Print.printToFileAsync({ 
+                html,
+                width: 250,
+                height:300,
+                base64: true,
+            });
 
-        await FileSystem.writeAsStringAsync(uri, wbout, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
+            if (Platform.OS === "ios"){
+                await Sharing.shareAsync(uri);
+            } else {	
+                console.log("Falta opción para Android")
+            };
 
-        await Sharing.shareAsync(uri, {
-            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            dialogTitle: 'REPORT DATA',
-            UTI: 'com.microsoft.excel.xlsx',
-        });
+        } catch (error) {
+            console.error(error);
+        };
     };
+
+    const exportCSV = async(data) => {
+        let salesData = transformData(data);
     
+        const headerString = 'total,díaSemana,Mes,Año,Fecha\n';
+        const rowString = salesData.map( row => `${row.total},${row.día},${row.mes},${row.ano},${row.fecha}\n`).join('');
+        const csvString = `${headerString}${rowString}`;
+
+        // const pathToWr// const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/data.csv`;
+        // console.log('pathToWrite ', pathToWrite);
+
+        // RNFetchBlob.fs
+        // .writeFile(pathToWrite, csvString, 'utf8')
+        // .then(() => console.log('done writing csv file yeaaaah'))
+        // .catch( error => console.log(error));
+        console.log(csvString)
+    };
+
+    const transformData = data => {
+        let transformData = [];
+        let sales = data.saleById;
+
+        for(var key in sales){
+            let salesInfo = {};
+
+            let date = sales[key].id;
+            let day = sales[key].dayOfWeek;
+            let month = sales[key].month;
+            let total = sales[key].total;
+            let year = sales[key].year;
+
+            salesInfo['total'] = total;
+            salesInfo['día'] = day;
+            salesInfo['mes'] = month;
+            salesInfo['ano'] = year;
+            salesInfo['fecha'] = date;
+
+            transformData.push(salesInfo);
+        };
+
+        return transformData;
+    };
+
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.formContainer}>
+                    <View style={styles.formContainer} ref={graphReference}>
                         {reportData ? (
                             <LineChart
                                 style={styles.graphStyle}
@@ -224,7 +273,7 @@ function ReportScreen({
 
 					    </View>
 
-                        <View style={{marginTop:'4%',marginBottom:'10%'}}>
+                        <View style={{marginTop:'5%',marginBottom:'5%'}}>
                             <Button
                                 disabled={!(initDate < endDate)}
                                 theme={roundness}
@@ -251,26 +300,53 @@ function ReportScreen({
                         { 
                             reportData && (
                                 <View>
-                                    <Button
-                                        theme={roundness}
-                                        color={'#000000'}
-                                        icon={"chart-bar"}
-                                        height={50}
-                                        mode="contained"
-                                        labelStyle={{
-                                            fontFamily: "dosis-bold",
-                                            fontSize: 15,
-                                        }}
-                                        style={{
-                                            fontFamily: 'dosis',
-                                            marginLeft: '5%',
-                                            marginRight: '5%',
-                                            justifyContent: 'center',
-                                        }}
-                                        onPress={ ()=> exportCSV(reportData) }
-                                    >
-                                    {'EXPORTAR DATOS'}
-                                    </Button>
+                                    <Text style={styles.subtitle}>Exportar a:</Text>
+                                    
+                                    <View style={styles.buttonsGrid}>
+                                        <Button
+                                            theme={roundness}
+                                            color={'#000000'}
+                                            icon={"file-chart"}
+                                            height={50}
+                                            mode="contained"
+                                            labelStyle={{
+                                                fontFamily: "dosis-bold",
+                                                fontSize: 15,
+                                            }}
+                                            style={{
+                                                fontFamily: 'dosis',
+                                                marginLeft: '5%',
+                                                marginRight: '5%',
+                                                justifyContent: 'center',
+                                                width: '40%',
+                                            }}
+                                            onPress={createPDF}
+                                        >
+                                        {'PDF'}
+                                        </Button>
+
+                                        <Button
+                                            theme={roundness}
+                                            color={'#000000'}
+                                            icon={"file-chart"}
+                                            height={50}
+                                            mode="contained"
+                                            labelStyle={{
+                                                fontFamily: "dosis-bold",
+                                                fontSize: 15,
+                                            }}
+                                            style={{
+                                                fontFamily: 'dosis',
+                                                marginLeft: '5%',
+                                                marginRight: '5%',
+                                                justifyContent: 'center',
+                                                width: '40%',
+                                            }}
+                                            onPress={ ()=> exportCSV(reportData) }
+                                        >
+                                        {'CSV'}
+                                        </Button>
+                                    </View>
                                 </View>
                             )
                         }
@@ -352,7 +428,19 @@ const styles = StyleSheet.create({
     datePicker: {
         height:200
     },
-	});
+    subtitle: {
+		textAlign: 'center',
+		fontFamily: 'dosis-regular',
+        fontSize: 16,
+		padding: '5%',
+    },
+    buttonsGrid: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems:'center',
+        justifyContent:'center',
+    },   
+});
 
 export default connect(
 	state => ({
