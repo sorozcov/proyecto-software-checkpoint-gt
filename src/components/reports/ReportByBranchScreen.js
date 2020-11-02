@@ -63,11 +63,11 @@ function ReportScreen({
                             deviceHeight={Dimensions.get("window").height}
                             visible={modalVisible}
                         >
-                            {/* <TouchableWithoutFeedback onPressOut={(e) => {
+                            <TouchableWithoutFeedback onPressOut={(e) => {
                                 if (e.nativeEvent.locationY < 0) {
                                 setModalVisible(false)
                                 }}}
-                            > */}
+                            >
                             
                             <View style={styles.modalBackground}>
                                 <View style={styles.modal}>
@@ -96,7 +96,7 @@ function ReportScreen({
                                     )}
                                 </View>
                             </View>                
-                            {/* </TouchableWithoutFeedback> */}
+                            </TouchableWithoutFeedback>
                         </Modal>
                         :modalVisible && (isInit ? (
                             <DateTimePicker
