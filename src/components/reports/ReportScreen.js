@@ -402,11 +402,11 @@ const styles = StyleSheet.create({
 	
 	  },
     modal: {
-    backgroundColor: '#FFFFFF',
-    height: 350,
-    width: '80%',
-    borderRadius: 10,
-    justifyContent: 'space-around'
+        backgroundColor: '#FFFFFF',
+        height: 350,
+        width: '80%',
+        borderRadius: 10,
+        justifyContent: 'space-around'
     },
     graphStyle: {
 

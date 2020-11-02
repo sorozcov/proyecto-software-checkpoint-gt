@@ -190,31 +190,42 @@ function ReportScreen({
             <FloatingAction
                 buttonSize={50}
                 color='black'
-                // floatingIcon={<MaterialCommunityIcons name="file-chart" color='white' size={20} style={{ marginRight: 4, }}/>}
                 onPressItem={(name) => navigateReport(navigation,name)}
-                actions={[{
-                    icon: (
-                        <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
-                    ),
-                    name:'ReportsByDay',
-                    text:'Reporte de Ventas Por Fechas',
-                    position:1,
-                    textStyle:{fontFamily:'dosis-light'},
-                    buttonSize:45,
-                    color:'#00A8C8'
-                    
-                }, {
-                    icon: (
-                        <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
-                    ),
-                    name:'ReportByBranch',
-                    text:'Reporte por Sucursal',
-                    position:1,
-                    textStyle:{fontFamily:'dosis-light'},
-                    buttonSize:45,
-                    color:'#00A8C8'
-                    
-                }]}
+                actions={[
+                    {
+                        icon: (
+                            <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
+                        ),
+                        name: 'ReportsByDay',
+                        text: 'Reporte de Ventas Por Fechas',
+                        position: 1,
+                        textStyle: {fontFamily: 'dosis-light'},
+                        buttonSize: 45,
+                        color: '#00A8C8'
+                    }, 
+                    {
+                        icon: (
+                            <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
+                        ),
+                        name: 'ReportByBranch',
+                        text: 'Reporte por Sucursal',
+                        position: 1,
+                        textStyle: {fontFamily: 'dosis-light'},
+                        buttonSize: 45,
+                        color: '#00A8C8'
+                    },
+                    {
+                        icon: (
+                            <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
+                        ),
+                        name: 'ReportsByWeekday',
+                        text: 'Ventas Promedio',
+                        position: 1,
+                        textStyle: {fontFamily: 'dosis-light'},
+                        buttonSize: 45,
+                        color: '#00A8C8'
+                    }
+                ]}
             />
     	</KeyboardAvoidingView>
   );
@@ -264,11 +275,11 @@ const styles = StyleSheet.create({
 	
 	  },
     modal: {
-    backgroundColor: '#FFFFFF',
-    height: 350,
-    width: '80%',
-    borderRadius: 10,
-    justifyContent: 'space-around'
+        backgroundColor: '#FFFFFF',
+        height: 350,
+        width: '80%',
+        borderRadius: 10,
+        justifyContent: 'space-around'
     },
     graphStyle: {
 

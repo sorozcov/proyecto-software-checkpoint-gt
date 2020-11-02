@@ -1,36 +1,74 @@
 import 'firebase/firestore';
-import React, { useState,useEffect } from 'react';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, RefreshControl, TouchableWithoutFeedback } from 'react-native';
-import {Card} from 'react-native-elements'
+import React, { useState } from 'react';
+import { LineChart } from 'react-native-chart-kit';
+import { 
+    KeyboardAvoidingView, 
+    StyleSheet, 
+    View, 
+    Platform, 
+    Dimensions, 
+    Modal, 
+    Text, 
+    TouchableWithoutFeedback 
+} from 'react-native';
+
+import map from 'lodash/map';
+
+import XLSX from 'xlsx';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+
+import { Button, withTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Button, withTheme,DataTable } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+import OptionPicker from '../general/OptionPicker';
+
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/reports';
-import { VictoryPie } from "victory-native";
-import moment from "moment";
 
 
-function ReportScreen({
+function AverageSalesReport({
     theme,
     navigation,
-    reportDataByBranch,
+    reportData,
     generateReport,
-    isLoading,
 }) {
-
-
     const { colors, roundness } = theme;
+    const groupOptions = [
+        {
+			id: 'WEEKDAY',
+			title: 'Día',
+			selected: true,
+		},
+		{
+			id: 'MONTH',
+			title: 'Mes',
+			selected: false,
+		},
+    ]
+
+    const chartConfig = {
+        backgroundGradientFrom: "#1E2923",
+        backgroundGradientFromOpacity: 0,
+        backgroundGradientTo: "#08130D",
+        backgroundGradientToOpacity: 0.5,
+        color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
+    };
     
-    const screenWidth = Dimensions.get("window").width;
-
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1))); // Yesterday
-    const [endDate, setEndDate] = useState(new Date()); // Today
+    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1)));
+    const [endDate, setEndDate] = useState(new Date());
     const [modalVisible, setModalVisible] = useState(false);
+    const [groupBy, setGroupBy] = useState(
+		{
+			id: 'WEEKDAY',
+			title: 'Día',
+			selected: true,
+		}
+	);
 
-    useEffect(() => generateReport(initDate, endDate), []);
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -42,13 +80,73 @@ function ReportScreen({
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
-    console.log(reportDataByBranch)
+
+    const toggleShow = (show) => {
+        setShow(!show);
+    };
+
+    const filterChange = elem => {        
+        if(reportData) {
+            generateReport(initDate, endDate, elem.id)
+        }
+    }
+
+    const exportCSV = async(data) => {
+        data = data.saleById;
+
+        var ws = await XLSX.utils.json_to_sheet(data);
+        var wb = await XLSX.utils.book_new();
+
+        await XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+        const wbout = await XLSX.write(wb, {
+            type: 'base64',
+            bookType: 'xlsx',
+        });
+
+        const uri = FileSystem.cacheDirectory + 'report.xlsx';
+
+
+        await FileSystem.writeAsStringAsync(uri, wbout, {
+            encoding: FileSystem.EncodingType.Base64,
+        });
+
+        await Sharing.shareAsync(uri, {
+            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            dialogTitle: 'REPORT DATA',
+            UTI: 'com.microsoft.excel.xlsx',
+        });
+    };
+    
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.formContainer}>
-                    {Platform.OS === 'ios' ?
+                    <View>
+                        {reportData ? (
+                            <View style={styles.formContainer}>
+                                <LineChart
+                                    data={{
+                                        labels: reportData.identifiers,
+                                        datasets: [
+                                            {
+                                                data: map(reportData.sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2)))
+                                                strokeWidth: 3
+                                            }
+                                        ]
+                                    }}
+                                    width={Dimensions.get("window").width - 24}
+                                    height={Dimensions.get("window").height * 0.55}
+                                    yAxisLabel="Q."
+                                    chartConfig={chartConfig}
+                                    verticalLabelRotation={60}
+                                    xLabelsOffset={-4}
+                                />
+                            </View>
+                        ): (
+                            <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
+                        )}
+                        {Platform.OS === 'ios' ?
                         <Modal
                             style={styles.modalView}
                             animationType="fade"
@@ -60,14 +158,14 @@ function ReportScreen({
                             onRequestClose={()=>setModalVisible(false)}
                             onDismiss={() => setModalVisible(false)}
                             deviceWidth={Dimensions.get("window").width}
-                            deviceHeight={Dimensions.get("window").height}
+			                deviceHeight={Dimensions.get("window").height}
                             visible={modalVisible}
                         >
-                            {/* <TouchableWithoutFeedback onPressOut={(e) => {
+                            <TouchableWithoutFeedback onPressOut={(e) => {
                                 if (e.nativeEvent.locationY < 0) {
                                 setModalVisible(false)
                                 }}}
-                            > */}
+                            >
                             
                             <View style={styles.modalBackground}>
                                 <View style={styles.modal}>
@@ -96,7 +194,7 @@ function ReportScreen({
                                     )}
                                 </View>
                             </View>                
-                            {/* </TouchableWithoutFeedback> */}
+                            </TouchableWithoutFeedback>
                         </Modal>
                         :modalVisible && (isInit ? (
                             <DateTimePicker
@@ -158,10 +256,18 @@ function ReportScreen({
                             >
                                 {`${endDate.toLocaleDateString('es-MX')}`}
                             </Button>
-
+					    </View>
+                        <View style={styles.pickerStyle}>
+                            <OptionPicker 
+                                theme={theme} 
+                                data={groupOptions} 
+                                onPress={elem => {
+                                    setGroupBy(elem)
+                                    filterChange(elem)
+                                }}/>
                         </View>
 
-                        <View style={{marginTop:'4%',marginBottom:'10%'}}>
+                        <View style={{marginTop: '4%', marginBottom: '2%'}}>
                             <Button
                                 disabled={!(initDate < endDate)}
                                 theme={roundness}
@@ -179,81 +285,38 @@ function ReportScreen({
                                     marginRight: '5%',
                                     justifyContent: 'center',
                                 }}
-                                onPress={()=>generateReport(initDate, endDate)}
+                                onPress={() => generateReport(initDate, endDate, groupBy.id)}
                             >
                             {'GENERAR REPORTE'}
                             </Button>
                         </View>
 
-                        {reportDataByBranch && reportDataByBranch.days ? (
-
-                            <View>
-                            <Card 
-                                title={"Ventas Por Sucursal"}
-                                titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
-                                containerStyle={{marginTop:10}}>
-                                    <DataTable>
-                                    <DataTable.Header>
-                                        <DataTable.Title style={{flex: 3}}>Día</DataTable.Title>
-                                        <DataTable.Title style={{flex: 4}}>Sucursal</DataTable.Title>
-                                        <DataTable.Title numeric style={{flex: 2}}>Total</DataTable.Title>
-                                    </DataTable.Header>
-                                    {reportDataByBranch.days.map(day=>(
-                                        Object.values(day.byBranch).filter(branch => typeof branch === 'object').map(branch=>(
-                                        <DataTable.Row>
-                                            <DataTable.Cell style={{flex: 3}}>{day.id}</DataTable.Cell>
-                                            <DataTable.Cell style={{flex: 4}}>{branch.name}</DataTable.Cell>
-                                            <DataTable.Cell numeric style={{flex: 2}}>GTQ {branch.total}</DataTable.Cell>
-                                        </DataTable.Row>
-
-                                        ))
-                                    ))}
-                                    
-                                </DataTable>
-                                {reportDataByBranch.branches.total > 0 ?
-                                    <View>
-                    
-                                    <VictoryPie
-                                    data={Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0)}
-                                    // theme={VictoryTheme.material}
-                                    // colorScale={["tomato", "orange", "gold", "cyan", "navy" ]}
-                                    
-                                    style={{
-                                        data: {
-                                            fillOpacity: 0.9, stroke: colors.accent, strokeWidth: 2,
-                                        },
-                                        labels: {
-                                            fontSize: 12, fill: colors.accent,padding:5
-                                        },
-                                        margin:0,
-                                        
+                        { 
+                            reportData && (
+                                <View style={{marginBottom: '2%'}}>
+                                    <Button
+                                        theme={roundness}
+                                        color={'#000000'}
+                                        icon={"file-export"}
+                                        height={50}
+                                        mode="contained"
+                                        labelStyle={{
+                                            fontFamily: "dosis-bold",
+                                            fontSize: 15,
                                         }}
-                                    x = "name"
-                                    innerRadius={0}
-                                    // labelRadius={}
-                                    // labelComponent={<VictoryLabel angle={45}/>}
-                                    labels={({ datum }) => `${datum.name}`}
-                                    y = "total"
-                                    padding={{ top: 0, bottom: 0,left:screenWidth*0.2 ,right:screenWidth*0.2 }}
-                                    origin={{x:screenWidth*0.42}}
-                                    width={screenWidth*0.8}
-                                    height={250}
-                                    
-                                    />
-                                    </View>
-                                    
-                                    :
-                                    null
-                                    }
-                            </Card>  
-                            </View>
-                        ): (
-                            <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>
-                        )}
-                        
-                        
-
-                        
+                                        style={{
+                                            fontFamily: 'dosis',
+                                            marginLeft: '5%',
+                                            marginRight: '5%',
+                                            justifyContent: 'center',
+                                        }}
+                                        onPress={ ()=> exportCSV(reportData) }
+                                    >
+                                    {'EXPORTAR DATOS'}
+                                    </Button>
+                                </View>
+                            )
+                        }
                     </View>
                 </ScrollView>
             </View>
@@ -268,6 +331,9 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		fontFamily: 'dosis-regular',
 	},
+	formContainer: {
+        alignItems: 'center'
+	},
 	contentContainer: {
 		paddingTop: 30,
 	},
@@ -278,12 +344,13 @@ const styles = StyleSheet.create({
 		paddingBottom: '6%',
 		paddingTop: '8%',
 	},
-	saleTitle: {
+	warning: {
 		textAlign: 'center',
-		fontFamily: 'dosis-semi-bold',
-        fontSize: 25,
-		paddingBottom: '2%',
-		paddingTop: '2%',
+		fontFamily: 'dosis-regular',
+        fontSize: 30,
+        color:'#DA482D',
+		paddingBottom: '6%',
+		paddingTop: '8%',
 	},
 	textStyle:{
 		textAlign: 'center', 
@@ -305,11 +372,11 @@ const styles = StyleSheet.create({
 	
 	  },
     modal: {
-    backgroundColor: '#FFFFFF',
-    height: 350,
-    width: '80%',
-    borderRadius: 10,
-    justifyContent: 'space-around'
+        backgroundColor: '#FFFFFF',
+        height: 350,
+        width: '80%',
+        borderRadius: 10,
+        justifyContent: 'space-around'
     },
     graphStyle: {
 
@@ -326,21 +393,27 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+    },
+    pickerStyle: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems:'center',
+        justifyContent:'center',
+        marginTop: 16,
     },
     datePicker: {
         height:200
     },
-	});
+});
 
 export default connect(
 	state => ({
-        reportDataByBranch: selectors.getReport(state, 'BY-BRANCH'),
-        isLoading:selectors.getDashboardSalessIsFetching(state),
+        reportData: selectors.getReport(state, 'AVERAGE'),
 	}),
 	dispatch => ({
-        generateReport(initDate, endDate) {
-            dispatch(actions.startFetchingReportByBranch(initDate, endDate));
+        generateReport(initDate, endDate, groupBy) {
+            dispatch(actions.startFetchingAverageReport(initDate, endDate, groupBy));
         },
 	}),
-)(withTheme(ReportScreen));
+)(withTheme(AverageSalesReport));
