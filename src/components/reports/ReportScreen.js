@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 // import RNFetchBlob from 'rn-fetch-blob';
+import { captureRef } from 'react-native-view-shot'
 
+import * as Print from 'expo-print';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
@@ -66,8 +68,8 @@ function ReportScreen({
             format: 'jpg',
             quality: 1,
         });
-        setSnap(snapshot);
 
+        console.log(snapshot)
         let html = 
 		`
             <img src="${snapshot}" width="100%" style="border:2px solid black; height:${300}px; width:${300}px;" />
