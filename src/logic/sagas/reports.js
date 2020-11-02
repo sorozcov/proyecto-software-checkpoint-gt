@@ -77,3 +77,25 @@ export function* watchGetSalesReportByBranch() {
         getSalesReportByBranch,
     );
 };
+
+
+function* getAverageSalesReport(action) {
+    try {
+        const result = yield getSalesReportByDates(action.payload.initial, action.payload.final, action.payload.groupBy);
+
+        if(result.error === null){
+            yield put(actions.completeFetchingAverageReport(result.report));
+        } else {
+            yield put(actions.failFetchingAverageReport('Falló al obtener reporte.'));
+        }
+    } catch (error) {
+        yield put(actions.failFetchingAverageReport('Falló al obtener reporte.'));
+    }
+}
+
+export function* watchGetAverageSalesReport() {
+    yield takeEvery(
+        types.FETCH_AVERAGE_SALES_REPORT_STARTED,
+        getAverageSalesReport,
+    );
+};

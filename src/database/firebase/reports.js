@@ -11,7 +11,7 @@ const db = firebaseFirestore;
 const collection = "salesByDate";
 
 // función para obtener ventas de Firebase según las fechas ingresadas
-export const getSalesReportByDates = async( initial, final, groupBy = 'DAY') => {
+export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') => {
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
@@ -20,10 +20,155 @@ export const getSalesReportByDates = async( initial, final, groupBy = 'DAY') => 
 
         const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
 
+
         let salesArray = [];
         sales.docs.forEach(sale => {
             salesArray.push(sale.data());
         });
+
+        if (groupBy === 'WEEKDAY') {
+            let grouped = {
+                0: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0,
+                },
+                1: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                2: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                3: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                4: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                5: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                6: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+            }
+            const days = ['Sábado', 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
+
+            salesArray.map(sale => {
+                grouped[sale.dayOfWeek.toString()].total = grouped[sale.dayOfWeek.toString()].total + sale.total
+                grouped[sale.dayOfWeek.toString()].totalWithoutTip = grouped[sale.dayOfWeek.toString()].totalWithoutTip + sale.totalWithoutTip
+                grouped[sale.dayOfWeek.toString()].count = grouped[sale.dayOfWeek.toString()].count + 1
+            })
+            
+            const normalizer = {
+                sales: grouped,
+                identifiers: days,
+            }
+
+            console.log("GROUP")
+            console.log(normalizer)
+
+            return {
+                report: normalizer,
+                error: null,
+            }
+        }
+        if (groupBy === 'MONTH') {
+            let grouped = {
+                0: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0,
+                },
+                1: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                2: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                3: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                4: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                5: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                6: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                7: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                8: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                9: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                10: {
+                    total: 0,
+                    totalWithoutTip:0,
+                    count: 0
+                },
+                11: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+            }
+            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+            salesArray.map(sale => {
+                grouped[sale.month.toString()].total = grouped[sale.month.toString()].total + sale.total
+                grouped[sale.month.toString()].totalWithoutTip = grouped[sale.month.toString()].totalWithoutTip + sale.totalWithoutTip
+                grouped[sale.month.toString()].count = grouped[sale.month.toString()].count + 1
+            })
+            
+            const normalizer = {
+                sales: grouped,
+                identifiers: months,
+            }
+
+            console.log("GROUP")
+            console.log(normalizer)
+
+            return {
+                report: normalizer,
+                error: null,
+            }
+        }
 
         let salesNormalizer = {};
         let saleById = {};

@@ -1,8 +1,10 @@
-import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { withTheme } from 'react-native-paper';
+import { createStackNavigator } from '@react-navigation/stack';
+
 import ReportScreen from './ReportScreen';
 import DashboardScreen from './DashboardScreen';
+import AverageSalesReport from './AverageSalesReport';
 import ReportByBranchScreen from './ReportByBranchScreen';
 
 
@@ -37,7 +39,11 @@ function ReportsStackScreen({ theme }) {
                 options={{ title: 'REPORTE POR SUCURSAL', headerTitleAlign:'center'}}
                 component={ReportByBranchScreen}
             />
-
+            <ReportsStack.Screen
+                name="ReportsByWeekday"
+                options={{ title: 'VENTAS PROMEDIO', headerTitleAlign:'center'}}
+                component={AverageSalesReport}
+            />
         </ReportsStack.Navigator>
     );
 }

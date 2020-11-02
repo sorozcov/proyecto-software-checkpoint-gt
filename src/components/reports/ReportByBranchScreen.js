@@ -1,7 +1,7 @@
 import 'firebase/firestore';
 import React, { useState,useEffect } from 'react';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text,   RefreshControl, } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, RefreshControl, TouchableWithoutFeedback } from 'react-native';
 import {Card} from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme,DataTable } from 'react-native-paper';

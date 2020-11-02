@@ -1,47 +1,73 @@
 import 'firebase/firestore';
-import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
+import React, { useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
+import { 
+    KeyboardAvoidingView, 
+    StyleSheet, 
+    View, 
+    Platform, 
+    Dimensions, 
+    Modal, 
+    Text, 
+    TouchableWithoutFeedback 
+} from 'react-native';
+
+import map from 'lodash/map';
 
 import XLSX from 'xlsx';
-import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 
-import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import * as actions from '../../logic/actions/reports';
+import OptionPicker from '../general/OptionPicker';
+
 import * as selectors from '../../logic/reducers';
+import * as actions from '../../logic/actions/reports';
 
 
-
-
-function ReportScreen({
+function AverageSalesReport({
     theme,
     navigation,
     reportData,
     generateReport,
 }) {
     const { colors, roundness } = theme;
-
+    const groupOptions = [
+        {
+			id: 'WEEKDAY',
+			title: 'Día',
+			selected: true,
+		},
+		{
+			id: 'MONTH',
+			title: 'Mes',
+			selected: false,
+		},
+    ]
 
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: Platform.OS === 'ios' ? "#08130D" : "#FFFFFF",
+        backgroundGradientTo: "#08130D",
         backgroundGradientToOpacity: 0.5,
         color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
-        strokeWidth: 2, // optional, default 3
-        barPercentage: 0.5,
-        useShadowColorFromDataset: false // optional
     };
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1))); // Yesterday
-    const [endDate, setEndDate] = useState(new Date()); // Today
+    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1)));
+    const [endDate, setEndDate] = useState(new Date());
     const [modalVisible, setModalVisible] = useState(false);
+    const [groupBy, setGroupBy] = useState(
+		{
+			id: 'WEEKDAY',
+			title: 'Día',
+			selected: true,
+		}
+	);
 
 
     const onInitDateChange = (event, selectedDate) => {
@@ -58,6 +84,12 @@ function ReportScreen({
     const toggleShow = (show) => {
         setShow(!show);
     };
+
+    const filterChange = elem => {        
+        if(reportData) {
+            generateReport(initDate, endDate, elem.id)
+        }
+    }
 
     const exportCSV = async(data) => {
         data = data.saleById;
@@ -90,24 +122,27 @@ function ReportScreen({
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.formContainer}>
+                    <View>
                         {reportData ? (
-                            <LineChart
-                                style={styles.graphStyle}
-                                data={{
-                                    labels: reportData.sale,
-                                    datasets: [
-                                        {
-                                        data: reportData.sale.map(i => reportData.saleById[i]['total'])
-                                        }
-                                    ]
-                                }}
-                                width={Dimensions.get("window").width}
-                                height={Dimensions.get("window").height * 0.55}
-                                yAxisLabel="Q."
-                                chartConfig={chartConfig}
-                                verticalLabelRotation={45}
-                            />
+                            <View style={styles.formContainer}>
+                                <LineChart
+                                    data={{
+                                        labels: reportData.identifiers,
+                                        datasets: [
+                                            {
+                                                data: map(reportData.sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2)))
+                                                strokeWidth: 3
+                                            }
+                                        ]
+                                    }}
+                                    width={Dimensions.get("window").width - 24}
+                                    height={Dimensions.get("window").height * 0.55}
+                                    yAxisLabel="Q."
+                                    chartConfig={chartConfig}
+                                    verticalLabelRotation={60}
+                                    xLabelsOffset={-4}
+                                />
+                            </View>
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
                         )}
@@ -221,10 +256,18 @@ function ReportScreen({
                             >
                                 {`${endDate.toLocaleDateString('es-MX')}`}
                             </Button>
-
 					    </View>
+                        <View style={styles.pickerStyle}>
+                            <OptionPicker 
+                                theme={theme} 
+                                data={groupOptions} 
+                                onPress={elem => {
+                                    setGroupBy(elem)
+                                    filterChange(elem)
+                                }}/>
+                        </View>
 
-                        <View style={{marginTop:'4%',marginBottom:'10%'}}>
+                        <View style={{marginTop: '4%', marginBottom: '2%'}}>
                             <Button
                                 disabled={!(initDate < endDate)}
                                 theme={roundness}
@@ -242,7 +285,7 @@ function ReportScreen({
                                     marginRight: '5%',
                                     justifyContent: 'center',
                                 }}
-                                onPress={()=>generateReport(initDate, endDate)}
+                                onPress={() => generateReport(initDate, endDate, groupBy.id)}
                             >
                             {'GENERAR REPORTE'}
                             </Button>
@@ -250,11 +293,11 @@ function ReportScreen({
 
                         { 
                             reportData && (
-                                <View>
+                                <View style={{marginBottom: '2%'}}>
                                     <Button
                                         theme={roundness}
                                         color={'#000000'}
-                                        icon={"chart-bar"}
+                                        icon={"file-export"}
                                         height={50}
                                         mode="contained"
                                         labelStyle={{
@@ -287,6 +330,9 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		backgroundColor: '#fff',
 		fontFamily: 'dosis-regular',
+	},
+	formContainer: {
+        alignItems: 'center'
 	},
 	contentContainer: {
 		paddingTop: 30,
@@ -347,21 +393,27 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+    },
+    pickerStyle: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems:'center',
+        justifyContent:'center',
+        marginTop: 16,
     },
     datePicker: {
         height:200
     },
-	});
+});
 
 export default connect(
 	state => ({
-        reportData: selectors.getReport(state, 'BY-DATE'),
+        reportData: selectors.getReport(state, 'AVERAGE'),
 	}),
 	dispatch => ({
-        // Updata data by dates.
-        generateReport(initDate, endDate) {
-            dispatch(actions.startFetchingDateReport(initDate, endDate));
+        generateReport(initDate, endDate, groupBy) {
+            dispatch(actions.startFetchingAverageReport(initDate, endDate, groupBy));
         },
 	}),
-)(withTheme(ReportScreen));
+)(withTheme(AverageSalesReport));
