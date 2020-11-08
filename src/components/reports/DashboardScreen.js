@@ -131,8 +131,8 @@ function ReportScreen({
                                         <DataTable.Title>Sucursal</DataTable.Title>
                                         <DataTable.Title numeric>Total</DataTable.Title>
                                     </DataTable.Header>
-                                    {dashboardDataBranches.map(branch=>(
-                                        <DataTable.Row>
+                                    {dashboardDataBranches.map((branch,index)=>(
+                                        <DataTable.Row key={index}>
                                             <DataTable.Cell>{branch.name}</DataTable.Cell>
                                             <DataTable.Cell numeric>GTQ {branch.total}</DataTable.Cell>
                                         </DataTable.Row>
