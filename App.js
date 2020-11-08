@@ -13,6 +13,8 @@ require('moment/locale/es'); //for import moment local language file during the 
 moment.locale('es');//set moment local language to zh-cn
 
 
+
+
 import configureStore from './src/logic/store';
 
 
