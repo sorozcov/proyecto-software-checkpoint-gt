@@ -38,8 +38,8 @@ function ReportScreen({
     const screenWidth = Dimensions.get("window").width;
 
       const chartConfig={
-        backgroundGradientFrom: '#F8FAFB',
-        backgroundGradientTo: '#F8FAFB',
+        backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+        backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
 
         barRadius:1,
         // barPercentage:1,
