@@ -191,14 +191,8 @@ const createAndSavePDF = async (activeOrder) => {
 			width: 250, //306, 200
 			height: length * 250 + 100
 		});
-    
-		if (Platform.OS === "ios"){
-			// console.log(uri);
-			return {uri,html};
-			// await Sharing.shareAsync(uri);
-    	} else {	
-			console.log("Falta opción para Android")
-		}
+		return {uri,html};
+
 	} catch (error) {
     	console.error(error);
   	}
@@ -266,7 +260,7 @@ function OrderInformationScreen({
 	const [modalOrderPrint, setModalOrderPrint] = useState(false);
 
 	useEffect(() => {
-		console.log(dataTip)
+		
 		dataTip.forEach((type, index) => {
 			if(activeOrder.hasTip && type.id == activeOrder.tipType.id){
 				dataTip[index] = activeOrder.tipType
@@ -319,7 +313,6 @@ function OrderInformationScreen({
 		seturiPDF(uri)
 		sethtmlPDF(html)
 	}
-	console.log(uriPDF)
 	
 	return (
 		<Modal
