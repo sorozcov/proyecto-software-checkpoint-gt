@@ -194,6 +194,7 @@ function ReportScreen({
                                             value={initDate}
                                             mode={'date'}
                                             display="default"
+                                            locale={'es'}
                                             onChange={onInitDateChange}
                                         />
                                         ) : (
@@ -205,6 +206,7 @@ function ReportScreen({
                                             value={endDate}
                                             mode={'date'}
                                             display="default"
+                                            locale={'es'}
                                             onChange={onEndDateChange}
                                         />
                                     )}
