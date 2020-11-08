@@ -46,11 +46,11 @@ function ProductsList ({ theme, onRefresh,onLoad, categories, isLoading, navigat
     const renderSectionHeader = ({ section }) => <ListItem   style={{backgroundColor:colors.gray}} itemDivider icon>
     <Left>
              
-                <Icon active name="restaurant" style={{color:colors.white}}/>
+                <Icon active name="restaurant" style={{color:colors.black}}/>
              
     </Left>
     <Body>
-    <Text style={{fontSize:16,fontFamily:'dosis-semi-bold',paddingLeft:0,color:colors.white}}>{section.title}</Text>
+    <Text style={{fontSize:16,fontFamily:'dosis-semi-bold',paddingLeft:0,color:colors.black}}>{section.title}</Text>
     </Body>
      </ListItem>  ;
    useEffect(onLoad, []);

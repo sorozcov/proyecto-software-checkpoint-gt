@@ -42,7 +42,7 @@ function OrderPrintScreen({
 	showPrintButton=true,
 	}) {
 	const { colors, roundness } = theme;
-	console.log(html);
+	
 	return (
 		<Modal
 			transparent={true}
