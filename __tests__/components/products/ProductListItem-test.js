@@ -58,7 +58,7 @@ describe('<ProductsListItem />', () => {
         const rendered = render(
             <Provider store={store}><ProductListItem style={null} key={product.productId} name={`${product.productName}`} product={product} navigation={navigation} onPress={()=>null} /></Provider>
         );
-        expect(rendered.getAllByTestId('noImageProductComponent').length).toBe(1)
+        expect(rendered.getAllByTestId('imageProductComponent').length).toBe(1)
         
     });
 });

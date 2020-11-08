@@ -59,7 +59,7 @@ import {imageExists} from 'image-exists'
         return(
             <ListItem thumbnail style={{...props.style}} onPress={props.onPress}>
                 <Left>
-                <Image  source={productImage} imageStyle={{height: 60,width:60,borderRadius:60}} style={{height: 60,width:60,borderRadius:60}}/>
+                <Image testID={'imageProductComponent'} source={productImage} imageStyle={{height: 60,width:60,borderRadius:60}} style={{height: 60,width:60,borderRadius:60}}/>
                 </Left>
                 <Body>
                     <Text  testID='productName' style={{fontFamily:'dosis-light',fontSize:17}}>{props.name}</Text>

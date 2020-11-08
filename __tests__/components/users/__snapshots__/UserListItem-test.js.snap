@@ -43,17 +43,35 @@ exports[`Snapshot User List Item snapshot 1`] = `
         }
       }
     >
-      <Image
-        circle={true}
-        source={1}
+      <View
         style={
           Object {
-            "borderRadius": 28,
-            "height": 56,
-            "width": 56,
+            "borderRadius": 65,
+            "height": 65,
+            "width": 65,
           }
         }
-      />
+      >
+        <Image
+          source={1}
+          style={
+            Array [
+              Object {
+                "bottom": 0,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              },
+              Object {
+                "borderRadius": 65,
+                "height": 65,
+                "width": 65,
+              },
+            ]
+          }
+        />
+      </View>
     </View>
     <View
       style={
