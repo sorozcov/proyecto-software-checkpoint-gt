@@ -68,8 +68,29 @@ function ReportScreen({
 			selected: false,
 		}
     ];
+
+    const graphOptionsWaiters = [
+		{
+			id: 1,
+			title: 'Barras',
+			selected: true,
+		},
+		{
+			id: 2,
+			title: 'Pie',
+			selected: false,
+		}
+    ];
     
     const [graphOption, setGraphOption] = useState(
+		{
+			id: 1,
+			title: 'Barras',
+			selected: true,
+		},
+    );
+
+    const [graphOptionWaiters, setGraphOptionWaiters] = useState(
 		{
 			id: 1,
 			title: 'Barras',
@@ -152,7 +173,7 @@ function ReportScreen({
                                 absolute={false}
                                 />
                                 }
-                                {dashboardData.toal==0 &&
+                                {dashboardData.total==0 &&
                                 <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>}
                                 {/* {dashboardData.total!=0 ?
                                     <View>
@@ -196,7 +217,44 @@ function ReportScreen({
                                 title={"Ventas Por Mesero"}
                                 titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
                                 containerStyle={{marginTop:10}}>
-                                    {dashboardData.total!=0 ?
+
+                                {dashboardData.total!=0 && <OptionPicker theme={theme} data={graphOptionsWaiters} onPress={(elem)=>setGraphOptionWaiters(elem)}/>}
+                                {dashboardData.total!=0 && graphOptionWaiters.id==1 && <BarChart data={{
+                                        labels: dashboardDataWaiters.filter(waiter=>waiter.total>0).map(i=>i.name),
+                                        datasets: [{
+                                            data: dashboardDataWaiters.filter(waiter=>waiter.total>0).map(i=>i.total),
+                                            
+                                            
+                                        },
+                                        ],
+                                        
+                                        }}
+                                       
+                                        showValuesOnTopOfBars={true}
+                                        showBarTops={false}
+                                        fromZero={true}
+                                        width={Platform.OS=="ios"? (Dimensions.get('window').width -60) : Dimensions.get('window').width}
+                                        height={240}
+                                        yAxisLabel={'Q'} 
+                                        chartConfig={chartConfig}
+                                        style={graphStyle}
+                                />}
+                                {dashboardData.total!=0 && graphOptionWaiters.id==2 && <PieChart
+                                data={dashboardDataWaiters.filter(waiter=>waiter.total>0).map((i,index)=>({...i,legendFontSize: 8,color: colorsGraph[index], }))}
+                                width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width}
+                                height={220}
+                                chartConfig={chartConfig}
+                                accessor="total"
+                                backgroundColor="transparent"
+                                paddingLeft="25"
+                                
+                                absolute={false}
+                                />
+                                }
+                                {dashboardData.total==0 &&
+                                <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>}
+
+                                    {/* {dashboardData.total!=0 ?
                                     <VictoryPie
                                     data={dashboardDataWaiters.filter(waiter=>waiter.total>0)}
                                     // theme={VictoryTheme.material}
@@ -223,30 +281,12 @@ function ReportScreen({
                                     
                                     />:
                                     <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>
-                                    }
+                                    } */}
                                     
                             </Card>
 
 
-                            {/* <Card 
-                                title={"Ventas Por Mesero"}
-                                titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
-                                containerStyle={{marginTop:10}}>
-                                    <DataTable>
-                                    <DataTable.Header>
-                                        <DataTable.Title>Mesero</DataTable.Title>
-                                        <DataTable.Title numeric>Total</DataTable.Title>
-                                    </DataTable.Header>
-                                    {dashboardDataWaiters.map(waiter=>(
-                                        <DataTable.Row>
-                                            <DataTable.Cell>{waiter.name}</DataTable.Cell>
-                                            <DataTable.Cell numeric>GTQ {waiter.total}</DataTable.Cell>
-                                        </DataTable.Row>
-    
-                                    ))}
-                                    
-                                </DataTable>
-                            </Card> */}
+                            
                            
                             
 
