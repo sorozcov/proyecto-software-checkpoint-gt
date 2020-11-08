@@ -84,11 +84,10 @@ function ReportScreen({
                 base64: true,
             });
 
-            if (Platform.OS === "ios"){
+            if (Platform.OS === "ios")
                 await Sharing.shareAsync(uri);
-            } else {	
+            else	
                 console.log("Falta opción para Android")
-            };
 
         } catch (error) {
             console.error(error);
@@ -97,7 +96,7 @@ function ReportScreen({
 
     const exportCSV = async(data) => {
         let salesData = transformData(data);
-    
+        
         const headerString = 'total,díaSemana,Mes,Año,Fecha\n';
         const rowString = salesData.map( row => `${row.total},${row.día},${row.mes},${row.ano},${row.fecha}\n`).join('');
         const csvString = `${headerString}${rowString}`;
