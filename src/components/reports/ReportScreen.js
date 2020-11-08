@@ -3,11 +3,13 @@ import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import RNFetchBlob from 'react-native-fetch-blob';
+// import RNFetchBlob from 'react-native-fetch-blob';
 import { captureRef } from 'react-native-view-shot'
 
 import * as Print from 'expo-print';
+import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
+import * as Permissions from 'expo-permissions';
 import * as Sharing from 'expo-sharing';
 
 import { ScrollView } from 'react-native-gesture-handler';
@@ -28,7 +30,6 @@ function ReportScreen({
 }) {
     const { colors, roundness } = theme;
 
-
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
@@ -46,7 +47,6 @@ function ReportScreen({
     const [modalVisible, setModalVisible] = useState(false);
 
     const graphReference = useRef();
-
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
@@ -97,18 +97,24 @@ function ReportScreen({
     const exportCSV = async(data) => {
         let salesData = transformData(data);
         
-        const headerString = 'total,díaSemana,Mes,Año,Fecha\n';
+        const headerString = 'Total,Día,Mes,Año,Fecha\n';
         const rowString = salesData.map( row => `${row.total},${row.día},${row.mes},${row.ano},${row.fecha}\n`).join('');
         const csvString = `${headerString}${rowString}`;
 
-        const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/data.csv`;
-        console.log('pathToWrite ', pathToWrite);
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status === "granted") {
+            let fileUri = FilFileSystem.documentDirectory + `reporte-${new Date().toISOString().split('T')[0]}.txt`;
+            console.log(fileUri)
+            await FileSystem.writeAsStringAsync(fileUri, csvString, { encoding: FileSystem.EncodingType.UTF8 });
+            const asset = await MediaLibrary.createAssetAsync(fileUri)
+            await MediaLibrary.createAlbumAsync("Download", asset, false)
+        }
 
-        RNFetchBlob.fs
-        .writeFile(pathToWrite, csvString, 'utf8')
-        .then(() => console.log('done writing csv file yeaaaah'))
-        .catch( error => console.log(error));
-        console.log(csvString)
+        // RNFetchBlob.fs
+        //     .writeFile(pathToWrite, csvString, 'utf8')
+        //     .then(() => console.log('done writing csv file yeaaaah'))
+        //     .catch( error => console.log(error));
+        // console.log(csvString)
     };
 
     const transformData = data => {
