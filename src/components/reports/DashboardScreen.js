@@ -155,15 +155,15 @@ function ReportScreen({
                                         showValuesOnTopOfBars={true}
                                         showBarTops={false}
                                         fromZero={true}
-                                        width={Platform.OS=="ios"? (Dimensions.get('window').width -60) : Dimensions.get('window').width}
+                                        width={Dimensions.get('window').width-60}
                                         height={240}
                                         yAxisLabel={'Q'} 
                                         chartConfig={chartConfig}
                                         style={graphStyle}
                                 />}
                                 {dashboardData.total!=0 && graphOption.id==2 && <PieChart
-                                data={dashboardDataBranches.map((i,index)=>({...i,legendFontSize: 8,color: colorsGraph[index], }))}
-                                width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width}
+                                data={dashboardDataBranches.map((i,index)=>({...i,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#000000",}))}
+                                width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width - 50}
                                 height={220}
                                 chartConfig={chartConfig}
                                 accessor="total"
@@ -233,15 +233,15 @@ function ReportScreen({
                                         showValuesOnTopOfBars={true}
                                         showBarTops={false}
                                         fromZero={true}
-                                        width={Platform.OS=="ios"? (Dimensions.get('window').width -60) : Dimensions.get('window').width}
+                                        width={Dimensions.get('window').width-60}
                                         height={240}
                                         yAxisLabel={'Q'} 
                                         chartConfig={chartConfig}
                                         style={graphStyle}
                                 />}
                                 {dashboardData.total!=0 && graphOptionWaiters.id==2 && <PieChart
-                                data={dashboardDataWaiters.filter(waiter=>waiter.total>0).map((i,index)=>({...i,legendFontSize: 8,color: colorsGraph[index], }))}
-                                width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width}
+                                data={dashboardDataWaiters.filter(waiter=>waiter.total>0).map((i,index)=>({...i,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#000000",}))}
+                                width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width - 50}
                                 height={220}
                                 chartConfig={chartConfig}
                                 accessor="total"

@@ -8,7 +8,8 @@ import { Button, withTheme,DataTable } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/reports';
-import { VictoryPie } from "victory-native";
+import { BarChart,LineChart,PieChart,StackedBarChart } from 'react-native-chart-kit';
+import OptionPicker from '../../components/general/OptionPicker';
 import moment from "moment";
 
 
@@ -42,7 +43,29 @@ function ReportScreen({
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
-    console.log(reportDataByBranch)
+    const chartConfig={
+        backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+        backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+        barRadius:1,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        fillShadowGradient:colors.accent,
+        fillShadowGradientOpacity:1,
+      }
+    const colorsGraph =
+        ["rgb(47, 145, 175)", "rgb(181, 231, 122)", "rgb(98, 141, 120)", "rgb(148, 37, 170)", "rgb(22, 190, 88)", "rgb(27, 149, 93)", "rgb(73, 14, 218)", "rgb(45, 175, 82)", "rgb(79, 53, 85)", "rgb(173, 113, 70)", "rgb(128, 107, 188)", "rgb(48, 124, 186)", "rgb(157, 90, 23)", "rgb(199, 176, 191)", "rgb(18, 251, 49)", "rgb(94, 89, 181)", "rgb(81, 184, 249)", "rgb(25, 239, 125)", "rgb(28, 24, 130)", "rgb(105, 225, 238)"]
+    const graphOptions = [
+		{
+			id: 1,
+			title: 'Barras',
+			selected: true,
+		},
+		{
+			id: 2,
+			title: 'Pie',
+			selected: false,
+		}
+    ];
+    const [graphOption, setGraphOption] = useState(graphOptions[0]);
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
@@ -212,41 +235,38 @@ function ReportScreen({
                                     ))}
                                     
                                 </DataTable>
-                                {reportDataByBranch.branches.total > 0 ?
-                                    <View>
-                    
-                                    <VictoryPie
-                                    data={Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0)}
-                                    // theme={VictoryTheme.material}
-                                    // colorScale={["tomato", "orange", "gold", "cyan", "navy" ]}
+                                {reportDataByBranch.branches.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
+                                {reportDataByBranch.branches.total > 0 && graphOption.id==1 && 
+                                <BarChart 
+                                    data={{
+                                    labels: Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0).map(branch => branch.name),
+                                    datasets: [{
+                                        data: Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0).map(branch => branch.total),
+                                    },
+                                    ],
                                     
-                                    style={{
-                                        data: {
-                                            fillOpacity: 0.9, stroke: colors.accent, strokeWidth: 2,
-                                        },
-                                        labels: {
-                                            fontSize: 12, fill: colors.accent,padding:5
-                                        },
-                                        margin:0,
-                                        
-                                        }}
-                                    x = "name"
-                                    innerRadius={0}
-                                    // labelRadius={}
-                                    // labelComponent={<VictoryLabel angle={45}/>}
-                                    labels={({ datum }) => `${datum.name}`}
-                                    y = "total"
-                                    padding={{ top: 0, bottom: 0,left:screenWidth*0.2 ,right:screenWidth*0.2 }}
-                                    origin={{x:screenWidth*0.42}}
-                                    width={screenWidth*0.8}
-                                    height={250}
-                                    
-                                    />
-                                    </View>
-                                    
-                                    :
-                                    null
-                                    }
+                                    }}
+                                    showValuesOnTopOfBars={true}
+                                    showBarTops={false}
+                                    fromZero={true}
+                                    width={Dimensions.get('window').width-60}
+                                    height={240}
+                                    yAxisLabel={'Q'} 
+                                    chartConfig={chartConfig}
+                                    style={styles.graphStyle}
+                                />}
+                                {reportDataByBranch.branches.total > 0 && graphOption.id==2 && 
+                                <PieChart
+                                    data={Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0)
+                                        .map((branch,index)=>({...branch,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
+                                    width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width-50}
+                                    height={220}
+                                    chartConfig={chartConfig}
+                                    accessor="total"
+                                    backgroundColor="transparent"
+                                    paddingLeft="25"                                    
+                                    absolute={false}
+                                />}
                             </Card>  
                             </View>
                         ): (
@@ -314,8 +334,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
     },
     graphStyle: {
-
-    },
+        paddingTop: 20,
+        borderRadius: 16
+     },
     dateBtn: {
         flex: 1,
         height: 70,
