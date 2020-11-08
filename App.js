@@ -40,7 +40,8 @@ const theme = {
     black:'black',
     white:'white',
     accent: '#00AACC',
-    gray:'#605856'
+    gray2:'#605856',
+    gray:'#FF7171'
   },
 };
 
