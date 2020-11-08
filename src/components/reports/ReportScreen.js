@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-// import RNFetchBlob from 'rn-fetch-blob';
+import RNFetchBlob from 'react-native-fetch-blob';
 import { captureRef } from 'react-native-view-shot'
 
 import * as Print from 'expo-print';
@@ -102,13 +102,13 @@ function ReportScreen({
         const rowString = salesData.map( row => `${row.total},${row.día},${row.mes},${row.ano},${row.fecha}\n`).join('');
         const csvString = `${headerString}${rowString}`;
 
-        // const pathToWr// const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/data.csv`;
-        // console.log('pathToWrite ', pathToWrite);
+        const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/data.csv`;
+        console.log('pathToWrite ', pathToWrite);
 
-        // RNFetchBlob.fs
-        // .writeFile(pathToWrite, csvString, 'utf8')
-        // .then(() => console.log('done writing csv file yeaaaah'))
-        // .catch( error => console.log(error));
+        RNFetchBlob.fs
+        .writeFile(pathToWrite, csvString, 'utf8')
+        .then(() => console.log('done writing csv file yeaaaah'))
+        .catch( error => console.log(error));
         console.log(csvString)
     };
 
