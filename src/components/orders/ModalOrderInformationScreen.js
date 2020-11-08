@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import {
 	Dimensions,
 	Platform, StyleSheet,
-	View,Image
+	View
 } from 'react-native';
 import { Divider } from 'react-native-elements';
 import Modal from 'react-native-modal';
@@ -16,10 +16,8 @@ import OptionPicker from '../../components/general/OptionPicker';
 import * as actions from '../../logic/actions/orders';
 import * as selectors from '../../logic/reducers';
 import MyCheckbox from '../general/checkboxNoReduxForm';
-import { uriToBlob } from "../general/ImagePickerUser";
 import FinishOrder from './FinishOrder';
-import { WebView } from 'react-native-webview';
-import ModalOrderPrintScreen from "./ModalOrderPrintScreen";
+
 
 const createAndSavePDF = async (activeOrder) => {
 	let length=0
@@ -51,7 +49,7 @@ const createAndSavePDF = async (activeOrder) => {
 		let additionalInstructions=""
 		additionalInstructions = item.additionalInstructions!= null && item.additionalInstructions!="" ? `<div><p class="ingredient">Instrucciones ad.:  ${item.additionalInstructions} </p></div>`:''
 		if(additionalInstructions!=''){
-			length+=parseInt(item.additionalInstructions.length/50 +1);
+			length+=parseInt(item.additionalInstructions.length/200 +1);
 		}
 		
 		return ({
@@ -98,7 +96,7 @@ const createAndSavePDF = async (activeOrder) => {
 						text-align: center;
 						margin: 4px;
 						margin-top: 12px;
-						font-size: 14px;
+						font-size: 12px;
 					}
 					body {
 						font-family: Arial, Helvetica, sans-serif;
@@ -107,7 +105,7 @@ const createAndSavePDF = async (activeOrder) => {
             		}
 					body .info {
 						text-align: center;
-						font-size: 10px;
+						font-size: 8px;
 						margin: 4px;
 					}
 					body .price {
@@ -115,35 +113,35 @@ const createAndSavePDF = async (activeOrder) => {
 						text-align: right;
 						margin: 4px;
 						margin-right: 16px;
-						font-size: 10px;
+						font-size: 8px;
 					}
 					body .ingredient {
 						flex: 1;
 						text-align: left;
 						margin: 1px;
 						margin-left: 24px;
-						font-size: 8px;
+						font-size: 7px;
 					}
 					body .name {
 						flex: 1;
 						text-align: left;
 						margin: 4px;
 						margin-left: 16px;
-						font-size: 10px;
+						font-size: 8px;
 					}
 					body .total {
 						flex: 1;
 						text-align: left;
 						margin: 4px;
 						margin-left: 16px;
-						font-size: 10px;
+						font-size: 8px;
 						font-weight: bold;
 					}
 					body .divisor {
 						text-align: center;
 					}
 					.header {
-						font-size: 10px;
+						font-size: 8px;
 						margin: 8px 0px;
 						font-weight: bold;
 					}
@@ -189,13 +187,11 @@ const createAndSavePDF = async (activeOrder) => {
     	const { uri } = await Print.printToFileAsync({ 
 			html,
 			width: 250, //306, 200
-			height: length * 250 + 100
+			height: length * 60 + 100
 		});
     
 		if (Platform.OS === "ios"){
-			// console.log(uri);
-			return {uri,html};
-			// await Sharing.shareAsync(uri);
+			await Sharing.shareAsync(uri);
     	} else {	
 			console.log("Falta opción para Android")
 		}
@@ -263,7 +259,7 @@ function OrderInformationScreen({
 		}
 	);
 
-	const [modalOrderPrint, setModalOrderPrint] = useState(false);
+	
 
 	useEffect(() => {
 		console.log(dataTip)
@@ -311,16 +307,6 @@ function OrderInformationScreen({
 		tipTotal  =  (total * tip.id / 100)
 	}
 
-	const [uriPDF, seturiPDF] = useState(null);
-	const [htmlPDF, sethtmlPDF] = useState(null);
-	const getPDF= async()=>{
-		let {uri,html} = await createAndSavePDF(activeOrder)
-		
-		seturiPDF(uri)
-		sethtmlPDF(html)
-	}
-	console.log(uriPDF)
-	
 	return (
 		<Modal
 			transparent={true}
@@ -364,7 +350,6 @@ function OrderInformationScreen({
 					<OptionPicker theme={theme} data={dataTip} onPress={(elem)=>setDiscount(elem)}/>}
 					<Divider style={{ backgroundColor: colors.accent,marginTop:10,marginBottom:10 }} /> */}
 				</View>}
-				
 				<View style={styles.totalContainer}>
                 	<Text  style={{fontFamily: 'dosis-light', fontSize: 24}}>{'Total: Q. ' + parseFloat(total).toFixed(2)}</Text>
            		</View>
@@ -386,10 +371,7 @@ function OrderInformationScreen({
 							justifyContent: 'center',
 							marginTop: 12,
 						}}
-						onPress={() => {getPDF();setModalOrderPrint(true);}}
-							
-						
-					
+						onPress={() => createAndSavePDF(activeOrder)}
 					>
 						IMPRIMIR ORDEN
 					</Button>}
@@ -416,7 +398,7 @@ function OrderInformationScreen({
 					</Button>} */}
 				</View>
 				<IconButton testID={'close-button'}  icon="close"  size={30} style={{ top: 20, right: 3, position: 'absolute', backgroundColor: '#D8D8D8'}} mode="contained" onPress={() => closeModal()}/>
-				{ <ModalOrderPrintScreen modal={modalOrderPrint} theme={theme} closeModal={()=>setModalOrderPrint(false)}  navigation={navigation} uri={uriPDF} html={htmlPDF}/>}
+				
 			</View>
 
 			{finishOrderButton && !onlyDetail &&  !charge &&
