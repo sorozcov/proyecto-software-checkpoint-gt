@@ -8801,7 +8801,7 @@ react-native-expo-cached-image@^1.2.1:
     react ">16.0.0"
     react-native ">0.37.0"
 
-react-native-fetch-blob@0.10.8:
+react-native-fetch-blob@0.10.8, react-native-fetch-blob@^0.10.8:
   version "0.10.8"
   resolved "https://registry.yarnpkg.com/react-native-fetch-blob/-/react-native-fetch-blob-0.10.8.tgz#4fc256abae0cb5f10e7c41f28c11b3ff330d72a9"
   integrity sha1-T8JWq64MtfEOfEHyjBGz/zMNcqk=
