@@ -9,9 +9,7 @@ import { captureRef } from 'react-native-view-shot'
 import XLSX from 'xlsx';
 
 import * as Print from 'expo-print';
-import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
-import * as Permissions from 'expo-permissions';
 import * as Sharing from 'expo-sharing';
 
 import { ScrollView } from 'react-native-gesture-handler';
