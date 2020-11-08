@@ -16,7 +16,7 @@ import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/dashboardSales';
 import { VictoryTheme,VictoryPie,VictoryLabel,VictoryChart,VictoryLegend } from "victory-native";
 import moment from "moment";
-
+import OptionPicker from '../../components/general/OptionPicker';
 
 
 
@@ -48,12 +48,35 @@ function ReportScreen({
         fillShadowGradient:colors.accent,
         fillShadowGradientOpacity:1,
       }
+      const colorsGraph =
+        ["rgb(47, 145, 175)", "rgb(181, 231, 122)", "rgb(98, 141, 120)", "rgb(148, 37, 170)", "rgb(22, 190, 88)", "rgb(27, 149, 93)", "rgb(73, 14, 218)", "rgb(45, 175, 82)", "rgb(79, 53, 85)", "rgb(173, 113, 70)", "rgb(128, 107, 188)", "rgb(48, 124, 186)", "rgb(157, 90, 23)", "rgb(199, 176, 191)", "rgb(18, 251, 49)", "rgb(94, 89, 181)", "rgb(81, 184, 249)", "rgb(25, 239, 125)", "rgb(28, 24, 130)", "rgb(105, 225, 238)"]
       
       const graphStyle = {
         paddingTop: 20,
         borderRadius: 16
      }
- 
+     
+     const graphOptions = [
+		{
+			id: 1,
+			title: 'Barras',
+			selected: true,
+		},
+		{
+			id: 2,
+			title: 'Pie',
+			selected: false,
+		}
+    ];
+    
+    const [graphOption, setGraphOption] = useState(
+		{
+			id: 1,
+			title: 'Barras',
+			selected: true,
+		},
+    );
+    
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
@@ -96,7 +119,8 @@ function ReportScreen({
                                     ))}
                                     
                                 </DataTable>
-                                <BarChart data={{
+                                {dashboardData.total!=0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
+                                {dashboardData.total!=0 && graphOption.id==1 && <BarChart data={{
                                         labels: dashboardDataBranches.map(i=>i.name),
                                         datasets: [{
                                             data: dashboardDataBranches.map(i=>i.total),
@@ -115,9 +139,9 @@ function ReportScreen({
                                         yAxisLabel={'Q'} 
                                         chartConfig={chartConfig}
                                         style={graphStyle}
-                                />
-                                <PieChart
-                                data={dashboardDataBranches.map(i=>({...i,legendFontSize: 8,color: `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)})`, }))}
+                                />}
+                                {dashboardData.total!=0 && graphOption.id==2 && <PieChart
+                                data={dashboardDataBranches.map((i,index)=>({...i,legendFontSize: 8,color: colorsGraph[index], }))}
                                 width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width}
                                 height={220}
                                 chartConfig={chartConfig}
@@ -127,16 +151,9 @@ function ReportScreen({
                                 
                                 absolute={false}
                                 />
-
-                                {/* <BarChart
-                                // style={graphStyle}
-                                data={data}
-                                width={screenWidth*0.8}
-                                height={220}
-                                yAxisLabel="$"
-                                chartConfig={chartConfig}
-                                verticalLabelRotation={30}
-                                /> */}
+                                }
+                                {dashboardData.toal==0 &&
+                                <Text  style={{...styles.saleTitle,color:colors.accent}}>Sin ventas por el momento.</Text>}
                                 {/* {dashboardData.total!=0 ?
                                     <View>
                                         
