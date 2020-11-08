@@ -178,6 +178,7 @@ function AverageSalesReport({
                                             value={initDate}
                                             mode={'date'}
                                             display="default"
+                                            locale={'es'}
                                             onChange={onInitDateChange}
                                         />
                                         ) : (
@@ -189,6 +190,7 @@ function AverageSalesReport({
                                             value={endDate}
                                             mode={'date'}
                                             display="default"
+                                            locale={'es'}
                                             onChange={onEndDateChange}
                                         />
                                     )}
