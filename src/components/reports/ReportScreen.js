@@ -6,10 +6,10 @@ import { LineChart } from 'react-native-chart-kit';
 // import RNFetchBlob from 'react-native-fetch-blob';
 import { captureRef } from 'react-native-view-shot'
 
+import XLSX from 'xlsx';
+
 import * as Print from 'expo-print';
-import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
-import * as Permissions from 'expo-permissions';
 import * as Sharing from 'expo-sharing';
 
 import { ScrollView } from 'react-native-gesture-handler';
@@ -77,7 +77,7 @@ function ReportScreen({
         html += '<p>Hello world</p>'
 
         try {
-            const { uri } = await Print.printToFileAsync({ 
+            const { uri } = await Print.printToFileAsync({
                 html,
                 width: 250,
                 height:300,
@@ -96,25 +96,25 @@ function ReportScreen({
 
     const exportCSV = async(data) => {
         let salesData = transformData(data);
+
+        var ws = XLSX.utils.json_to_sheet(salesData);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+        const wbout = XLSX.write(wb, {
+          type: 'base64',
+          bookType: "xlsx"
+        });
+        const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
+        console.log(`Writing to ${JSON.stringify(uri)} with text: ${wbout}`);
+        await FileSystem.writeAsStringAsync(uri, wbout, {
+          encoding: FileSystem.EncodingType.Base64
+        });
         
-        const headerString = 'Total,Día,Mes,Año,Fecha\n';
-        const rowString = salesData.map( row => `${row.total},${row.día},${row.mes},${row.ano},${row.fecha}\n`).join('');
-        const csvString = `${headerString}${rowString}`;
-
-        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-        if (status === "granted") {
-            let fileUri = FilFileSystem.documentDirectory + `reporte-${new Date().toISOString().split('T')[0]}.txt`;
-            console.log(fileUri)
-            await FileSystem.writeAsStringAsync(fileUri, csvString, { encoding: FileSystem.EncodingType.UTF8 });
-            const asset = await MediaLibrary.createAssetAsync(fileUri)
-            await MediaLibrary.createAlbumAsync("Download", asset, false)
-        }
-
-        // RNFetchBlob.fs
-        //     .writeFile(pathToWrite, csvString, 'utf8')
-        //     .then(() => console.log('done writing csv file yeaaaah'))
-        //     .catch( error => console.log(error));
-        // console.log(csvString)
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          dialogTitle: 'MyWater data',
+          UTI: 'com.microsoft.excel.xlsx'
+        });
     };
 
     const transformData = data => {
