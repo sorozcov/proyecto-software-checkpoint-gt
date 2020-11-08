@@ -3,7 +3,7 @@ import React, { useState,useEffect } from 'react';
 import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text,   RefreshControl, } from 'react-native';
 import { Field, reduxForm } from 'redux-form';
-import { BarChart,LineChart,PieChart } from 'react-native-chart-kit';
+import { BarChart,LineChart,PieChart,StackedBarChart } from 'react-native-chart-kit';
 import { FloatingAction } from "react-native-floating-action";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as FileSystem from 'expo-file-system';
@@ -37,6 +37,23 @@ function ReportScreen({
     
     const screenWidth = Dimensions.get("window").width;
 
+      const chartConfig={
+        backgroundGradientFrom: '#F8FAFB',
+        backgroundGradientTo: '#F8FAFB',
+
+        barRadius:1,
+        // barPercentage:1,
+        // color: (opacity = 1) => `rgba(0, 170, 204, ${opacity})`,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        fillShadowGradient:colors.accent,
+        fillShadowGradientOpacity:1,
+      }
+      
+      const graphStyle = {
+        paddingTop: 20,
+        borderRadius: 16
+     }
+ 
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
@@ -79,9 +96,50 @@ function ReportScreen({
                                     ))}
                                     
                                 </DataTable>
-                                {dashboardData.total!=0 ?
+                                <BarChart data={{
+                                        labels: dashboardDataBranches.map(i=>i.name),
+                                        datasets: [{
+                                            data: dashboardDataBranches.map(i=>i.total),
+                                            
+                                            
+                                        },
+                                        ],
+                                        
+                                        }}
+                                       
+                                        showValuesOnTopOfBars={true}
+                                        showBarTops={false}
+                                        fromZero={true}
+                                        width={Platform.OS=="ios"? (Dimensions.get('window').width -60) : Dimensions.get('window').width}
+                                        height={240}
+                                        yAxisLabel={'Q'} 
+                                        chartConfig={chartConfig}
+                                        style={graphStyle}
+                                />
+                                <PieChart
+                                data={dashboardDataBranches.map(i=>({...i,legendFontSize: 8,color: `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)})`, }))}
+                                width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width}
+                                height={220}
+                                chartConfig={chartConfig}
+                                accessor="total"
+                                backgroundColor="transparent"
+                                paddingLeft="25"
+                                
+                                absolute={false}
+                                />
+
+                                {/* <BarChart
+                                // style={graphStyle}
+                                data={data}
+                                width={screenWidth*0.8}
+                                height={220}
+                                yAxisLabel="$"
+                                chartConfig={chartConfig}
+                                verticalLabelRotation={30}
+                                /> */}
+                                {/* {dashboardData.total!=0 ?
                                     <View>
-                    
+                                        
                                     <VictoryPie
                                     data={dashboardDataBranches.filter(branch=>branch.total>0)}
                                     // theme={VictoryTheme.material}
@@ -113,7 +171,7 @@ function ReportScreen({
                                     
                                     :
                                     null
-                                    }
+                                    } */}
                             </Card>
                             
                         
