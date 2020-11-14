@@ -1,6 +1,6 @@
 import 'firebase/firestore';
 import { connect } from 'react-redux';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { LineChart } from 'react-native-chart-kit';
 import { 
     KeyboardAvoidingView, 
@@ -16,8 +16,10 @@ import {
 import map from 'lodash/map';
 
 import XLSX from 'xlsx';
-import * as Sharing from 'expo-sharing';
+import { captureRef } from 'react-native-view-shot';
+import * as Print from 'expo-print';
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 import { Button, withTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -36,6 +38,7 @@ function AverageSalesReport({
     generateReport,
 }) {
     const { colors, roundness } = theme;
+    
     const groupOptions = [
         {
 			id: 'WEEKDAY',
@@ -61,13 +64,11 @@ function AverageSalesReport({
     const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1)));
     const [endDate, setEndDate] = useState(new Date());
     const [modalVisible, setModalVisible] = useState(false);
-    const [groupBy, setGroupBy] = useState(
-		{
+    const [groupBy, setGroupBy] = useState({
 			id: 'WEEKDAY',
 			title: 'Día',
 			selected: true,
-		}
-	);
+		});
 
 
     const onInitDateChange = (event, selectedDate) => {
@@ -81,30 +82,61 @@ function AverageSalesReport({
         setEndDate(currentDate);
     };
 
-    const toggleShow = (show) => {
-        setShow(!show);
-    };
-
     const filterChange = elem => {        
         if(reportData) {
             generateReport(initDate, endDate, elem.id)
         }
     }
 
+    const graphReference = useRef();
+
+    const createPDF = async() => {
+        let snapshot = await captureRef(graphReference, {
+            format: 'jpg',
+            quality: 1,
+            result: 'data-uri'
+        });
+
+        //TODO: Mejorar estilo de reporte.
+        let html = `
+        <center>
+            <h1>REPORTE</h1>
+            <h6>${new Date().toISOString().split('T')[0]}</h6>
+        </center>
+        
+        <h2>Gráfica</h2>
+        <img src="${snapshot}" width="100%" style="border:2px solid black;" />
+        `;
+
+        try {
+            const { uri } = await Print.printToFileAsync({
+                html,
+                width: 250,
+                height:300,
+                base64: true,
+            });
+
+            await Sharing.shareAsync(uri);
+
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
     const exportCSV = async(data) => {
         data = data.saleById;
 
-        var ws = await XLSX.utils.json_to_sheet(data);
-        var wb = await XLSX.utils.book_new();
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
 
-        await XLSX.utils.book_append_sheet(wb, ws, 'Report');
+        XLSX.utils.book_append_sheet(wb, ws, 'Report');
 
         const wbout = await XLSX.write(wb, {
             type: 'base64',
             bookType: 'xlsx',
         });
 
-        const uri = FileSystem.cacheDirectory + 'report.xlsx';
+        const uri = FileSystem.cacheDirectory + 'reporte.xlsx';
 
 
         await FileSystem.writeAsStringAsync(uri, wbout, {
@@ -124,7 +156,7 @@ function AverageSalesReport({
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                     <View>
                         {reportData ? (
-                            <View style={styles.formContainer}>
+                            <View style={styles.formContainer} ref={graphReference}>
                                 <LineChart
                                     data={{
                                         labels: reportData.identifiers,

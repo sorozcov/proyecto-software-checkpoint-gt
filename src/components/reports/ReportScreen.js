@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 // import RNFetchBlob from 'react-native-fetch-blob';
-import { captureRef } from 'react-native-view-shot'
 
 import XLSX from 'xlsx';
 
+import { captureRef } from 'react-native-view-shot'
 import * as Print from 'expo-print';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -46,8 +46,6 @@ function ReportScreen({
     const [endDate, setEndDate] = useState(new Date()); // Today
     const [modalVisible, setModalVisible] = useState(false);
 
-    const graphReference = useRef();
-
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setModalVisible(Platform.OS === 'ios');
@@ -59,22 +57,25 @@ function ReportScreen({
         setEndDate(currentDate);
     };
 
-    const toggleShow = (show) => {
-        setShow(!show);
-    };
+    const graphReference = useRef();
 
     const createPDF = async() => {
         let snapshot = await captureRef(graphReference, {
             format: 'jpg',
             quality: 1,
+            result: 'data-uri'
         });
 
-        console.log(snapshot)
-        let html = 
-		`
-            <img src="${snapshot}" width="100%" style="border:2px solid black; height:${300}px; width:${300}px;" />
+        //TODO: Mejorar estilo de reporte.
+        let html = `
+        <center>
+            <h1>REPORTE</h1>
+            <h6>${new Date().toISOString().split('T')[0]}</h6>
+        </center>
+        
+        <h2>Gráfica</h2>
+        <img src="${snapshot}" width="100%" style="border:2px solid black;" />
         `;
-        html += '<p>Hello world</p>'
 
         try {
             const { uri } = await Print.printToFileAsync({
@@ -84,10 +85,7 @@ function ReportScreen({
                 base64: true,
             });
 
-            if (Platform.OS === "ios")
-                await Sharing.shareAsync(uri);
-            else	
-                console.log("Falta opción para Android")
+            await Sharing.shareAsync(uri);
 
         } catch (error) {
             console.error(error);
@@ -105,7 +103,6 @@ function ReportScreen({
           bookType: "xlsx"
         });
         const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
-        console.log(`Writing to ${JSON.stringify(uri)} with text: ${wbout}`);
         await FileSystem.writeAsStringAsync(uri, wbout, {
           encoding: FileSystem.EncodingType.Base64
         });
@@ -146,24 +143,26 @@ function ReportScreen({
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.formContainer} ref={graphReference}>
+                    <View style={styles.formContainer}>
                         {reportData ? (
-                            <LineChart
-                                style={styles.graphStyle}
-                                data={{
-                                    labels: reportData.sale,
-                                    datasets: [
-                                        {
-                                        data: reportData.sale.map(i => reportData.saleById[i]['total'])
-                                        }
-                                    ]
-                                }}
-                                width={Dimensions.get("window").width}
-                                height={Dimensions.get("window").height * 0.55}
-                                yAxisLabel="Q."
-                                chartConfig={chartConfig}
-                                verticalLabelRotation={45}
-                            />
+                            <View ref={graphReference}>
+                                <LineChart
+                                    style={styles.graphStyle}
+                                    data={{
+                                        labels: reportData.sale,
+                                        datasets: [
+                                            {
+                                            data: reportData.sale.map(i => reportData.saleById[i]['total'])
+                                            }
+                                        ]
+                                    }}
+                                    width={Dimensions.get("window").width}
+                                    height={Dimensions.get("window").height * 0.55}
+                                    yAxisLabel="Q."
+                                    chartConfig={chartConfig}
+                                    verticalLabelRotation={45}
+                                />
+                            </View>
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
                         )}
