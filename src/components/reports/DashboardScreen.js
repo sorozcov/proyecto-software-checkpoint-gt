@@ -333,6 +333,17 @@ function ReportScreen({
                         icon: (
                             <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
                         ),
+                        name: 'ReportByUser',
+                        text: 'Reporte por Usuario',
+                        position: 1,
+                        textStyle: {fontFamily: 'dosis-light'},
+                        buttonSize: 45,
+                        color: '#00A8C8'
+                    },
+                    {
+                        icon: (
+                            <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
+                        ),
                         name: 'ReportsByWeekday',
                         text: 'Ventas Promedio',
                         position: 1,

@@ -6,6 +6,7 @@ import ReportScreen from './ReportScreen';
 import DashboardScreen from './DashboardScreen';
 import AverageSalesReport from './AverageSalesReport';
 import ReportByBranchScreen from './ReportByBranchScreen';
+import ReportByUserScreen from './ReportByUserScreen';
 
 
 const ReportsStack = createStackNavigator();
@@ -38,6 +39,11 @@ function ReportsStackScreen({ theme }) {
                 name="ReportByBranch"
                 options={{ title: 'REPORTE POR SUCURSAL', headerTitleAlign:'center'}}
                 component={ReportByBranchScreen}
+            />
+            <ReportsStack.Screen
+                name="ReportByUser"
+                options={{ title: 'REPORTE POR USUARIO', headerTitleAlign:'center'}}
+                component={ReportByUserScreen}
             />
             <ReportsStack.Screen
                 name="ReportsByWeekday"

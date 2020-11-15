@@ -21,6 +21,14 @@ const byId = (state = {}, action) => {
             }
             return newState;
         }
+        case types.FETCH_SALES_REPORT_BY_USER_COMPLETED: 
+        {
+            const newState = {
+                ...state,
+                ['BY-USER']: action.payload.report,
+            }
+            return newState;
+        }
         case types.FETCH_AVERAGE_SALES_REPORT_COMPLETED:
         {
             const newState = {

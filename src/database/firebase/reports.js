@@ -207,7 +207,7 @@ export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') =>
 };
 
 // función para obtener ventas de Firebase según las fechas ingresadas agrupadas por branch
-export const getSalesReportByBranches = async( initial, final, groupBy = 'DAY') => {
+export const getSalesReportByBranches = async( initial, final) => {
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
@@ -219,6 +219,34 @@ export const getSalesReportByBranches = async( initial, final, groupBy = 'DAY') 
         let salesArray = [];
         sales.docs.forEach(sale => {
             salesArray.push(omit(sale.data(), ['products', 'byTime', 'byWaiter']));
+        });
+
+        return {
+            report: salesArray,
+            error: null,
+        };
+
+    } catch (error) {
+        return {
+            report: null,
+            error,
+        };
+    }
+};
+
+// función para obtener ventas de Firebase según las fechas ingresadas agrupadas por usuario
+export const getSalesReportByUsers = async( initial, final) => {
+    try {
+        let initial_date = new Date(initial);
+        let final_date = new Date(final);
+        initial_date.setUTCHours(-18,0,0);
+        final_date.setUTCHours(-18,0,0);
+
+        const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
+
+        let salesArray = [];
+        sales.docs.forEach(sale => {
+            salesArray.push(omit(sale.data(), ['products', 'byTime', 'byBranch']));
         });
 
         return {

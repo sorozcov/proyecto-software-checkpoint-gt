@@ -16,11 +16,10 @@ import moment from "moment";
 function ReportScreen({
     theme,
     navigation,
-    reportDataByBranch,
+    reportDataByUser,
     generateReport,
     isLoading,
 }) {
-
 
     const { colors, roundness } = theme;
     
@@ -43,6 +42,8 @@ function ReportScreen({
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
+
+    //Configuraciones de las graficas
     const chartConfig={
         backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
         backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
@@ -210,38 +211,38 @@ function ReportScreen({
                             </Button>
                         </View>
 
-                        {reportDataByBranch && reportDataByBranch.branches.total > 0 ? (
+                        {reportDataByUser && reportDataByUser.users.total > 0 ? (
 
                             <View>
                             <Card 
-                                title={"Ventas Por Sucursal"}
+                                title={"Ventas Por Usuario"}
                                 titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
                                 containerStyle={{marginTop:10}}>
                                     <DataTable>
                                     <DataTable.Header>
                                         <DataTable.Title style={{flex: 3}}>Día</DataTable.Title>
-                                        <DataTable.Title style={{flex: 4}}>Sucursal</DataTable.Title>
+                                        <DataTable.Title style={{flex: 4}}>Usuario</DataTable.Title>
                                         <DataTable.Title numeric style={{flex: 2}}>Total</DataTable.Title>
                                     </DataTable.Header>
-                                    {reportDataByBranch.days.map(day=>(
-                                        Object.values(day.byBranch).filter(branch => typeof branch === 'object' && branch.total > 0).map(branch=>(
+                                    {reportDataByUser.days.map(day=>(
+                                        Object.values(day.byWaiter).filter(user => typeof user === 'object' && user.total > 0).map(user=>(
                                         <DataTable.Row>
                                             <DataTable.Cell style={{flex: 3}}>{day.id}</DataTable.Cell>
-                                            <DataTable.Cell style={{flex: 4}}>{branch.name}</DataTable.Cell>
-                                            <DataTable.Cell numeric style={{flex: 2}}>GTQ {branch.total}</DataTable.Cell>
+                                            <DataTable.Cell style={{flex: 4}}>{user.name}</DataTable.Cell>
+                                            <DataTable.Cell numeric style={{flex: 2}}>GTQ {user.total}</DataTable.Cell>
                                         </DataTable.Row>
 
                                         ))
                                     ))}
                                     
                                 </DataTable>
-                                {reportDataByBranch.branches.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
-                                {reportDataByBranch.branches.total > 0 && graphOption.id==1 && 
+                                {reportDataByUser.users.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
+                                {reportDataByUser.users.total > 0 && graphOption.id==1 && 
                                 <BarChart 
                                     data={{
-                                    labels: Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0).map(branch => branch.name),
+                                    labels: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.name),
                                     datasets: [{
-                                        data: Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0).map(branch => branch.total),
+                                        data: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.total),
                                     },
                                     ],
                                     
@@ -255,10 +256,10 @@ function ReportScreen({
                                     chartConfig={chartConfig}
                                     style={styles.graphStyle}
                                 />}
-                                {reportDataByBranch.branches.total > 0 && graphOption.id==2 && 
+                                {reportDataByUser.users.total > 0 && graphOption.id==2 && 
                                 <PieChart
-                                    data={Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0)
-                                        .map((branch,index)=>({...branch,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
+                                    data={Object.values(reportDataByUser.users).filter(user=>user.total>0)
+                                        .map((user,index)=>({...user,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
                                     width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width-50}
                                     height={220}
                                     chartConfig={chartConfig}
@@ -358,12 +359,12 @@ const styles = StyleSheet.create({
 
 export default connect(
 	state => ({
-        reportDataByBranch: selectors.getReport(state, 'BY-BRANCH'),
+        reportDataByUser: selectors.getReport(state, 'BY-USER'),
         isLoading:selectors.getDashboardSalessIsFetching(state),
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {
-            dispatch(actions.startFetchingReportByBranch(initDate, endDate));
+            dispatch(actions.startFetchingReportByUser(initDate, endDate));
         },
 	}),
 )(withTheme(ReportScreen));

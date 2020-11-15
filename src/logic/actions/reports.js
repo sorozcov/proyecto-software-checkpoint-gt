@@ -45,6 +45,28 @@ export const failFetchingReportByBranch = error => ({
     },
 });
 
+export const startFetchingReportByUser = (initial, final) => ({
+    type: types.FETCH_SALES_REPORT_BY_USER_STARTED,
+    payload: {
+        initial,
+        final
+    }
+});
+
+export const completeFetchingReportByUser = report => ({
+    type: types.FETCH_SALES_REPORT_BY_USER_COMPLETED,
+    payload: {
+        report, 
+    },
+});
+
+export const failFetchingReportByUser = error => ({
+    type: types.FETCH_SALES_REPORT_BY_USER_FAILED,
+    payload: {
+        error,
+    },
+});
+
 
 export const startFetchingAverageReport = (initial, final, groupBy = 'WEEKDAY') => ({
     type: types.FETCH_AVERAGE_SALES_REPORT_STARTED,

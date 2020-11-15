@@ -1,6 +1,6 @@
 import { put, takeEvery, select } from 'redux-saga/effects';
 
-import { getSalesReportByDates, getSalesReportByBranches } from '../../database/firebase/reports';
+import { getSalesReportByDates, getSalesReportByBranches, getSalesReportByUsers } from '../../database/firebase/reports';
 import * as actions from '../../logic/actions/reports';
 import * as types from '../types/reports';
 import * as selectors from '../../logic/reducers';
@@ -75,6 +75,58 @@ export function* watchGetSalesReportByBranch() {
     yield takeEvery(
         types.FETCH_SALES_REPORT_BY_BRANCH_STARTED,
         getSalesReportByBranch,
+    );
+};
+
+
+
+function* getSalesReportByUser(action) {
+    try {
+        const result = yield getSalesReportByUsers(action.payload.initial, action.payload.final);
+
+        if(result.error === null){
+            const users = yield select(selectors.getUsers)
+            var usersData = { total: 0 };
+            users.map(user => {
+               usersData[user.uid] = {
+                   ...user,
+                   total: 0
+               } 
+            });
+            Object.values(result.report).forEach(day=>{
+                users.forEach((user)=>{
+                    usersData[user.uid].total = day.byWaiter[user.uid] != null ? 
+                            usersData[user.uid].total + day.byWaiter[user.uid].total : 
+                            usersData[user.uid].total
+                    
+                    usersData.total = day.byWaiter[user.uid] != null ? 
+                        usersData.total + day.byWaiter[user.uid].total : 
+                        usersData.total
+                    day.byWaiter[user.uid]={
+                        total:0,
+                        totalWithInvoice:0,
+                        totalWithoutTip:0,
+                        totalWithoutInvoice:0,
+                        totalTip:0,
+                        ...user,
+                        ...day.byWaiter[user.uid]
+                    }
+                })
+            })
+            yield put(actions.completeFetchingReportByUser({days: result.report, users: usersData}));
+        } else {
+            yield put(actions.failFetchingReportByUser('Falló al obtener reporte.'));
+        }
+    } catch (error) {
+        console.log(error);
+        yield put(actions.failFetchingReportByUser('Falló al obtener reporte.'));
+    }
+}
+
+export function* watchGetSalesReportByUser() {
+    yield takeEvery(
+        types.FETCH_SALES_REPORT_BY_USER_STARTED,
+        getSalesReportByUser,
     );
 };
 
