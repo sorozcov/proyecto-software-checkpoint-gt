@@ -14,7 +14,7 @@ import {
     // watchEditIngredientStarted
 } from './products';
 import { watchAddUsersStarted, watchDeleteUserStarted, watchEditUsersStarted, watchUsersFetchStarted } from './users';
-import { watchGetSalesReportByDate, watchGetAverageSalesReport, watchGetSalesReportByBranch } from './reports';
+import { watchGetSalesReportByDate, watchGetAverageSalesReport, watchGetSalesReportByBranch, watchFetchMostSoldProducts } from './reports';
 import { watchGetDashboardSalesReport } from './dashboardSales';
 
 
@@ -55,6 +55,7 @@ function* mainSaga() {
         fork(watchGetSalesReportByDate),
         fork(watchGetSalesReportByBranch),
         fork(watchGetAverageSalesReport),
+        fork(watchFetchMostSoldProducts),
 
         fork(watchGetDashboardSalesReport),
     ]);

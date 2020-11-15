@@ -339,6 +339,17 @@ function ReportScreen({
                         textStyle: {fontFamily: 'dosis-light'},
                         buttonSize: 45,
                         color: '#00A8C8'
+                    },
+                    {
+                        icon: (
+                            <MaterialCommunityIcons name="file-chart" color='white' size={25}/>
+                        ),
+                        name: 'ReportsByProducts',
+                        text: 'Productos Más Vendidos',
+                        position: 1,
+                        textStyle: {fontFamily: 'dosis-light'},
+                        buttonSize: 45,
+                        color: '#00A8C8'
                     }
                 ]}
             />

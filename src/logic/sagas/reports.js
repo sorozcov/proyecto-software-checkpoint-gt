@@ -1,6 +1,6 @@
 import { put, takeEvery, select } from 'redux-saga/effects';
 
-import { getSalesReportByDates, getSalesReportByBranches } from '../../database/firebase/reports';
+import { getSalesReportByDates, getSalesReportByBranches, getMostSoldProducts } from '../../database/firebase/reports';
 import * as actions from '../../logic/actions/reports';
 import * as types from '../types/reports';
 import * as selectors from '../../logic/reducers';
@@ -99,3 +99,26 @@ export function* watchGetAverageSalesReport() {
         getAverageSalesReport,
     );
 };
+
+function* fetchMostSoldProducts(action) {
+    try {
+        const response = yield getMostSoldProducts(action.payload.initial, action.payload.final);
+
+        if(response.error === null) {
+            yield put(actions.completeFetchingMostSoldProducts(response.report));
+        } else {
+            yield put(actions.failFetchingMostSoldProducts('Ha ocurrido un error al traer los productos'))
+        }
+
+    } catch (error) {
+        yield put(actions.failFetchingMostSoldProducts('Ha ocurrido un error al traer los productos'))
+    };
+};
+
+export function* watchFetchMostSoldProducts() {
+    yield takeEvery(
+        types.FETCH_MOST_SOLD_PRODUCTS_REPORT_STARTED,
+        fetchMostSoldProducts,
+    );
+};
+

@@ -29,6 +29,16 @@ const byId = (state = {}, action) => {
             }
             return newState;
         }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_COMPLETED:
+        {
+            const newState = {
+                ...state,
+                ['MOST-SOLD-PRODUCTS']: action.payload.report,
+            };
+
+            return newState;
+        }
+
         default: 
         {
             return state;
@@ -74,6 +84,18 @@ const isFetching = (state = false, action) => {
         {
             return false;
         }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_STARTED:
+        {
+            return true;
+        }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_COMPLETED:
+        {
+            return false;
+        }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_FAILED:
+        {
+            return false;
+        }
         default:
         {
             return state;
@@ -116,6 +138,18 @@ const error = (state = null, action) => {
             return null;
         }
         case types.FETCH_AVERAGE_SALES_REPORT_FAILED:
+        {
+            return action.payload.error;
+        }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_STARTED:
+        {
+            return null;
+        }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_COMPLETED:
+        {
+            return null;
+        }
+        case types.FETCH_MOST_SOLD_PRODUCTS_REPORT_FAILED:
         {
             return action.payload.error;
         }

@@ -233,3 +233,57 @@ export const getSalesReportByBranches = async( initial, final, groupBy = 'DAY') 
         };
     }
 };
+
+export const getMostSoldProducts = async(initial, final) => {
+    try {
+        let initial_date = new Date(initial);
+        let final_date = new Date(final);
+        initial_date.setUTCHours(-18,0,0);
+        final_date.setUTCHours(-18,0,0);
+
+        
+        const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
+
+        let salesArray = [];
+        sales.docs.forEach(sale => {
+            if(sale.data().products.length > 0) {
+                salesArray.push(omit(sale.data(), ['byBranch', 'byTime', 'byWaiter']));
+            };
+        });
+
+        let commonProducts = {
+            order: [],
+            byId: [],
+        };
+        
+        salesArray[0].products.map( day => {
+          if(commonProducts.order.includes(day.productName)) {
+              commonProducts.byId.map(obj => {
+                if(obj.name === day.productName) {
+                    obj['quantity']  = obj.quantity + day.quantity;
+                };
+            });
+
+          } else {
+            commonProducts.order.push(day.productName);
+            commonProducts.byId.push({
+                name: day.productName,
+                  quantity: day.quantity,
+            });
+          };
+        });
+
+        return {
+            report: commonProducts,
+            error: null,
+        };
+        
+    } catch (error) {
+        return {
+            report: null,
+            error,
+        };
+    };
+};
+
+
