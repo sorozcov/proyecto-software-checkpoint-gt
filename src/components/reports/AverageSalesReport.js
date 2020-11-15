@@ -61,8 +61,8 @@ function AverageSalesReport({
     };
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1)));
-    const [endDate, setEndDate] = useState(new Date());
+    const [initDate, setInitDate] = useState(new Date()); // Today
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
     const [modalVisible, setModalVisible] = useState(false);
     const [groupBy, setGroupBy] = useState({
 			id: 'WEEKDAY',

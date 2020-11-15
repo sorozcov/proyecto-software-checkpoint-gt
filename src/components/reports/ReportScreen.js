@@ -42,8 +42,8 @@ function ReportScreen({
     };
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date(new Date().setDate(new Date().getDate()-1))); // Yesterday
-    const [endDate, setEndDate] = useState(new Date()); // Today
+    const [initDate, setInitDate] = useState(new Date()); // Today
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
     const [modalVisible, setModalVisible] = useState(false);
 
     const onInitDateChange = (event, selectedDate) => {
