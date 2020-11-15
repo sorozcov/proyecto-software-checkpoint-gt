@@ -7,6 +7,7 @@ import DashboardScreen from './DashboardScreen';
 import AverageSalesReport from './AverageSalesReport';
 import ReportByBranchScreen from './ReportByBranchScreen';
 import ReportByUserScreen from './ReportByUserScreen';
+import MostSoldProductsReport from './MostSoldProductsReport';
 
 
 const ReportsStack = createStackNavigator();
@@ -49,6 +50,11 @@ function ReportsStackScreen({ theme }) {
                 name="ReportsByWeekday"
                 options={{ title: 'VENTAS PROMEDIO', headerTitleAlign:'center'}}
                 component={AverageSalesReport}
+            />
+            <ReportsStack.Screen
+                name="ReportsByProducts"
+                options={{ title: 'PRODUCTOS MÁS VENDIDOS', headerTitleAlign:'center'}}
+                component={MostSoldProductsReport}
             />
         </ReportsStack.Navigator>
     );

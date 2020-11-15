@@ -90,3 +90,25 @@ export const failFetchingAverageReport = error => ({
         error,
     },
 });
+
+export const startFetchingMostSoldProducts = (initial, final) => ({
+    type: types.FETCH_MOST_SOLD_PRODUCTS_REPORT_STARTED,
+    payload: {
+        initial,
+        final,
+    }
+});
+
+export const completeFetchingMostSoldProducts = report => ({
+    type: types.FETCH_MOST_SOLD_PRODUCTS_REPORT_COMPLETED,
+    payload: {
+        report, 
+    },
+});
+
+export const failFetchingMostSoldProducts = error => ({
+    type: types.FETCH_MOST_SOLD_PRODUCTS_REPORT_FAILED,
+    payload: {
+        error,
+    },
+});
