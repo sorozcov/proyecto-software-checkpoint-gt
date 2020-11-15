@@ -36,6 +36,7 @@ function AverageSalesReport({
     navigation,
     reportData,
     generateReport,
+    isFetching
 }) {
     const { colors, roundness } = theme;
     
@@ -48,6 +49,11 @@ function AverageSalesReport({
 		{
 			id: 'MONTH',
 			title: 'Mes',
+			selected: false,
+		},
+		{
+			id: 'HOUR',
+			title: 'Hora',
 			selected: false,
 		},
     ]
@@ -81,12 +87,6 @@ function AverageSalesReport({
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
     };
-
-    const filterChange = elem => {        
-        if(reportData) {
-            generateReport(initDate, endDate, elem.id)
-        }
-    }
 
     const graphReference = useRef();
 
@@ -159,10 +159,10 @@ function AverageSalesReport({
                             <View style={styles.formContainer} ref={graphReference}>
                                 <LineChart
                                     data={{
-                                        labels: reportData.identifiers,
+                                        labels: reportData[groupBy.id].identifiers,
                                         datasets: [
                                             {
-                                                data: map(reportData.sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2)))
+                                                data: map(reportData[groupBy.id].sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2)))
                                                 strokeWidth: 3
                                             }
                                         ]
@@ -297,13 +297,12 @@ function AverageSalesReport({
                                 data={groupOptions} 
                                 onPress={elem => {
                                     setGroupBy(elem)
-                                    filterChange(elem)
                                 }}/>
                         </View>
 
                         <View style={{marginTop: '4%', marginBottom: '2%'}}>
                             <Button
-                                disabled={!(initDate < endDate)}
+                                disabled={!(initDate < endDate) || isFetching}
                                 theme={roundness}
                                 color={'#000000'}
                                 icon={"chart-bar"}
@@ -319,7 +318,7 @@ function AverageSalesReport({
                                     marginRight: '5%',
                                     justifyContent: 'center',
                                 }}
-                                onPress={() => generateReport(initDate, endDate, groupBy.id)}
+                                onPress={() => generateReport(initDate, endDate)}
                             >
                             {'GENERAR REPORTE'}
                             </Button>
@@ -444,10 +443,11 @@ const styles = StyleSheet.create({
 export default connect(
 	state => ({
         reportData: selectors.getReport(state, 'AVERAGE'),
+        isFetching: selectors.getReportIsFetching(state)
 	}),
 	dispatch => ({
-        generateReport(initDate, endDate, groupBy) {
-            dispatch(actions.startFetchingAverageReport(initDate, endDate, groupBy));
+        generateReport(initDate, endDate) {
+            dispatch(actions.startFetchingAverageReport(initDate, endDate, true));
         },
 	}),
 )(withTheme(AverageSalesReport));

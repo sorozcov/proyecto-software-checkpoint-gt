@@ -2,6 +2,7 @@ import { firebase, firebaseFirestore } from '.';
 
 import moment from "moment";
 import omit from 'lodash/omit';
+import forEach from 'lodash/map';
 
 import { store } from '../../../App';
 import * as selectors from '../../logic/reducers';
@@ -11,7 +12,7 @@ const db = firebaseFirestore;
 const collection = "salesByDate";
 
 // función para obtener ventas de Firebase según las fechas ingresadas
-export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') => {
+export const getSalesReportByDates = async( initial, final, groupBy = false) => {
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
@@ -26,8 +27,8 @@ export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') =>
             salesArray.push(sale.data());
         });
 
-        if (groupBy === 'WEEKDAY') {
-            let grouped = {
+        if (groupBy) {
+            let groupedW = {
                 0: {
                     total: 0,
                     totalWithoutTip:0,
@@ -64,57 +65,36 @@ export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') =>
                     count: 0
                 },
             }
-            const days = ['Sábado', 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
 
-            salesArray.map(sale => {
-                grouped[sale.dayOfWeek.toString()].total = grouped[sale.dayOfWeek.toString()].total + sale.total
-                grouped[sale.dayOfWeek.toString()].totalWithoutTip = grouped[sale.dayOfWeek.toString()].totalWithoutTip + sale.totalWithoutTip
-                grouped[sale.dayOfWeek.toString()].count = grouped[sale.dayOfWeek.toString()].count + 1
-            })
-            
-            const normalizer = {
-                sales: grouped,
-                identifiers: days,
-            }
-
-            console.log("GROUP")
-            console.log(normalizer)
-
-            return {
-                report: normalizer,
-                error: null,
-            }
-        }
-        if (groupBy === 'MONTH') {
-            let grouped = {
+            let groupedM = {
                 0: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0,
                 },
                 1: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 2: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 3: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 4: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 5: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 6: {
@@ -124,22 +104,22 @@ export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') =>
                 },
                 7: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 8: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 9: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 10: {
                     total: 0,
-                    totalWithoutTip:0,
+                    totalWithoutTip: 0,
                     count: 0
                 },
                 11: {
@@ -148,21 +128,107 @@ export const getSalesReportByDates = async( initial, final, groupBy = 'NONE') =>
                     count: 0
                 },
             }
+            
+            let groupedH = {
+                12: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0,
+                },
+                13: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                14: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                15: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                16: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                17: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                18: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                19: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                20: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                21: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                22: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+                23: {
+                    total: 0,
+                    totalWithoutTip: 0,
+                    count: 0
+                },
+            }
+
+            const days = ['Sábado', 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
             const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+            const hours = ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
 
             salesArray.map(sale => {
-                grouped[sale.month.toString()].total = grouped[sale.month.toString()].total + sale.total
-                grouped[sale.month.toString()].totalWithoutTip = grouped[sale.month.toString()].totalWithoutTip + sale.totalWithoutTip
-                grouped[sale.month.toString()].count = grouped[sale.month.toString()].count + 1
+                // grouping by weekday
+                groupedW[sale.dayOfWeek.toString()].total = groupedW[sale.dayOfWeek.toString()].total + sale.total;
+                groupedW[sale.dayOfWeek.toString()].totalWithoutTip = groupedW[sale.dayOfWeek.toString()].totalWithoutTip + sale.totalWithoutTip;
+                groupedW[sale.dayOfWeek.toString()].count = groupedW[sale.dayOfWeek.toString()].count + 1;
+
+                // grouping by month
+                groupedM[sale.month.toString()].total = groupedM[sale.month.toString()].total + sale.total;
+                groupedM[sale.month.toString()].totalWithoutTip = groupedM[sale.month.toString()].totalWithoutTip + sale.totalWithoutTip;
+                groupedM[sale.month.toString()].count = groupedM[sale.month.toString()].count + 1;
+
+                //grouping by hour
+                forEach(sale.byTime, function(value, key) {
+                    if (key > 11){
+                        groupedH[key] = value
+                    }
+                })
             })
             
             const normalizer = {
-                sales: grouped,
-                identifiers: months,
+                'WEEKDAY': {
+                    sales: groupedW,
+                    identifiers: days,
+                },
+                'MONTH': {
+                    sales: groupedM,
+                    identifiers: months,
+                },
+                'HOUR': {
+                    sales: groupedH,
+                    identifiers: hours,
+                }
             }
-
-            console.log("GROUP")
-            console.log(normalizer)
 
             return {
                 report: normalizer,
