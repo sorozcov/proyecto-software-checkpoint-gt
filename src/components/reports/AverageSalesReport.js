@@ -16,10 +16,10 @@ import {
 import map from 'lodash/map';
 
 import XLSX from 'xlsx';
-import { captureRef } from 'react-native-view-shot';
 import * as Print from 'expo-print';
-import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { captureRef } from 'react-native-view-shot';
 
 import { Button, withTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -59,22 +59,24 @@ function AverageSalesReport({
     ]
 
     const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
+        backgroundGradientFrom: "#ffffff",
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "#08130D",
+        backgroundGradientTo: "#ffe6e6",
         backgroundGradientToOpacity: 0.5,
         color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
     };
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date()); // Today
-    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
+    const [initDate, setInitDate] = useState(new Date()); // today
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // tomorrow
     const [modalVisible, setModalVisible] = useState(false);
-    const [groupBy, setGroupBy] = useState({
-			id: 'WEEKDAY',
-			title: 'Día',
-			selected: true,
-		});
+    const [groupBy, setGroupBy] = useState(
+        {
+		    id: 'WEEKDAY',
+		    title: 'Día',
+		    selected: true,
+        }
+    );
 
 
     const onInitDateChange = (event, selectedDate) => {
@@ -112,7 +114,7 @@ function AverageSalesReport({
             const { uri } = await Print.printToFileAsync({
                 html,
                 width: 250,
-                height:300,
+                height: 300,
                 base64: true,
             });
 
@@ -124,9 +126,9 @@ function AverageSalesReport({
     };
 
     const exportCSV = async(data) => {
-        data = data.saleById;
+        let salesData = transformData(data);
 
-        var ws = XLSX.utils.json_to_sheet(data);
+        var ws = XLSX.utils.json_to_sheet(salesData);
         var wb = XLSX.utils.book_new();
 
         XLSX.utils.book_append_sheet(wb, ws, 'Report');
@@ -136,18 +138,26 @@ function AverageSalesReport({
             bookType: 'xlsx',
         });
 
-        const uri = FileSystem.cacheDirectory + 'reporte.xlsx';
-
-
-        await FileSystem.writeAsStringAsync(uri, wbout, {
-            encoding: FileSystem.EncodingType.Base64,
-        });
-
+        const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
+        
         await Sharing.shareAsync(uri, {
-            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            dialogTitle: 'REPORT DATA',
-            UTI: 'com.microsoft.excel.xlsx',
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          dialogTitle: 'MyWater data',
+          UTI: 'com.microsoft.excel.xlsx'
         });
+    };
+
+    const transformData = data => {
+        let transformData = [];
+        let sales = data;
+
+        for(var key in sales){
+            let salesInfo = data[groupBy.id][key];
+
+            transformData.push(salesInfo);
+        };
+
+        return transformData;
     };
     
   	return (
@@ -326,27 +336,54 @@ function AverageSalesReport({
 
                         { 
                             reportData && (
-                                <View style={{marginBottom: '2%'}}>
-                                    <Button
-                                        theme={roundness}
-                                        color={'#000000'}
-                                        icon={"file-export"}
-                                        height={50}
-                                        mode="contained"
-                                        labelStyle={{
-                                            fontFamily: "dosis-bold",
-                                            fontSize: 15,
-                                        }}
-                                        style={{
-                                            fontFamily: 'dosis',
-                                            marginLeft: '5%',
-                                            marginRight: '5%',
-                                            justifyContent: 'center',
-                                        }}
-                                        onPress={ ()=> exportCSV(reportData) }
-                                    >
-                                    {'EXPORTAR DATOS'}
-                                    </Button>
+                                <View>
+                                    <Text style={styles.subtitle}>Exportar a:</Text>
+                                    
+                                    <View style={styles.buttonsGrid}>
+                                        <Button
+                                            theme={roundness}
+                                            color={'#000000'}
+                                            icon={"file-chart"}
+                                            height={50}
+                                            mode="contained"
+                                            labelStyle={{
+                                                fontFamily: "dosis-bold",
+                                                fontSize: 15,
+                                            }}
+                                            style={{
+                                                fontFamily: 'dosis',
+                                                marginLeft: '5%',
+                                                marginRight: '5%',
+                                                justifyContent: 'center',
+                                                width: '40%',
+                                            }}
+                                            onPress={createPDF}
+                                        >
+                                        {'PDF'}
+                                        </Button>
+
+                                        <Button
+                                            theme={roundness}
+                                            color={'#000000'}
+                                            icon={"file-chart"}
+                                            height={50}
+                                            mode="contained"
+                                            labelStyle={{
+                                                fontFamily: "dosis-bold",
+                                                fontSize: 15,
+                                            }}
+                                            style={{
+                                                fontFamily: 'dosis',
+                                                marginLeft: '5%',
+                                                marginRight: '5%',
+                                                justifyContent: 'center',
+                                                width: '40%',
+                                            }}
+                                            onPress={ ()=> exportCSV(reportData) }
+                                        >
+                                        {'CSV'}
+                                        </Button>
+                                    </View>
                                 </View>
                             )
                         }
@@ -436,7 +473,20 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     datePicker: {
-        height:200
+        height: 200
+    },
+    subtitle: {
+		textAlign: 'center',
+		fontFamily: 'dosis-regular',
+        fontSize: 16,
+		padding: '5%',
+    },
+    buttonsGrid: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16
     },
 });
 
@@ -447,6 +497,7 @@ export default connect(
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {
+            console.log(initDate)
             dispatch(actions.startFetchingAverageReport(initDate, endDate, true));
         },
 	}),

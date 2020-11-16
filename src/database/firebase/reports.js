@@ -21,7 +21,6 @@ export const getSalesReportByDates = async( initial, final, groupBy = false) => 
 
         const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
 
-
         let salesArray = [];
         sales.docs.forEach(sale => {
             salesArray.push(sale.data());
@@ -210,7 +209,9 @@ export const getSalesReportByDates = async( initial, final, groupBy = false) => 
                 //grouping by hour
                 forEach(sale.byTime, function(value, key) {
                     if (key > 11){
-                        groupedH[key] = value
+                        groupedH[key].total = groupedH[key].total + value.total
+                        groupedH[key].totalWithoutTip = groupedH[key].total + value.totalWithoutTip
+                        groupedH[key].count = groupedH[key].count + 1
                     }
                 })
             })
