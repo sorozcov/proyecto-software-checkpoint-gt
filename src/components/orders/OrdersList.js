@@ -282,7 +282,7 @@ function OrdersList ({
                                         key={order.item.orderId}
                                         name={`${order.item.orderName}`}
                                         date={order.item.date.toDate().toString()}
-                                        total={order.item.total} image={order.item.image}
+                                        total={parseFloat(order.item.total) + parseFloat(order.item.hasTip?order.item.tip:0)} image={order.item.image}
                                         order={order.item}
                                         navigation={navigation}
                                         theme={theme}

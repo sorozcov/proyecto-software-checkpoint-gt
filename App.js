@@ -41,7 +41,7 @@ const theme = {
     white:'white',
     accent: '#00AACC',
     gray2:'#605856',
-    gray:'#FF7171'
+    gray:'#FF2D2D'
   },
 };
 

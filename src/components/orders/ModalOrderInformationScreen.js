@@ -66,12 +66,11 @@ const createAndSavePDF = async (activeOrder) => {
 	
 	const subtotal = parseFloat(activeOrder.total).toFixed(2)
 	const tiptotal = parseFloat(activeOrder.hasTip ? activeOrder.tip:0).toFixed(2)
+	
 	const total = parseFloat(parseFloat(subtotal)+parseFloat(tiptotal)).toFixed(2)
 
 
 	const d = new Date(activeOrder.date.seconds * 1000);
-
-	length = length
 	const date = d.toLocaleDateString('en-GB')
 	const time = d.toLocaleTimeString('en-US')
 	
@@ -300,7 +299,7 @@ function OrderInformationScreen({
 	if(charge && discounts){
 		total = total - (total * discount.id / 100)
 	}
-	if(charge && tips){
+	if((chargeView || charge) && tips){
 		total = total + (total * tip.id / 100)
 		tipTotal  =  (total * tip.id / 100)
 	}
@@ -308,7 +307,16 @@ function OrderInformationScreen({
 	const [uriPDF, seturiPDF] = useState(null);
 	const [htmlPDF, sethtmlPDF] = useState(null);
 	const getPDF= async()=>{
-		let {uri,html} = await createAndSavePDF(activeOrder)
+		let printOrder ={...activeOrder}
+
+		let {uri,html} = activeOrder.status>=3 ? await createAndSavePDF({...printOrder,
+		
+			tip :tips ? (tip.id/100)*printOrder.total : 0,
+			hasTip : tips,
+			tipType : tips ? tip : null}) :  await createAndSavePDF({...printOrder}) 
+			
+		
+		
 		
 		seturiPDF(uri)
 		sethtmlPDF(html)
