@@ -1,7 +1,7 @@
 import 'firebase/firestore';
 import { connect } from 'react-redux';
 import React, { useState, useRef } from 'react';
-import { LineChart } from 'react-native-chart-kit';
+import { LineChart,BarChart } from 'react-native-chart-kit';
 import { 
     KeyboardAvoidingView, 
     StyleSheet, 
@@ -58,13 +58,22 @@ function AverageSalesReport({
 		},
     ]
 
-    const chartConfig = {
-        backgroundGradientFrom: "#ffffff",
-        backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "#ffe6e6",
-        backgroundGradientToOpacity: 0.5,
-        color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
-    };
+    const graphStyle = {
+        paddingTop: 20,
+        borderRadius: 16
+     }
+
+    const chartConfig={
+        backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+        backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+
+        barRadius:1,
+        // barPercentage:1,
+        // color: (opacity = 1) => `rgba(0, 170, 204, ${opacity})`,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        fillShadowGradient:colors.accent,
+        fillShadowGradientOpacity:1,
+      }
     
     const [isInit, setIsInit] = useState(false);
     const [initDate, setInitDate] = useState(new Date()); // today
@@ -184,6 +193,26 @@ function AverageSalesReport({
                                     verticalLabelRotation={60}
                                     xLabelsOffset={-4}
                                 />
+                                {/* <BarChart data={{
+                                        labels: reportData[groupBy.id].identifiers,
+                                        datasets: [{
+                                            data: map(reportData[groupBy.id].sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2))),
+                                            
+                                            
+                                        },
+                                        ],
+                                        
+                                        }}
+                                       
+                                        showValuesOnTopOfBars={true}
+                                        showBarTops={false}
+                                        fromZero={true}
+                                        width={Dimensions.get('window').width-60}
+                                        height={240}
+                                        yAxisLabel={'Q.'} 
+                                        chartConfig={chartConfig}
+                                        style={graphStyle}
+                                /> */}
                             </View>
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>

@@ -21,24 +21,24 @@ function MostSoldProductsReport({
 }) {
     const { colors, roundness } = theme;
 
-    const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
-        backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: Platform.OS === 'ios' ? "#08130D" : "#FFFFFF",
-        backgroundGradientToOpacity: 0.5,
-        color: (opacity = 1) => `rgba(199, 43, 14, ${opacity})`,
-        strokeWidth: 2, // optional, default 3
-        barPercentage: 0.5,
-        useShadowColorFromDataset: false, // optional
-        decimalPlaces: 1,
-    };
+    const chartConfig={
+        backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+        backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
+
+        barRadius:1,
+        // barPercentage:1,
+        // color: (opacity = 1) => `rgba(0, 170, 204, ${opacity})`,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        fillShadowGradient:colors.accent,
+        fillShadowGradientOpacity:1,
+      }
     
     const [isInit, setIsInit] = useState(false);
     const [initDate, setInitDate] = useState(new Date()); // Today
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
     const [modalVisible, setModalVisible] = useState(false);
     
-    useEffect(() => generateReport(initDate, endDate), []);
+    // useEffect(() => generateReport(initDate, endDate), []);
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;

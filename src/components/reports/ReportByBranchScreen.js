@@ -31,7 +31,7 @@ function ReportScreen({
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
     const [modalVisible, setModalVisible] = useState(false);
 
-    useEffect(() => generateReport(initDate, endDate), []);
+    // useEffect(() => generateReport(initDate, endDate), []);
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
