@@ -156,7 +156,7 @@ function Main({theme, navigation}) {
         <Tab.Navigator
             initialRouteName="Home"
             activeColor={colors.primary}
-            inactiveColor={colors.gray}
+            inactiveColor={colors.gray2}
             lazy={false}
             shifting={false}
             barStyle={{ backgroundColor: colors.white ,paddingBottom:0,paddingTop:3,fontSize:'30px'}}
