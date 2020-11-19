@@ -16,10 +16,10 @@ Escanear codigo QR que abrira la aplicación en EXPO para ser probada.
 Mayor Documentación Técnica en:
 https://docs.google.com/document/d/11LWiP5CNyqziHF9wZyVb5PSpg2Iy1nFX3fQ_TNorwuY/edit?usp=sharing
 
-<hr>
-#Desarolladores
-##José Castañeda 18161 
-##Luis Cuéllar 18220
-##Douglas de León 18037
-##Gerardo Méndez 18239 
-##Silvio Orozco 18282 
+
+# Desarolladores
+## José Castañeda 18161 
+## Luis Cuéllar 18220
+## Douglas de León 18037
+## Gerardo Méndez 18239 
+## Silvio Orozco 18282 
