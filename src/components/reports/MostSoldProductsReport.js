@@ -64,10 +64,14 @@ function MostSoldProductsReport({
                             <BarChart
                                 style={styles.graphStyle}
                                 data={{
-                                    labels: reportData.order,
+                                    labels: reportData.byId.sort(function(o1,o2){
+                                        return o2.quantity>o1.quantity;
+                                      }).map(i => i.name),
                                     datasets: [
                                         {
-                                            data: reportData.byId.map(i => i.quantity)
+                                            data: reportData.byId.sort(function(o1,o2){
+                                                return o2.quantity>o1.quantity;
+                                              }).map(i => i.quantity)
                                         }
                                     ]
                                 }}
