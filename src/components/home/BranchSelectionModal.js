@@ -60,8 +60,8 @@ function BranchSelectionModal({
 		>
 			<View style={styles.modalBackground}>
 				<View style={styles.modal}>
-					<View style={{justifyContent: 'center'}}>
-                        <Field
+					<View style={styles.select}>
+						<Field
 							name={'restaurantId'}
 							component={PickerInput}
 							title='Sucursal'
@@ -75,7 +75,7 @@ function BranchSelectionModal({
 							selectedItems={!isNew ? [initialValues.restaurantId]:[]}
 						/>
 					</View>
-					<View>
+					<View style={{paddingBottom: '40%'}}>
 						<Button
 							disabled={!dirty}
 							theme={roundness}
@@ -144,6 +144,10 @@ const styles = StyleSheet.create({
 		width: '80%',
 		borderRadius: 10,
 		justifyContent: 'space-around'
+	  },
+	  select: {
+		paddingTop:'40%',
+		height: 350,
 	  },
 });
 	

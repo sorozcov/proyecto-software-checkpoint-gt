@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
 
 export default connect(
   state => ({
+    categories: selectors.getCategories(state),
     initialValues: selectors.getCategorySelected(state),
   }),
   dispatch => ({
@@ -114,10 +115,13 @@ export default connect(
 )(reduxForm({
   form: 'newCategory',
   enableReinitialize : true,
-  validate: (values) => {
+  validate: (values, {categories, initialValues}) => {
     const errors = {};
-    errors.name = !values.name ? 'Este campo es obligatorio' : undefined
-
+    if(initialValues==null) 
+      errors.categoryName = !values.categoryName ? 'Este campo es obligatorio' : 
+        categories.filter(category => category.categoryName.toLowerCase() == values.categoryName.toLowerCase()).length > 0 ? 'Ya existe una categoría con ese nombre' : undefined;
+    else
+      errors.categoryName = !values.categoryName ? 'Este campo es obligatorio' : undefined;
     return errors;
   }
 })(withTheme(EditCategoryScreen)));

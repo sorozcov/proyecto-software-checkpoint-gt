@@ -22,7 +22,7 @@ function ModalAdditional({
         submitFunction(values);
         values.additional = '';
         values.additionalCost = '';
-    }
+	}
 	return (
 		<Modal
 			transparent={true}
@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
 });
 
 export default reduxForm({
-	form: 'editIngredientsForm',
-	enableReinitialize : true,
+	form: 'editAdditionalsForm',
 	validate: (values) => {
 		const errors = {};
 		errors.additional = !values.additional ? 'Ingrese el nombre del adicional' : undefined;
-		errors.additionalCost = values.additionalCost && isNaN(parseInt(values.additionalCost)) ? 'Ingrese un número correcto' : undefined;
+		errors.additionalCost = !values.additionalCost ? 'Ingrese el precio del adicional' : 
+			isNaN(parseInt(values.additionalCost)) ? 'Ingrese un número correcto' : undefined;
 		return errors;
 	}
 })(withTheme(ModalAdditional));

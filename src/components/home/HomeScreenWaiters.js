@@ -1,6 +1,6 @@
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { Image as ImageReact,StyleSheet, Text, View } from 'react-native';
+import { Image as ImageReact,StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Image from 'react-native-image-progress';
 import React, { Component,useEffect, useState } from 'react';
 import { Avatar, Caption, Drawer, Title, withTheme } from 'react-native-paper';
@@ -10,6 +10,7 @@ import default_pic from '../../assets/resources/default.png';
 import * as actionsLoggedUser from '../../logic/actions/loggedUser';
 import * as selectors from '../../logic/reducers';
 import BranchSelectionModal from './BranchSelectionModal';
+import AboutModal from './AboutModal';
 import * as firebase from "firebase";
 
 import NewOrdersStackScreen from '../orders/NewOrderStackScreen';
@@ -48,8 +49,10 @@ function DrawerContent(props) {
       getImage();
   
       },[props.user.image])
-      const userImage = imageUrl === null ? default_pic : {uri: imageUrl, cache:'force-cache'}
+    
+    const userImage = imageUrl === null ? default_pic : {uri: imageUrl, cache:'force-cache'}
     const [branchModal, setBranchModal] = useState(false);
+    const [aboutModal, setAboutModal] = useState(false);
 
     return (
         <DrawerContentScrollView {...props}>
@@ -110,14 +113,25 @@ function DrawerContent(props) {
                         onPress={() => logOff(navigation)}
                     />
                 </Drawer.Section>
+                
+                <TouchableOpacity
+                style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                onPress={() => setAboutModal(true)}
+                >  
+                    <View style={styles.footer}>
+                        <ImageReact
+                            source={ require('../../assets/images/checkpoint.jpg') }
+                            style={styles.logoImage}
+                        />
+                        <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
+                    </View>
+                </TouchableOpacity> 
 
-                <View style={styles.footer}>
-                    <ImageReact
-                        source={ require('../../assets/images/checkpoint.jpg') }
-                        style={styles.logoImage}
-                    />
-                    <Text style={styles.restaurantName}>Checkpoint Guatemala</Text>
-                </View>
+                <AboutModal
+                    navigation={navigation}
+                    modal={aboutModal}
+                    closeModal={()=>setAboutModal(false)}
+                />
 
                 <BranchSelectionModal
                     navigation={navigation}
