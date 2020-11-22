@@ -80,6 +80,18 @@ const isFetching = (state = false, action) => {
         {
             return false;
         }
+        case types.FETCH_SALES_REPORT_BY_USER_STARTED:
+        {
+            return true;
+        }
+        case types.FETCH_SALES_REPORT_BY_USER_COMPLETED:
+        {
+            return false;
+        }
+        case types.FETCH_SALES_REPORT_BY_USER_FAILED:
+        {
+            return false;
+        }
         case types.FETCH_AVERAGE_SALES_REPORT_STARTED:
         {
             return true;

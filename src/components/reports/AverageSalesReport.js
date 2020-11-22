@@ -1,21 +1,23 @@
 import 'firebase/firestore';
 import { connect } from 'react-redux';
 import React, { useState, useRef } from 'react';
-import { LineChart,BarChart } from 'react-native-chart-kit';
+import { LineChart, BarChart } from 'react-native-chart-kit';
 import { 
-    KeyboardAvoidingView, 
-    StyleSheet, 
-    View, 
-    Platform, 
-    Dimensions, 
-    Modal, 
-    Text, 
-    TouchableWithoutFeedback 
+    View,
+    Text,
+    Modal,
+    Platform,
+    StyleSheet,
+    Dimensions,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback
 } from 'react-native';
 
 import map from 'lodash/map';
 
 import XLSX from 'xlsx';
+
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
@@ -66,18 +68,15 @@ function AverageSalesReport({
     const chartConfig={
         backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
         backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
-
-        barRadius:1,
-        // barPercentage:1,
-        // color: (opacity = 1) => `rgba(0, 170, 204, ${opacity})`,
+        barRadius: 1,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        fillShadowGradient:colors.accent,
-        fillShadowGradientOpacity:1,
+        fillShadowGradient: colors.accent,
+        fillShadowGradientOpacity: 1,
       }
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date()); // today
-    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // tomorrow
+    const [initDate, setInitDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
     const [groupBy, setGroupBy] = useState(
         {
@@ -87,16 +86,19 @@ function AverageSalesReport({
         }
     );
 
-
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setModalVisible(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
+
     const onEndDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
+        if(selectedDate <= initDate) {
+            setInitDate(new Date(new Date(selectedDate).setDate(selectedDate.getDate() - 1)))
+        }
     };
 
     const graphReference = useRef();
@@ -174,14 +176,14 @@ function AverageSalesReport({
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                     <View>
-                        {reportData ? (
+                        { reportData ? (
                             <View style={styles.formContainer} ref={graphReference}>
                                 <LineChart
                                     data={{
                                         labels: reportData[groupBy.id].identifiers,
                                         datasets: [
                                             {
-                                                data: map(reportData[groupBy.id].sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2)))
+                                                data: map(reportData[groupBy.id].sales, sale => sale.total),
                                                 strokeWidth: 3
                                             }
                                         ]
@@ -193,26 +195,6 @@ function AverageSalesReport({
                                     verticalLabelRotation={60}
                                     xLabelsOffset={-4}
                                 />
-                                {/* <BarChart data={{
-                                        labels: reportData[groupBy.id].identifiers,
-                                        datasets: [{
-                                            data: map(reportData[groupBy.id].sales, sale => sale.total),//(sale.total / (sale.count === 0 ? 1 : sale.count).toFixed(2))),
-                                            
-                                            
-                                        },
-                                        ],
-                                        
-                                        }}
-                                       
-                                        showValuesOnTopOfBars={true}
-                                        showBarTops={false}
-                                        fromZero={true}
-                                        width={Dimensions.get('window').width-60}
-                                        height={240}
-                                        yAxisLabel={'Q.'} 
-                                        chartConfig={chartConfig}
-                                        style={graphStyle}
-                                /> */}
                             </View>
                         ): (
                             <Text width={Dimensions.get("window").width} style={styles.warning}>{"¡Aún no hay reportes! \n Genera uno"}</Text>
@@ -232,10 +214,12 @@ function AverageSalesReport({
 			                deviceHeight={Dimensions.get("window").height}
                             visible={modalVisible}
                         >
-                            <TouchableWithoutFeedback onPressOut={(e) => {
-                                if (e.nativeEvent.locationY < 0) {
-                                setModalVisible(false)
-                                }}}
+                            <TouchableWithoutFeedback 
+                                onPressOut={(e) => {
+                                    if (e.nativeEvent.locationY < 0) {
+                                        setModalVisible(false)
+                                    }
+                                }}
                             >
                             
                             <View style={styles.modalBackground}>
@@ -243,7 +227,7 @@ function AverageSalesReport({
                                     <Text style={styles.titleStyle}> Selección de fecha </Text>
                                     {isInit ? (
                                         <DateTimePicker
-                                            maximumDate={endDate}
+                                            maximumDate={new Date(new Date(endDate).setDate(endDate.getDate() - 1))}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={initDate}
@@ -254,8 +238,7 @@ function AverageSalesReport({
                                         />
                                         ) : (
                                         <DateTimePicker
-                                            minimumDate={initDate}
-                                            maximumDate={new Date()}
+                                            maximumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={endDate}
@@ -269,7 +252,7 @@ function AverageSalesReport({
                             </View>                
                             </TouchableWithoutFeedback>
                         </Modal>
-                        :modalVisible && (isInit ? (
+                        : modalVisible && (isInit ? (
                             <DateTimePicker
                                 style={styles.datePicker}
                                 testID="dateTimePicker"
@@ -339,9 +322,9 @@ function AverageSalesReport({
                                 }}/>
                         </View>
 
-                        <View style={{marginTop: '4%', marginBottom: '2%'}}>
+                        <View style={{ marginTop: '4%', marginBottom: '2%' }}>
                             <Button
-                                disabled={!(initDate < endDate) || isFetching}
+                                disabled={!(initDate <= endDate) || isFetching}
                                 theme={roundness}
                                 color={'#000000'}
                                 icon={"chart-bar"}
@@ -362,7 +345,6 @@ function AverageSalesReport({
                             {'GENERAR REPORTE'}
                             </Button>
                         </View>
-
                         { 
                             reportData && (
                                 <View>
@@ -418,6 +400,16 @@ function AverageSalesReport({
                         }
                     </View>
                 </ScrollView>
+                <Modal
+                    transparent={true}
+                    animationType={'none'}
+                    visible={isFetching}>
+                    <View style={styles.modalBackground}>
+                        <View style={styles.activityIndicatorWrapper}>
+                            <ActivityIndicator size="large" animating={isFetching} color={colors.primary} />
+                        </View>
+                    </View>
+                </Modal>
             </View>
     	</KeyboardAvoidingView>
   );
@@ -463,13 +455,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		margin: 0
 	},
-	modalBackground: {
-		flex: 1,
-		alignItems: 'center',
-		flexDirection: 'column',
-		justifyContent: 'space-around',
-	
-	  },
     modal: {
         backgroundColor: '#FFFFFF',
         height: 350,
@@ -508,7 +493,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontFamily: 'dosis-regular',
         fontSize: 16,
-		padding: '5%',
+        marginBottom: 8
     },
     buttonsGrid: {
         display: 'flex',
@@ -516,6 +501,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 16
+    },
+    modalBackground: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        backgroundColor: '#00000040'
+    },
+    activityIndicatorWrapper: {
+        backgroundColor: '#FFFFFF',
+        height: 150,
+        width: 150,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around'
     },
 });
 

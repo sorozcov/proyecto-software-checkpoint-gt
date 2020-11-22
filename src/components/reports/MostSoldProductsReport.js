@@ -1,16 +1,36 @@
 import 'firebase/firestore';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, RefreshControl, TouchableWithoutFeedback } from 'react-native';
-import {Card} from 'react-native-elements'
+import { 
+    View,
+    Text,
+    Modal,
+    Platform,
+    Dimensions,
+    StyleSheet,
+    RefreshControl,
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback 
+} from 'react-native';
+import XLSX from 'xlsx';
+
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { captureRef } from 'react-native-view-shot';
+
+import { Card } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Button, withTheme,DataTable } from 'react-native-paper';
+import { Button, withTheme, DataTable } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { BarChart,LineChart,PieChart,StackedBarChart } from 'react-native-chart-kit';
+
+import { BarChart, LineChart, PieChart, StackedBarChart } from 'react-native-chart-kit';
+
+import OptionPicker from '../../components/general/OptionPicker';
 
 import * as selectors from '../../logic/reducers';
 import * as actions from '../../logic/actions/reports';
-import OptionPicker from '../../components/general/OptionPicker';
 
 
 function MostSoldProductsReport({
@@ -18,60 +38,130 @@ function MostSoldProductsReport({
     navigation,
     reportData,
     generateReport,
+    isFetching
 }) {
     const { colors, roundness } = theme;
 
     const chartConfig={
         backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
         backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
-
-        barRadius:1,
-        // barPercentage:1,
-        // color: (opacity = 1) => `rgba(0, 170, 204, ${opacity})`,
+        barRadius: 1,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         fillShadowGradient:colors.accent,
         fillShadowGradientOpacity:1,
       }
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date()); // Today
-    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
+    const [initDate, setInitDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
-    
-    // useEffect(() => generateReport(initDate, endDate), []);
 
     const onInitDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setModalVisible(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
+
     const onEndDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
+        if(selectedDate <= initDate) {
+            setInitDate(new Date(new Date(selectedDate).setDate(selectedDate.getDate() - 1)))
+        }
     };
 
     const toggleShow = (show) => {
         setShow(!show);
     };
 
+    const graphReference = useRef();
+
+    const createPDF = async() => {
+        let snapshot = await captureRef(graphReference, {
+            format: 'jpg',
+            quality: 1,
+            result: 'data-uri'
+        });
+
+        //TODO: Mejorar estilo de reporte.
+        let html = `
+        <center>
+            <h1>REPORTE</h1>
+            <h6>${new Date().toISOString().split('T')[0]}</h6>
+        </center>
+        
+        <h2>Gráfica</h2>
+        <img src="${snapshot}" width="100%" style="border:2px solid black;" />
+        `;
+
+        try {
+            const { uri } = await Print.printToFileAsync({
+                html,
+                width: 250,
+                height: 300,
+                base64: true,
+            });
+
+            await Sharing.shareAsync(uri);
+
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
+    const exportCSV = async(data) => {
+        let salesData = transformData(data);
+
+        var ws = XLSX.utils.json_to_sheet(salesData);
+        var wb = XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(wb, ws, 'Report');
+
+        const wbout = await XLSX.write(wb, {
+            type: 'base64',
+            bookType: 'xlsx',
+        });
+
+        const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
+        
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          dialogTitle: 'MyWater data',
+          UTI: 'com.microsoft.excel.xlsx'
+        });
+    };
+
+    const transformData = data => {
+        let transformData = [];
+        let sales = data;
+
+        for(var key in sales){
+            let salesInfo = data[groupBy.id][key];
+
+            transformData.push(salesInfo);
+        };
+
+        return transformData;
+    };
+
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.formContainer}>
+                    <View style={styles.formContainer} ref={graphReference}>
                         {reportData ? (
                             <BarChart
                                 style={styles.graphStyle}
                                 data={{
-                                    labels: reportData.byId.sort(function(o1,o2){
-                                        return o2.quantity>o1.quantity;
+                                    labels: reportData.byId.sort(function(o1, o2){
+                                        return o2.quantity > o1.quantity;
                                       }).map(i => i.name),
                                     datasets: [
                                         {
                                             data: reportData.byId.sort(function(o1,o2){
                                                 return o2.quantity>o1.quantity;
-                                              }).map(i => i.quantity)
+                                            }).map(i => i.quantity)
                                         }
                                     ]
                                 }}
@@ -100,18 +190,19 @@ function MostSoldProductsReport({
 			                deviceHeight={Dimensions.get("window").height}
                             visible={modalVisible}
                         >
-                            <TouchableWithoutFeedback onPressOut={(e) => {
-                                if (e.nativeEvent.locationY < 0) {
-                                setModalVisible(false)
-                                }}}
+                            <TouchableWithoutFeedback 
+                                onPressOut={(e) => {
+                                    if (e.nativeEvent.locationY < 0) {
+                                        setModalVisible(false)
+                                    }
+                                }}
                             >
-                            
                             <View style={styles.modalBackground}>
                                 <View style={styles.modal}>
                                     <Text style={styles.titleStyle}> Selección de fecha </Text>
                                     {isInit ? (
                                         <DateTimePicker
-                                            maximumDate={endDate}
+                                            maximumDate={new Date(new Date(endDate).setDate(endDate.getDate() - 1))}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={initDate}
@@ -122,8 +213,7 @@ function MostSoldProductsReport({
                                         />
                                         ) : (
                                         <DateTimePicker
-                                            minimumDate={initDate}
-                                            maximumDate={new Date()}
+                                            maximumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={endDate}
@@ -137,7 +227,7 @@ function MostSoldProductsReport({
                             </View>                
                             </TouchableWithoutFeedback>
                         </Modal>
-                        :modalVisible && (isInit ? (
+                        : modalVisible && (isInit ? (
                             <DateTimePicker
                                 style={styles.datePicker}
                                 testID="dateTimePicker"
@@ -202,7 +292,7 @@ function MostSoldProductsReport({
 
                         <View style={{marginTop:'5%',marginBottom:'5%'}}>
                             <Button
-                                disabled={!(initDate < endDate)}
+                                disabled={!(initDate < endDate) || isFetching}
                                 theme={roundness}
                                 color={'#000000'}
                                 icon={"chart-bar"}
@@ -218,13 +308,76 @@ function MostSoldProductsReport({
                                     marginRight: '5%',
                                     justifyContent: 'center',
                                 }}
-                                onPress={()=>generateReport(initDate, endDate)}
+                                onPress={() => generateReport(initDate, endDate)}
                             >
                             {'GENERAR REPORTE'}
                             </Button>
                         </View>
+                        { 
+                            reportData && (
+                                <View>
+                                    <Text style={styles.subtitle}>Exportar a:</Text>
+                                    
+                                    <View style={styles.buttonsGrid}>
+                                        <Button
+                                            theme={roundness}
+                                            color={'#000000'}
+                                            icon={"file-chart"}
+                                            height={50}
+                                            mode="contained"
+                                            labelStyle={{
+                                                fontFamily: "dosis-bold",
+                                                fontSize: 15,
+                                            }}
+                                            style={{
+                                                fontFamily: 'dosis',
+                                                marginLeft: '5%',
+                                                marginRight: '5%',
+                                                justifyContent: 'center',
+                                                width: '40%',
+                                            }}
+                                            onPress={createPDF}
+                                        >
+                                        {'PDF'}
+                                        </Button>
+
+                                        <Button
+                                            theme={roundness}
+                                            color={'#000000'}
+                                            icon={"file-chart"}
+                                            height={50}
+                                            mode="contained"
+                                            labelStyle={{
+                                                fontFamily: "dosis-bold",
+                                                fontSize: 15,
+                                            }}
+                                            style={{
+                                                fontFamily: 'dosis',
+                                                marginLeft: '5%',
+                                                marginRight: '5%',
+                                                justifyContent: 'center',
+                                                width: '40%',
+                                            }}
+                                            onPress={ ()=> exportCSV(reportData) }
+                                        >
+                                        {'CSV'}
+                                        </Button>
+                                    </View>
+                                </View>
+                            )
+                        }
                     </View>
                 </ScrollView>
+                <Modal
+                    transparent={true}
+                    animationType={'none'}
+                    visible={isFetching}>
+                    <View style={styles.modalBackground}>
+                        <View style={styles.activityIndicatorWrapper}>
+                            <ActivityIndicator size="large" animating={isFetching} color={colors.primary} />
+                        </View>
+                    </View>
+                </Modal>
             </View>
     	</KeyboardAvoidingView>
   );
@@ -267,13 +420,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		margin: 0
 	},
-	modalBackground: {
-		flex: 1,
-		alignItems: 'center',
-		flexDirection: 'column',
-		justifyContent: 'space-around',
-	
-	  },
     modal: {
         backgroundColor: '#FFFFFF',
         height: 350,
@@ -305,19 +451,37 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontFamily: 'dosis-regular',
         fontSize: 16,
-		padding: '5%',
+        marginBottom: 8
     },
     buttonsGrid: {
         display: 'flex',
         flexDirection: 'row',
         alignItems:'center',
         justifyContent:'center',
+        marginBottom: 16
+    },
+    modalBackground: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        backgroundColor: '#00000040'
+    },
+    activityIndicatorWrapper: {
+        backgroundColor: '#FFFFFF',
+        height: 150,
+        width: 150,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around'
     },   
 });
 
 export default connect(
 	state => ({
         reportData: selectors.getReport(state, 'MOST-SOLD-PRODUCTS'),
+        isFetching: selectors.getReportIsFetching(state)
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {

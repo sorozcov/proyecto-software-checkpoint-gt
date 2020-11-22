@@ -1,25 +1,32 @@
 import 'firebase/firestore';
-import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView, StyleSheet, View, Platform, Dimensions, Modal, Text, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useRef } from 'react';
 import { LineChart } from 'react-native-chart-kit';
-// import RNFetchBlob from 'react-native-fetch-blob';
+import { 
+    View, 
+    Text, 
+    Modal, 
+    Platform, 
+    StyleSheet, 
+    Dimensions, 
+    ActivityIndicator,
+    KeyboardAvoidingView, 
+    TouchableWithoutFeedback 
+} from 'react-native';
 
 import XLSX from 'xlsx';
 
-import { captureRef } from 'react-native-view-shot'
 import * as Print from 'expo-print';
-import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { captureRef } from 'react-native-view-shot';
 
-import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import * as actions from '../../logic/actions/reports';
 import * as selectors from '../../logic/reducers';
-
-
+import * as actions from '../../logic/actions/reports';
 
 
 function ReportScreen({
@@ -27,24 +34,22 @@ function ReportScreen({
     navigation,
     reportData,
     generateReport,
-}) {
+    isFetching
+}){
     const { colors, roundness } = theme;
 
     const chartConfig={
         backgroundGradientFrom: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
         backgroundGradientTo: Platform.OS === 'ios' ? "#F8FAFB" : "#FFFFFF",
-
-        barRadius:1,
-        // barPercentage:1,
-        // color: (opacity = 1) => `rgba(0, 170, 204, ${opacity})`,
+        barRadius: 1,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        fillShadowGradient:colors.accent,
-        fillShadowGradientOpacity:1,
+        fillShadowGradient: colors.accent,
+        fillShadowGradientOpacity: 1,
       }
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date()); // Today
-    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Tomorrow
+    const [initDate, setInitDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
 
     const onInitDateChange = (event, selectedDate) => {
@@ -52,10 +57,14 @@ function ReportScreen({
         setModalVisible(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
+
     const onEndDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
+        if(selectedDate <= initDate) {
+            setInitDate(new Date(new Date(selectedDate).setDate(selectedDate.getDate() - 1)))
+        }
     };
 
     const graphReference = useRef();
@@ -153,7 +162,7 @@ function ReportScreen({
                                         labels: reportData.sale,
                                         datasets: [
                                             {
-                                            data: reportData.sale.map(i => reportData.saleById[i]['total'])
+                                                data: reportData.sale.map(i => reportData.saleById[i]['total'])
                                             }
                                         ]
                                     }}
@@ -193,7 +202,7 @@ function ReportScreen({
                                     <Text style={styles.titleStyle}> Selección de fecha </Text>
                                     {isInit ? (
                                         <DateTimePicker
-                                            maximumDate={endDate}
+                                            maximumDate={new Date(new Date(endDate).setDate(endDate.getDate() - 1))}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={initDate}
@@ -204,8 +213,7 @@ function ReportScreen({
                                         />
                                         ) : (
                                         <DateTimePicker
-                                            minimumDate={initDate}
-                                            maximumDate={new Date()}
+                                            maximumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
                                             style={styles.datePicker}
                                             testID="dateTimePicker"
                                             value={endDate}
@@ -219,7 +227,7 @@ function ReportScreen({
                             </View>                
                             </TouchableWithoutFeedback>
                         </Modal>
-                        :modalVisible && (isInit ? (
+                        : modalVisible && (isInit ? (
                             <DateTimePicker
                                 style={styles.datePicker}
                                 testID="dateTimePicker"
@@ -284,7 +292,7 @@ function ReportScreen({
 
                         <View style={{marginTop:'5%',marginBottom:'5%'}}>
                             <Button
-                                disabled={!(initDate < endDate)}
+                                disabled={!(initDate < endDate) || isFetching}
                                 theme={roundness}
                                 color={'#000000'}
                                 icon={"chart-bar"}
@@ -300,7 +308,7 @@ function ReportScreen({
                                     marginRight: '5%',
                                     justifyContent: 'center',
                                 }}
-                                onPress={()=>generateReport(initDate, endDate)}
+                                onPress={ () => generateReport(initDate, endDate)}
                             >
                             {'GENERAR REPORTE'}
                             </Button>
@@ -361,6 +369,16 @@ function ReportScreen({
                         }
                     </View>
                 </ScrollView>
+                <Modal
+                    transparent={true}
+                    animationType={'none'}
+                    visible={isFetching}>
+                    <View style={styles.modalBackground}>
+                        <View style={styles.activityIndicatorWrapper}>
+                            <ActivityIndicator size="large" animating={isFetching} color={colors.primary} />
+                        </View>
+                    </View>
+                </Modal>
             </View>
     	</KeyboardAvoidingView>
   );
@@ -403,13 +421,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		margin: 0
 	},
-	modalBackground: {
-		flex: 1,
-		alignItems: 'center',
-		flexDirection: 'column',
-		justifyContent: 'space-around',
-	
-	  },
     modal: {
         backgroundColor: '#FFFFFF',
         height: 350,
@@ -441,24 +452,43 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		fontFamily: 'dosis-regular',
         fontSize: 16,
-		padding: '5%',
+        marginBottom: 8
     },
     buttonsGrid: {
         display: 'flex',
         flexDirection: 'row',
-        alignItems:'center',
-        justifyContent:'center',
-    },   
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16
+    },  
+    modalBackground: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        backgroundColor: '#00000040'
+    },
+    activityIndicatorWrapper: {
+        backgroundColor: '#FFFFFF',
+        height: 150,
+        width: 150,
+        borderRadius: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
 });
 
 export default connect(
 	state => ({
         reportData: selectors.getReport(state, 'BY-DATE'),
+        isFetching: selectors.getReportIsFetching(state)
 	}),
 	dispatch => ({
-        // Updata data by dates.
         generateReport(initDate, endDate) {
             dispatch(actions.startFetchingDateReport(initDate, endDate));
+            console.log(initDate)
+            console.log(endDate)
         },
 	}),
 )(withTheme(ReportScreen));
