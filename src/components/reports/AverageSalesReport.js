@@ -72,7 +72,7 @@ function AverageSalesReport({
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         fillShadowGradient: colors.accent,
         fillShadowGradientOpacity: 1,
-      }
+    }
     
     const [isInit, setIsInit] = useState(false);
     const [initDate, setInitDate] = useState(new Date());
