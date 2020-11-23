@@ -125,7 +125,7 @@ function AverageSalesReport({
             const { uri } = await Print.printToFileAsync({
                 html,
                 width: 250,
-                height: 300,
+                height:300,
                 base64: true,
             });
 
@@ -137,19 +137,22 @@ function AverageSalesReport({
     };
 
     const exportCSV = async(data) => {
-        let salesData = transformData(data);
+        let salesData = Object.values(data[groupBy.id].sales).map((sale, i) => ({
+            Identificador: data[groupBy.id].identifiers[i],
+            total: sale.total,
+        }));
 
         var ws = XLSX.utils.json_to_sheet(salesData);
         var wb = XLSX.utils.book_new();
-
-        XLSX.utils.book_append_sheet(wb, ws, 'Report');
-
-        const wbout = await XLSX.write(wb, {
-            type: 'base64',
-            bookType: 'xlsx',
+        XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+        const wbout = XLSX.write(wb, {
+          type: 'base64',
+          bookType: "xlsx"
         });
-
         const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
+        await FileSystem.writeAsStringAsync(uri, wbout, {
+          encoding: FileSystem.EncodingType.Base64
+        });
         
         await Sharing.shareAsync(uri, {
           mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -158,18 +161,6 @@ function AverageSalesReport({
         });
     };
 
-    const transformData = data => {
-        let transformData = [];
-        let sales = data;
-
-        for(var key in sales){
-            let salesInfo = data[groupBy.id][key];
-
-            transformData.push(salesInfo);
-        };
-
-        return transformData;
-    };
     
   	return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
@@ -392,7 +383,7 @@ function AverageSalesReport({
                                             }}
                                             onPress={ ()=> exportCSV(reportData) }
                                         >
-                                        {'CSV'}
+                                        {'Excel'}
                                         </Button>
                                     </View>
                                 </View>
@@ -527,7 +518,6 @@ export default connect(
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {
-            console.log(initDate)
             dispatch(actions.startFetchingAverageReport(initDate, endDate, true));
         },
 	}),
