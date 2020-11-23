@@ -1,5 +1,5 @@
 import 'firebase/firestore';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { 
     View,
@@ -13,12 +13,14 @@ import {
     KeyboardAvoidingView,
     TouchableWithoutFeedback 
 } from 'react-native';
+
 import XLSX from 'xlsx';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { captureRef } from 'react-native-view-shot';
+
 
 import { Card } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -71,10 +73,6 @@ function MostSoldProductsReport({
         }
     };
 
-    const toggleShow = (show) => {
-        setShow(!show);
-    };
-
     const graphReference = useRef();
 
     const createPDF = async() => {
@@ -99,7 +97,7 @@ function MostSoldProductsReport({
             const { uri } = await Print.printToFileAsync({
                 html,
                 width: 250,
-                height: 300,
+                height:300,
                 base64: true,
             });
 
@@ -111,38 +109,30 @@ function MostSoldProductsReport({
     };
 
     const exportCSV = async(data) => {
-        let salesData = transformData(data);
+        let salesData = reportData.byId.sort(function(o1, o2){
+                return o2.quantity > o1.quantity;
+            }).map(i => ({
+                Nombre: i.name,
+                Total: i.quantity,
+            }));
 
         var ws = XLSX.utils.json_to_sheet(salesData);
         var wb = XLSX.utils.book_new();
-
-        XLSX.utils.book_append_sheet(wb, ws, 'Report');
-
-        const wbout = await XLSX.write(wb, {
-            type: 'base64',
-            bookType: 'xlsx',
+        XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+        const wbout = XLSX.write(wb, {
+          type: 'base64',
+          bookType: "xlsx"
         });
-
         const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
+        await FileSystem.writeAsStringAsync(uri, wbout, {
+          encoding: FileSystem.EncodingType.Base64
+        });
         
         await Sharing.shareAsync(uri, {
           mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           dialogTitle: 'MyWater data',
           UTI: 'com.microsoft.excel.xlsx'
         });
-    };
-
-    const transformData = data => {
-        let transformData = [];
-        let sales = data;
-
-        for(var key in sales){
-            let salesInfo = data[groupBy.id][key];
-
-            transformData.push(salesInfo);
-        };
-
-        return transformData;
     };
 
   	return (
@@ -475,6 +465,13 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-around'
+    },
+    buttonsGrid: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16
     },   
 });
 
