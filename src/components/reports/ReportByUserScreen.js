@@ -1,6 +1,6 @@
 import 'firebase/firestore';
 import { connect } from 'react-redux';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
     View,
     Text,
@@ -18,6 +18,13 @@ import { Card } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, withTheme, DataTable } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+import XLSX from 'xlsx';
+
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { captureRef } from 'react-native-view-shot';
 
 import { BarChart, LineChart, PieChart, StackedBarChart } from 'react-native-chart-kit';
 
@@ -106,6 +113,68 @@ function ReportScreen({
 		}
     ];
     const [graphOption, setGraphOption] = useState(graphOptions[0]);
+
+    const graphReference = useRef();
+
+    const createPDF = async() => {
+        let snapshot = await captureRef(graphReference, {
+            format: 'jpg',
+            quality: 1,
+            result: 'data-uri'
+        });
+
+        //TODO: Mejorar estilo de reporte.
+        let html = `
+        <center>
+            <h1>REPORTE</h1>
+            <h6>${new Date().toISOString().split('T')[0]}</h6>
+        </center>
+        
+        <h2>Gráfica</h2>
+        <img src="${snapshot}" width="100%" style="border:2px solid black;" />
+        `;
+
+        try {
+            const { uri } = await Print.printToFileAsync({
+                html,
+                width: 250,
+                height:300,
+                base64: true,
+            });
+
+            await Sharing.shareAsync(uri);
+
+        } catch (error) {
+            console.error(error);
+        };
+    };
+
+    const exportCSV = async(data) => {
+        let salesData = Object.values(data.users).filter(user=>user.total>0).map(user => {
+            return {
+                name: user.name,
+                total: user.total,
+            }
+        })
+
+        var ws = XLSX.utils.json_to_sheet(salesData);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Ventas");
+        const wbout = XLSX.write(wb, {
+          type: 'base64',
+          bookType: "xlsx"
+        });
+        const uri = FileSystem.cacheDirectory + `reporte-${new Date().toISOString().split('T')[0]}.xlsx`;
+        await FileSystem.writeAsStringAsync(uri, wbout, {
+          encoding: FileSystem.EncodingType.Base64
+        });
+        
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          dialogTitle: 'MyWater data',
+          UTI: 'com.microsoft.excel.xlsx'
+        });
+    };
   	
       return (
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
@@ -250,6 +319,52 @@ function ReportScreen({
                             </Button>
                         </View>
 
+                        <View style={styles.buttonsGrid}>
+                            <Button
+                                theme={roundness}
+                                color={'#000000'}
+                                icon={"file-chart"}
+                                height={50}
+                                mode="contained"
+                                labelStyle={{
+                                    fontFamily: "dosis-bold",
+                                    fontSize: 15,
+                                }}
+                                style={{
+                                    fontFamily: 'dosis',
+                                    marginLeft: '5%',
+                                    marginRight: '5%',
+                                    justifyContent: 'center',
+                                    width: '40%',
+                                }}
+                                onPress={createPDF}
+                            >
+                            {'PDF'}
+                            </Button>
+
+                            <Button
+                                theme={roundness}
+                                color={'#000000'}
+                                icon={"file-chart"}
+                                height={50}
+                                mode="contained"
+                                labelStyle={{
+                                    fontFamily: "dosis-bold",
+                                    fontSize: 15,
+                                }}
+                                style={{
+                                    fontFamily: 'dosis',
+                                    marginLeft: '5%',
+                                    marginRight: '5%',
+                                    justifyContent: 'center',
+                                    width: '40%',
+                                }}
+                                onPress={ ()=> exportCSV(reportDataByUser) }
+                            >
+                            {'Excel'}
+                            </Button>
+                        </View>
+
                         {reportDataByUser && reportDataByUser.users.total > 0 ? (
 
                             <View>
@@ -275,37 +390,41 @@ function ReportScreen({
                                     ))}
                                 </DataTable>
                                 {reportDataByUser.users.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
-                                {reportDataByUser.users.total > 0 && graphOption.id==1 && 
-                                    <BarChart 
-                                        data={{
-                                            labels: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.name),
-                                            datasets: [{
-                                                data: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.total),
-                                            }],
-                                        }}
-                                        showValuesOnTopOfBars={true}
-                                        showBarTops={false}
-                                        fromZero={true}
-                                        width={Dimensions.get('window').width-60}
-                                        height={240}
-                                        yAxisLabel={'Q'} 
-                                        chartConfig={chartConfig}
-                                        style={styles.graphStyle}
-                                    />
-                                }
-                                {reportDataByUser.users.total > 0 && graphOption.id==2 && 
-                                    <PieChart
-                                        data={Object.values(reportDataByUser.users).filter(user=>user.total>0)
-                                            .map((user,index)=>({...user,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
-                                        width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width-50}
-                                        height={220}
-                                        chartConfig={chartConfig}
-                                        accessor="total"
-                                        backgroundColor="transparent"
-                                        paddingLeft="25"                                    
-                                        absolute={false}
-                                    />
-                                }
+                                {reportDataByUser.users.total > 0 && graphOption.id==1 && (
+                                    <View ref={graphReference}> 
+                                        <BarChart 
+                                            data={{
+                                                labels: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.name),
+                                                datasets: [{
+                                                    data: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.total),
+                                                }],
+                                            }}
+                                            showValuesOnTopOfBars={true}
+                                            showBarTops={false}
+                                            fromZero={true}
+                                            width={Dimensions.get('window').width-60}
+                                            height={240}
+                                            yAxisLabel={'Q'} 
+                                            chartConfig={chartConfig}
+                                            style={styles.graphStyle}
+                                        />
+                                    </View>
+                                )}
+                                {reportDataByUser.users.total > 0 && graphOption.id==2 && (
+                                    <View ref={graphReference}>
+                                        <PieChart
+                                            data={Object.values(reportDataByUser.users).filter(user=>user.total>0)
+                                                .map((user,index)=>({...user,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
+                                            width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width-50}
+                                            height={220}
+                                            chartConfig={chartConfig}
+                                            accessor="total"
+                                            backgroundColor="transparent"
+                                            paddingLeft="25"                                    
+                                            absolute={false}
+                                        />
+                                    </View>
+                                )}
                             </Card>  
                             </View>
                         ): (
@@ -409,6 +528,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-around'
     },
+    buttonsGrid: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16
+    },  
 });
 
 export default connect(

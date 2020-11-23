@@ -128,7 +128,7 @@ function ReportScreen({
         let transformData = [];
         let sales = data.saleById;
 
-        for(var key in sales){
+        for(var key in sales) {
             let salesInfo = {};
 
             let date = sales[key].id;
@@ -361,7 +361,7 @@ function ReportScreen({
                                             }}
                                             onPress={ ()=> exportCSV(reportData) }
                                         >
-                                        {'CSV'}
+                                        {'Excel'}
                                         </Button>
                                     </View>
                                 </View>
