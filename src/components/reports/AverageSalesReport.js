@@ -168,7 +168,7 @@ function AverageSalesReport({
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                     <View>
                         { reportData ? (
-                            <View style={styles.formContainer} ref={graphReference}>
+                            <View style={styles.formContainer} ref={graphReference} collapsable={false}>
                                 <LineChart
                                     data={{
                                         labels: reportData[groupBy.id].identifiers,

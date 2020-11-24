@@ -139,7 +139,7 @@ function MostSoldProductsReport({
     	<KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.container}>
             <View style={styles.container}>
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-                    <View style={styles.formContainer} ref={graphReference}>
+                    <View style={styles.formContainer} ref={graphReference} collapsable={false}>
                         {reportData ? (
                             <BarChart
                                 style={styles.graphStyle}

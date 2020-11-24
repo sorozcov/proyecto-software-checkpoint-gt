@@ -395,7 +395,7 @@ function ReportScreen({
                                 </DataTable>
                                 {reportDataByBranch.branches.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
                                 {reportDataByBranch.branches.total > 0 && graphOption.id==1 && (
-                                    <View ref={graphReference}>
+                                    <View ref={graphReference} collapsable={false}>
                                         <BarChart 
                                             data={{
                                             labels: Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0).map(branch => branch.name),
@@ -417,7 +417,7 @@ function ReportScreen({
                                     </View>
                                 )}
                                 {reportDataByBranch.branches.total > 0 && graphOption.id==2 && (
-                                    <View ref={graphReference}>
+                                    <View ref={graphReference} collapsable={false}>
                                         <PieChart
                                             data={Object.values(reportDataByBranch.branches).filter(branch=>branch.total>0)
                                                 .map((branch,index)=>({...branch,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}

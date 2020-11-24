@@ -49,6 +49,7 @@ function ReportScreen({
     
     const [isInit, setIsInit] = useState(false);
     const [initDate, setInitDate] = useState(new Date());
+    console.log(initDate)
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -73,11 +74,12 @@ function ReportScreen({
         let snapshot = await captureRef(graphReference, {
             format: 'jpg',
             quality: 1,
-            result: 'data-uri'
+            result: 'data-uri',
         });
-
+        
         //TODO: Mejorar estilo de reporte.
         let html = `
+        
         <center>
             <h1>REPORTE</h1>
             <h6>${new Date().toISOString().split('T')[0]}</h6>
@@ -155,7 +157,7 @@ function ReportScreen({
                 <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
                     <View style={styles.formContainer}>
                         {reportData ? (
-                            <View ref={graphReference}>
+                            <View ref={graphReference} collapsable={false}>
                                 <LineChart
                                     style={styles.graphStyle}
                                     data={{

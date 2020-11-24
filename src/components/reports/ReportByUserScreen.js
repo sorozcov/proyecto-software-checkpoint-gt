@@ -319,7 +319,70 @@ function ReportScreen({
                             </Button>
                         </View>
 
-                        <View style={styles.buttonsGrid}>
+                        
+
+                        {reportDataByUser && reportDataByUser.users.total > 0 ? (
+
+                            <View>
+                            <Card 
+                                title={"Ventas Por Usuario"}
+                                titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
+                                containerStyle={{marginTop:10}}>
+                                    <DataTable>
+                                    <DataTable.Header>
+                                        <DataTable.Title style={{flex: 3}}>Día</DataTable.Title>
+                                        <DataTable.Title style={{flex: 4}}>Usuario</DataTable.Title>
+                                        <DataTable.Title numeric style={{flex: 2}}>Total</DataTable.Title>
+                                    </DataTable.Header>
+                                    {reportDataByUser.days.map(day=>(
+                                        Object.values(day.byWaiter).filter(user => typeof user === 'object' && user.total > 0).map(user=>(
+                                        <DataTable.Row>
+                                            <DataTable.Cell style={{flex: 3}}>{day.id}</DataTable.Cell>
+                                            <DataTable.Cell style={{flex: 4}}>{user.name}</DataTable.Cell>
+                                            <DataTable.Cell numeric style={{flex: 2}}>GTQ {user.total}</DataTable.Cell>
+                                        </DataTable.Row>
+
+                                        ))
+                                    ))}
+                                </DataTable>
+                                {reportDataByUser.users.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
+                                {reportDataByUser.users.total > 0 && graphOption.id==1 && (
+                                    <View ref={graphReference} collapsable={false}> 
+                                        <BarChart 
+                                            data={{
+                                                labels: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.name),
+                                                datasets: [{
+                                                    data: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.total),
+                                                }],
+                                            }}
+                                            showValuesOnTopOfBars={true}
+                                            showBarTops={false}
+                                            fromZero={true}
+                                            width={Dimensions.get('window').width-60}
+                                            height={240}
+                                            yAxisLabel={'Q'} 
+                                            chartConfig={chartConfig}
+                                            style={styles.graphStyle}
+                                        />
+                                    </View>
+                                )}
+                                {reportDataByUser.users.total > 0 && graphOption.id==2 && (
+                                    <View ref={graphReference} collapsable={false}>
+                                        <PieChart
+                                            data={Object.values(reportDataByUser.users).filter(user=>user.total>0)
+                                                .map((user,index)=>({...user,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
+                                            width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width-50}
+                                            height={220}
+                                            chartConfig={chartConfig}
+                                            accessor="total"
+                                            backgroundColor="transparent"
+                                            paddingLeft="25"                                    
+                                            absolute={false}
+                                        />
+                                    </View>
+                                )}
+                            </Card>  
+                            <View style={styles.buttonsGrid}>
                             <Button
                                 theme={roundness}
                                 color={'#000000'}
@@ -364,69 +427,8 @@ function ReportScreen({
                             {'Excel'}
                             </Button>
                         </View>
-
-                        {reportDataByUser && reportDataByUser.users.total > 0 ? (
-
-                            <View>
-                            <Card 
-                                title={"Ventas Por Usuario"}
-                                titleStyle={{fontFamily:'dosis-bold',fontSize:18}}
-                                containerStyle={{marginTop:10}}>
-                                    <DataTable>
-                                    <DataTable.Header>
-                                        <DataTable.Title style={{flex: 3}}>Día</DataTable.Title>
-                                        <DataTable.Title style={{flex: 4}}>Usuario</DataTable.Title>
-                                        <DataTable.Title numeric style={{flex: 2}}>Total</DataTable.Title>
-                                    </DataTable.Header>
-                                    {reportDataByUser.days.map(day=>(
-                                        Object.values(day.byWaiter).filter(user => typeof user === 'object' && user.total > 0).map(user=>(
-                                        <DataTable.Row>
-                                            <DataTable.Cell style={{flex: 3}}>{day.id}</DataTable.Cell>
-                                            <DataTable.Cell style={{flex: 4}}>{user.name}</DataTable.Cell>
-                                            <DataTable.Cell numeric style={{flex: 2}}>GTQ {user.total}</DataTable.Cell>
-                                        </DataTable.Row>
-
-                                        ))
-                                    ))}
-                                </DataTable>
-                                {reportDataByUser.users.total > 0 && <OptionPicker theme={theme} data={graphOptions} onPress={(elem)=>setGraphOption(elem)}/>}
-                                {reportDataByUser.users.total > 0 && graphOption.id==1 && (
-                                    <View ref={graphReference}> 
-                                        <BarChart 
-                                            data={{
-                                                labels: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.name),
-                                                datasets: [{
-                                                    data: Object.values(reportDataByUser.users).filter(user=>user.total>0).map(user => user.total),
-                                                }],
-                                            }}
-                                            showValuesOnTopOfBars={true}
-                                            showBarTops={false}
-                                            fromZero={true}
-                                            width={Dimensions.get('window').width-60}
-                                            height={240}
-                                            yAxisLabel={'Q'} 
-                                            chartConfig={chartConfig}
-                                            style={styles.graphStyle}
-                                        />
-                                    </View>
-                                )}
-                                {reportDataByUser.users.total > 0 && graphOption.id==2 && (
-                                    <View ref={graphReference}>
-                                        <PieChart
-                                            data={Object.values(reportDataByUser.users).filter(user=>user.total>0)
-                                                .map((user,index)=>({...user,legendFontSize: 8,color: colorsGraph[index], legendFontColor: "#7F7F7F",}))}
-                                            width={Platform.OS=="ios"? (Dimensions.get('window').width -100) : Dimensions.get('window').width-50}
-                                            height={220}
-                                            chartConfig={chartConfig}
-                                            accessor="total"
-                                            backgroundColor="transparent"
-                                            paddingLeft="25"                                    
-                                            absolute={false}
-                                        />
-                                    </View>
-                                )}
-                            </Card>  
                             </View>
+                            
                         ): (
                             <Text  style={{...styles.saleTitle, color: colors.accent}}>Sin ventas por el momento.</Text>
                         )}   
@@ -533,7 +535,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 16
+        marginBottom: 16,
+        marginTop:20,
     },  
 });
 
