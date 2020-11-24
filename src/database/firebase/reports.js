@@ -16,8 +16,8 @@ export const getSalesReportByDates = async( initial, final, groupBy = false) => 
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
-        initial_date.setUTCHours(-18,0,0);
-        final_date.setUTCHours(-18,0,0);
+        initial_date.setHours(0,0,0);
+        final_date.setHours(0,0,0);
 
         const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
 
@@ -278,8 +278,8 @@ export const getSalesReportByBranches = async( initial, final) => {
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
-        initial_date.setUTCHours(-18,0,0);
-        final_date.setUTCHours(-18,0,0);
+        initial_date.setHours(0,0,0);
+        final_date.setHours(0,0,0);
 
         const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
 
@@ -306,8 +306,8 @@ export const getSalesReportByUsers = async( initial, final) => {
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
-        initial_date.setUTCHours(-18,0,0);
-        final_date.setUTCHours(-18,0,0);
+        initial_date.setHours(0,0,0);
+        final_date.setHours(0,0,0);
 
         const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
 
@@ -332,8 +332,8 @@ export const getMostSoldProducts = async(initial, final) => {
     try {
         let initial_date = new Date(initial);
         let final_date = new Date(final);
-        initial_date.setUTCHours(-18,0,0);
-        final_date.setUTCHours(-18,0,0);
+        initial_date.setHours(0,0,0);
+        final_date.setHours(0,0,0);
 
         const sales = await db.collection(collection).where("date", ">=", initial_date).where("date", "<=", final_date).get();
 

@@ -49,7 +49,7 @@ function ReportScreen({
     const screenWidth = Dimensions.get("window").width;
 
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date());
+    const [initDate, setInitDate] = useState( Platform.OS=='ios' ? new Date(new Date().setDate(new Date().getDate() - 1)): new Date());
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -547,7 +547,13 @@ export default connect(
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {
-            dispatch(actions.startFetchingReportByUser(initDate, endDate));
+            let dateInit = new Date(initDate)
+            let dateEnd = new Date(endDate)
+            if(Platform.OS!='ios'){
+                dateInit = new Date(dateInit.setDate(dateInit.getDate() - 1))
+                // dateEnd = new Date(dateEnd.setDate(dateEnd.getDate() - 1))
+            }
+            dispatch(actions.startFetchingReportByUser(dateInit, dateEnd));
         },
 	}),
 )(withTheme(ReportScreen));

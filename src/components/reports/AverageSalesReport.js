@@ -75,7 +75,7 @@ function AverageSalesReport({
     }
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date());
+    const [initDate, setInitDate] = useState( Platform.OS=='ios' ? new Date(new Date().setDate(new Date().getDate() - 1)): new Date());
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
     const [groupBy, setGroupBy] = useState(
@@ -87,13 +87,13 @@ function AverageSalesReport({
     );
 
     const onInitDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
+        let currentDate = selectedDate;
         setModalVisible(Platform.OS === 'ios');
         setInitDate(currentDate);
     };
 
     const onEndDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
+        let currentDate = selectedDate;
         setModalVisible(Platform.OS === 'ios');
         setEndDate(currentDate);
         if(selectedDate <= initDate) {
@@ -518,7 +518,13 @@ export default connect(
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {
-            dispatch(actions.startFetchingAverageReport(initDate, endDate, true));
+            let dateInit = new Date(initDate)
+            let dateEnd = new Date(endDate)
+            if(Platform.OS!='ios'){
+                dateInit = new Date(dateInit.setDate(dateInit.getDate() - 1))
+                // dateEnd = new Date(dateEnd.setDate(dateEnd.getDate() - 1))
+            }
+            dispatch(actions.startFetchingAverageReport(dateInit, dateEnd, true));
         },
 	}),
 )(withTheme(AverageSalesReport));

@@ -48,8 +48,8 @@ function ReportScreen({
       }
     
     const [isInit, setIsInit] = useState(false);
-    const [initDate, setInitDate] = useState(new Date());
-    console.log(initDate)
+    const [initDate, setInitDate] = useState( Platform.OS=='ios' ? new Date(new Date().setDate(new Date().getDate() - 1)): new Date());
+    
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -488,9 +488,15 @@ export default connect(
 	}),
 	dispatch => ({
         generateReport(initDate, endDate) {
-            dispatch(actions.startFetchingDateReport(initDate, endDate));
-            console.log(initDate)
-            console.log(endDate)
+            let dateInit = new Date(initDate)
+            let dateEnd = new Date(endDate)
+            if(Platform.OS!='ios'){
+                dateInit = new Date(dateInit.setDate(dateInit.getDate() - 1))
+                // dateEnd = new Date(dateEnd.setDate(dateEnd.getDate() - 1))
+            }
+            
+            dispatch(actions.startFetchingDateReport(dateInit, dateEnd));
+
         },
 	}),
 )(withTheme(ReportScreen));
