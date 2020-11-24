@@ -44,7 +44,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                                 disableRightSwipe={true}
                                 refreshing={isLoading}
                                 closeOnRowPress={true}
-                                onRefresh={()=>onRefresh()}
+                                // onRefresh={()=>onRefresh()}
                                 // shouldItemUpdate={() => selectedUser !== null}
                                 keyExtractor={user => user.uid}
                                 renderHiddenItem={

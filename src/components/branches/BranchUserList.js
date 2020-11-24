@@ -17,7 +17,6 @@ const width = Dimensions.get('window').width; // full width
 function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newUser, isAdding, isEditing, selectUser, deleteUser, branch }) {
     const { colors, roundness } = theme;
 
-    useEffect(onLoad, []);
     return(
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             {
@@ -39,7 +38,7 @@ function UserList ({ theme, onLoad, onRefresh,users, isLoading, navigation, newU
                             )}
                             disableRightSwipe={true}
                             refreshing={isLoading}
-                            onRefresh={()=>onRefresh()}
+                            //onRefresh={()=>onRefresh()}
                             keyExtractor={user => user.uid}
                             renderHiddenItem={
                                 (user, rowMap) => (
