@@ -77,7 +77,7 @@ function CategoriesList ({ theme, onRefresh, onLoad, categories, isLoading, navi
                                                                 text: 'Eliminar',
                                                                 onPress: () => {
                                                                     const cate = productsByCategories.some(
-                                                                        product => product.data.length > 0 && (product.categoryId == category.item.categoryId));
+                                                                        product => product.data.length > 0 && (product.id == category.item.categoryId));
                                                                     if(cate === false) {
                                                                         deleteCategory(category.item.categoryId);
                                                                     } else {
