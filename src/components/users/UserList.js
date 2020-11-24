@@ -189,7 +189,8 @@ export default connect(
     state => ({
         activeUser: selectors.getLoggedUser(state),
         users: selectors.getUsers(state),
-        isLoading: selectors.isFetchingUsers(state),
+        // isLoading: selectors.isFetchingUsers(state),
+        isLoading:false,
         isAdding: selectors.isAddingUsers(state),
         isEditing: selectors.isEditingUsers(state),
         selectedUser: selectors.getSelectedUser(state),
