@@ -197,6 +197,23 @@ const createAndSavePDF = async (activeOrder) => {
   	}
 };
 
+var dataTip = [
+	{
+		id: 15,
+		title: '15%',
+		selected: false,
+	},
+	{
+		id: 10,
+		title: '10%',
+		selected: true,
+	},
+	{
+		id: 5,
+		title: '5%',
+		selected: false,
+	},
+];
 
 function OrderInformationScreen({ 
 	theme,
@@ -217,24 +234,8 @@ function OrderInformationScreen({
 	const { colors, roundness } = theme;
 	const charge = activeOrder.status == 3; 
 	const chargeView = activeOrder.status >=4; 
-	const dataTip = [
-		{
-			id: 15,
-			title: '15%',
-			selected: false,
-		},
-		{
-			id: 10,
-			title: '10%',
-			selected: true,
-		},
-		{
-			id: 5,
-			title: '5%',
-			selected: false,
-		},
-	];
 
+	
 	const dataInvoice = [
 		{
 			id: true,

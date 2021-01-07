@@ -75,8 +75,9 @@ function LoginScreen({ theme, navigation, saveLoggedUser }) {
   async function login(email, pass) {
     Keyboard.dismiss();
     console.log("started");
-    // await createDatesDocuments({});
     setmodalVisibleIndicatorLogin(true);
+    // await createDatesDocuments({});
+    
      try {
          
          await firebase.auth()
